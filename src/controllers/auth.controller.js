@@ -18,7 +18,7 @@ async function register(req, res) {
         message: "Email already exists",
       });
     }
-    const hashedPassword = await bcrypt.hash(password, process.env.SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash(password,Number( process.env.SALT_ROUNDS));
 
     const user = await userModel.create({
       name,
@@ -76,6 +76,4 @@ async function login(req, res) {
   }
 }
 
-async function me(req, res) {}
-
-module.exports = { register, login, me };
+module.exports = { register, login};
