@@ -14,8 +14,8 @@ const router = express.Router();
 
 router.post("/products", auth, authorize("farmer"), createProduct);
 router.get("/products", getAllProducts);
-router.get("/products/:id", validateProductId, getProductById);
 router.get("/products/me", auth, authorize("farmer"), getMyProducts);
+router.get("/products/:id", validateProductId, getProductById);
 router.patch(
   "/products/:id",
   auth,
