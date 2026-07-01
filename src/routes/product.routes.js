@@ -7,7 +7,7 @@ const {
   updateProduct,
   changeProductStatus,
 } = require("../controllers/product.controller");
-const validateProductId = require("../middleware/product.validation.middleware");
+const validateId = require("../middleware/validateId.middlewarejs");
 const auth = require("../middleware/auth.middleware");
 const authorize = require("../middleware/role.middleware");
 const router = express.Router();
@@ -15,19 +15,19 @@ const router = express.Router();
 router.post("/products", auth, authorize("farmer"), createProduct);
 router.get("/products", getAllProducts);
 router.get("/products/me", auth, authorize("farmer"), getMyProducts);
-router.get("/products/:id", validateProductId, getProductById);
+router.get("/products/:id", validateId("Product"), getProductById);
 router.patch(
   "/products/:id",
   auth,
   authorize("farmer"),
-  validateProductId,
+  validateId("Product"),
   updateProduct,
 );
 router.patch(
   "/products/:id/status",
   auth,
   authorize("farmer"),
-  validateProductId,
+  validateId("Product"),
   changeProductStatus,
 );
 module.exports = router;
