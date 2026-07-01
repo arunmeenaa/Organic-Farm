@@ -1,6 +1,6 @@
 const express = require("express");
 const auth = require("../middleware/auth.middleware");
-const validateId = require("../middleware/validateId.middlewarejs");
+const validateId = require("../middleware/validateId.middleware.js");
 const authorize = require("../middleware/role.middleware");
 const router = express.Router();
 const {

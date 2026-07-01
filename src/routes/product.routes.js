@@ -7,7 +7,7 @@ const {
   updateProduct,
   changeProductStatus,
 } = require("../controllers/product.controller");
-const validateId = require("../middleware/validateId.middlewarejs");
+const validateId = require("../middleware/validateId.middleware.js");
 const auth = require("../middleware/auth.middleware");
 const authorize = require("../middleware/role.middleware");
 const router = express.Router();

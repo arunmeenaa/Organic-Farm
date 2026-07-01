@@ -98,14 +98,55 @@ async function createReview(req, res) {
   }
 }
 
-async function getReviewsByProduct(req, res) {}
+async function getProductReviews(req, res) {
+  const { productId } = req.params;
+  try {
+    const product = await productModel.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+    const reviews = (
+      await reviewModel.find({ product: productId }).populate("user", "name")
+    )
+      .sort({ createdAt: -1 })
+      .lean();
+
+    let totalRating = 0;
+
+    for (const review of reviews) {
+      totalRating += review.rating;
+    }
+
+    const averageRating =
+      reviews.length === 0
+        ? 0
+        : Number((totalRating / reviews.length).toFixed(1));
+
+    return res.status(200).json({
+      success: true,
+      message: "Reviews fetched successfully",
+      reviews,
+      averageRating,
+      totalReviews: reviews.length,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get reviews",
+      error: err.message,
+    });
+  }
+}
 
 async function updateReview(req, res) {}
 
 async function deleteReview(req, res) {}
 module.exports = {
   createReview,
-  getReviewsByProduct,
+  getProductReviews,
   updateReview,
-  deleteReview
+  deleteReview,
 };
