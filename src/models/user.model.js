@@ -35,7 +35,7 @@ const userModel = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: { values: ["buyer", "farmer", "admin"] },
+      enum: { values: ["buyer", "farmer"] },
       required: true,
     },
      isVerified:{

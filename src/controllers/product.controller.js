@@ -1,5 +1,5 @@
 const productModel = require("../models/product.model");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 async function createProduct(req, res) {
   const { name, description, images, price, quantity, category, unit } =
@@ -76,12 +76,6 @@ async function getAllProducts(req, res) {
 async function getProductById(req, res) {
   const { id } = req.params;
   try {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        message: "Invalid product ID",
-      });
-    }
-
     const product = await productModel
       .findOne({ _id: id, status: "active" })
       .populate("farmer", "name location profileImage")
@@ -102,4 +96,114 @@ async function getProductById(req, res) {
     });
   }
 }
-module.exports = { createProduct, getAllProducts, getProductById };
+
+async function getMyProducts(req, res) {
+  try {
+    const myProduct = await productModel.find({ farmer: req.user._id }).lean();
+    return res.status(200).json({
+      message: "My products fetched successfully",
+      count: myProduct.length,
+      myProduct,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+}
+
+async function updateProduct(req, res) {
+  const { id } = req.params;
+  try {
+  
+    const product = await productModel.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        message: "Product is no longer available",
+      });
+    }
+    if (product.farmer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "You don't have permission to update this product",
+      });
+    }
+    const {
+      name,
+      description,
+      images,
+      price,
+      quantity,
+      category,
+      unit,
+      status,
+    } = req.body;
+    if (price !== undefined && price < 0) {
+      return res.status(400).json({
+        message: "Price must be greater than 0",
+      });
+    }
+
+    if (quantity !== undefined && quantity < 0) {
+      return res.status(400).json({
+        message: "Quantity must be greater than 0",
+      });
+    }
+    if (name !== undefined) product.name = name;
+    if (description !== undefined) product.description = description;
+    if (images !== undefined) product.images = images;
+    if (price !== undefined) product.price = price;
+    if (quantity !== undefined) product.quantity = quantity;
+    if (category !== undefined) product.category = category;
+    if (unit !== undefined) product.unit = unit;
+    if (status !== undefined) product.status = status;
+
+    await product.save();
+    res.status(200).json({
+      message: "Product updated Succesfully",
+      product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+}
+
+async function changeProductStatus(req, res) {
+  const { id } = req.params;
+  try {
+    const product = await productModel.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        message: "Product is no longer available",
+      });
+    }
+    if (product.farmer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "You don't have permission to update status of product",
+      });
+    }
+    product.status = product.status === "active" ? "inactive" : "active";
+
+    await product.save();
+    res.status(200).json({
+      success: true,
+      message: "Product status updated successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to update Status of Product",
+      error: err.message,
+    });
+  }
+}
+
+
+module.exports = {
+  createProduct,
+  getAllProducts,
+  getProductById,
+  getMyProducts,
+  updateProduct,
+  changeProductStatus,
+};
