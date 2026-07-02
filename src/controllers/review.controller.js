@@ -141,9 +141,138 @@ async function getProductReviews(req, res) {
   }
 }
 
-async function updateReview(req, res) {}
+async function updateReview(req, res) {
+  const { reviewId } = req.params;
+  const { title, rating, comment } = req.body;
 
-async function deleteReview(req, res) {}
+  try {
+    const review = await reviewModel.findById(reviewId);
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found",
+      });
+    }
+
+    if (review.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only update your own reviews",
+      });
+    }
+    if (title === undefined && rating === undefined && comment === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: "Provide at least one field to update",
+      });
+    }
+    if (title !== undefined) {
+      if (typeof title !== "string") {
+        return res.status(400).json({
+          success: false,
+          message: "Title must be a string",
+        });
+      }
+      const trimmedTitle = title.trim();
+      if (trimmedTitle.length === 0 || trimmedTitle.length > 50) {
+        return res.status(400).json({
+          success: false,
+          message: "Title must be between 1 and 50 characters",
+        });
+      }
+
+      review.title = trimmedTitle;
+    }
+
+    if (rating !== undefined) {
+      if (typeof rating !== "number") {
+        return res.status(400).json({
+          success: false,
+          message: "Rating must be a number",
+        });
+      }
+
+      if (rating < 1 || rating > 5) {
+        return res.status(400).json({
+          success: false,
+          message: "Rating must be between 1 and 5",
+        });
+      }
+
+      review.rating = rating;
+    }
+
+    if (comment !== undefined) {
+      if (typeof comment !== "string") {
+        return res.status(400).json({
+          success: false,
+          message: "Comment must be a string",
+        });
+      }
+
+      const trimmedComment = comment.trim();
+
+      if (trimmedComment.length === 0 || trimmedComment.length > 200) {
+        return res.status(400).json({
+          success: false,
+          message: "Comment must be between 1 and 200 characters",
+        });
+      }
+
+      review.comment = trimmedComment;
+    }
+
+    await review.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Review updated successfully",
+      review,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update review",
+      error: err.message,
+    });
+  }
+}
+
+async function deleteReview(req, res) {
+  const { reviewId } = req.params;
+
+  try {
+    const review = await reviewModel.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found",
+      });
+    }
+
+    if (review.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only delete your own reviews",
+      });
+    }
+
+    await review.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: "Review deleted successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete review",
+      error: err.message,
+    });
+  }
+}
+
 module.exports = {
   createReview,
   getProductReviews,
