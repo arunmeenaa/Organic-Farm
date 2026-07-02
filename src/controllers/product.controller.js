@@ -56,13 +56,78 @@ async function createProduct(req, res) {
 
 async function getAllProducts(req, res) {
   try {
+    const {
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = 10,
+    } = req.query;
+    const pageNumber = Number(page);
+    const limitNumber = Number(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    if (pageNumber < 1 || limitNumber < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Page and limit must be greater than 0",
+      });
+    }
+    if (
+      !Number.isInteger(pageNumber) ||
+      !Number.isInteger(limitNumber) ||
+      pageNumber < 1 ||
+      limitNumber < 1
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Page and limit must be positive integers",
+      });
+    }
+
+    const filter = {
+      status: "active",
+    };
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+    if (category) {
+      filter.category = category;
+    }
+
+    if (
+      (minPrice && Number.isNaN(Number(minPrice))) ||
+      (maxPrice && Number.isNaN(Number(maxPrice)))
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Price filters must be valid numbers",
+      });
+    }
+    if (minPrice || maxPrice) {
+      filter.price = {};
+
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+
+    const totalProducts = await productModel.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / limitNumber);
+
     const products = await productModel
-      .find({ status: "active" })
+      .find(filter)
       .populate("farmer", "name location profileImage")
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNumber)
       .lean();
     return res.status(200).json({
+      success: true,
       message: "Products fetched successfully",
+      currentPage: pageNumber,
+      totalPages,
+      totalProducts,
       count: products.length,
       products,
     });
@@ -115,7 +180,6 @@ async function getMyProducts(req, res) {
 async function updateProduct(req, res) {
   const { id } = req.params;
   try {
-  
     const product = await productModel.findById(id);
     if (!product) {
       return res.status(404).json({
@@ -197,7 +261,6 @@ async function changeProductStatus(req, res) {
     });
   }
 }
-
 
 module.exports = {
   createProduct,

@@ -5,12 +5,6 @@ const generateToken = require("../utils/generateToken");
 async function register(req, res) {
   const { name, email, phone, password, location, role } = req.body;
 
-  if (role === "admin") {
-    return res.status(403).json({
-      message: "Unauthorized Access",
-    });
-  }
-
   try {
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
