@@ -26,41 +26,35 @@ const Login = () => {
     if (!isAuthenticated) return;
 
     if (user?.role === "buyer") {
-      navigate("/buyer/dashboard");
+      navigate("/buyer/dashboard", { replace: true });
     } else if (user?.role === "farmer") {
-      navigate("/farmer/dashboard");
+      navigate("/farmer/dashboard", { replace: true });
     }
   }, [isAuthenticated, user, navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const { data } = await loginUser({
-        email: formData.email,
-        password: formData.password,
-      });
-      
-      login({
-        token: data.token,
-        user: data.user,
-      });
+    const { data } = await loginUser({
+      email: formData.email,
+      password: formData.password,
+    });
 
-      toast.success("Login successful");
+    login({
+      token: data.token,
+      user: data.user,
+    });
 
-      if (data.user.role === "buyer") {
-        navigate("/buyer/dashboard");
-      } else if (data.user.role === "farmer") {
-        navigate("/farmer/dashboard");
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+    toast.success("Login successful");
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-100">

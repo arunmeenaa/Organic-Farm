@@ -1,22 +1,16 @@
 const productModel = require("../models/product.model");
+const { uploadImage } = require("../utils/imagekit");
 const mongoose = require("mongoose");
 
 async function createProduct(req, res) {
-  const { name, description, images, price, quantity, category, unit } =
-    req.body;
   try {
-    if (
-      !name ||
-      !description ||
-      price == null ||
-      quantity == null ||
-      !category
-    ) {
+    const { name, description, price, quantity, category, unit } = req.body;
+
+    if (!name || !description || !price || !quantity || !category) {
       return res.status(400).json({
         message: "All required fields must be provided",
       });
     }
-
     if (price <= 0) {
       return res.status(400).json({
         message: "Price must be greater than 0",
@@ -28,28 +22,41 @@ async function createProduct(req, res) {
         message: "Quantity must be greater than 0",
       });
     }
-    if (!Array.isArray(images) || images.length === 0) {
+    if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         message: "At least one product image is required",
       });
     }
+
+    const imageUrls = [];
+
+    for (const file of req.files) {
+      const url = await uploadImage(file);
+      imageUrls.push(url);
+    }
+
     const product = await productModel.create({
       name,
       description,
-      images,
+      images: imageUrls,
       price,
       quantity,
       category,
       unit,
       farmer: req.user._id,
     });
-    res.status(201).json({
-      message: "Product Created:",
+
+    return res.status(201).json({
+      success: true,
+      message: "Product created successfully",
       product,
     });
   } catch (err) {
-    res.status(500).json({
-      message: "Failed product creation: " + err.message,
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message,
     });
   }
 }
@@ -164,14 +171,20 @@ async function getProductById(req, res) {
 
 async function getMyProducts(req, res) {
   try {
-    const myProduct = await productModel.find({ farmer: req.user._id }).lean();
+    const products = await productModel
+      .find({ farmer: req.user._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
     return res.status(200).json({
+      success: true,
       message: "My products fetched successfully",
-      count: myProduct.length,
-      myProduct,
+      count: products.length,
+      products,
     });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
       message: err.message,
     });
   }

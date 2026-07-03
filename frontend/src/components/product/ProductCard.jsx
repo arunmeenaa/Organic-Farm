@@ -49,7 +49,6 @@ const ProductCard = ({ product }) => {
         </Link>
 
       </div>
-
     </div>
   );
 };

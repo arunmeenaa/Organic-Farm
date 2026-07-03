@@ -10,10 +10,13 @@ export const getProductById = (id) => {
   return api.get(`/product/${id}`);
 };
 
-export const createProduct = (data) => {
-  return api.post("/product", data);
+export const createProduct = (formData) => {
+  return api.post("/product", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
-
 export const updateProduct = (id, data) => {
   return api.patch(`/product/${id}`, data);
 };

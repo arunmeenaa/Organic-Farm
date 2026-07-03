@@ -6,37 +6,43 @@ import {
   FaXTwitter,
 } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Footer = () => {
+  const { isAuthenticated } = useAuth();
   return (
     <footer className="bg-[#0F172A] text-gray-300">
       {/* Newsletter */}
-      <section className="border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div>
-              <h2 className="text-3xl font-bold text-white">Stay Updated 🌱</h2>
+      {!isAuthenticated && (
+        <section className="border-b border-slate-700 hover:scale-105 transition-all duration-300">
+          <div className="max-w-7xl mx-auto px-6 py-12">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div>
+                <h2 className="text-3xl font-bold text-white">
+                  Stay Updated 🌱
+                </h2>
 
-              <p className="mt-2 text-gray-400 max-w-xl">
-                Subscribe to receive updates about fresh organic products,
-                farming tips and exclusive offers.
-              </p>
-            </div>
+                <p className="mt-2 text-gray-400 max-w-xl ">
+                  Subscribe to receive updates about fresh organic products,
+                  farming tips and exclusive offers.
+                </p>
+              </div>
 
-            <div className="flex w-full lg:w-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full lg:w-80 rounded-l-xl px-5 py-4 bg-slate-800 border border-slate-700 outline-none focus:border-green-500"
-              />
+              <div className="flex w-full lg:w-auto">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full lg:w-80 rounded-l-xl px-5 py-4 bg-slate-800 border border-slate-700 outline-none focus:border-green-500"
+                />
 
-              <button className="bg-green-600 hover:bg-green-700 transition px-6 rounded-r-xl flex items-center">
-                <ArrowRight />
-              </button>
+                <button className="bg-green-600 hover:bg-green-700 transition px-6 rounded-r-xl flex items-center">
+                  <ArrowRight />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Main Footer */}
 
@@ -189,7 +195,7 @@ const Footer = () => {
       <div className="border-t border-slate-700">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-400 text-center">
-            © {new Date().getFullYear()} Organic Farm. All Rights Reserved.
+            © {new Date().getFullYear()} © 2026 Organic Farm. Empowering farmers. Delivering freshness.
           </p>
 
           <div className="flex gap-6">

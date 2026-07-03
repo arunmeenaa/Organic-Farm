@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
@@ -16,7 +16,7 @@ const Navbar = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
   const { totalItems } = useCart();
-  // Replace with Auth Context
+
   const { user, isAuthenticated, logout } = useAuth();
 
   const navigate = useNavigate();
@@ -24,9 +24,20 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     setProfileMenu(false);
-    navigate("/");
+    setMobileMenu(false);
+    navigate("/", { replace: true });
   };
+  useEffect(() => {
+    const resize = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileMenu(false);
+      }
+    };
 
+    window.addEventListener("resize", resize);
+
+    return () => window.removeEventListener("resize", resize);
+  }, []);
   const activeClass =
     "text-green-700 font-semibold border-b-2 border-green-600";
 
@@ -36,7 +47,13 @@ const Navbar = () => {
         <div className="h-20 flex items-center justify-between">
           {/* Logo */}
           <Link
-            to="/"
+            to={
+              !isAuthenticated
+                ? "/"
+                : user?.role === "buyer"
+                  ? "/buyer/dashboard"
+                  : "/farmer/dashboard"
+            }
             className="flex items-center gap-2 text-2xl font-bold text-green-700"
           >
             <Leaf size={32} />
@@ -47,7 +64,13 @@ const Navbar = () => {
 
           <nav className="hidden lg:flex items-center gap-8">
             <NavLink
-              to="/"
+              to={
+                !isAuthenticated
+                  ? "/"
+                  : user?.role === "buyer"
+                    ? "/buyer/dashboard"
+                    : "/farmer/dashboard"
+              }
               className={({ isActive }) =>
                 isActive ? activeClass : "hover:text-green-700"
               }
@@ -80,7 +103,7 @@ const Navbar = () => {
             {isAuthenticated && user?.role === "farmer" && (
               <>
                 <NavLink
-                  to="/my-products"
+                  to="/farmer/products"
                   className={({ isActive }) =>
                     isActive ? activeClass : "hover:text-green-700"
                   }
@@ -89,7 +112,7 @@ const Navbar = () => {
                 </NavLink>
 
                 <NavLink
-                  to="/add-product"
+                  to="/farmer/products/add"
                   className={({ isActive }) =>
                     isActive ? activeClass : "hover:text-green-700"
                   }
@@ -167,10 +190,16 @@ const Navbar = () => {
                     className="flex items-center gap-2"
                   >
                     <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold uppercase">
-                      {user?.name?.charAt(0)}
+                      {user?.name?.trim()?.charAt(0).toUpperCase()}
                     </div>
 
-                    <span className="font-medium">{user?.name}</span>
+                    <div className="text-left">
+                      <p className="font-medium">{user?.name}</p>
+
+                      <p className="text-xs text-gray-500 capitalize">
+                        {user?.role}
+                      </p>
+                    </div>
 
                     <ChevronDown size={18} />
                   </button>
@@ -178,7 +207,12 @@ const Navbar = () => {
                   {profileMenu && (
                     <div className="absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-xl border">
                       <Link
-                        to="/profile"
+                        to={
+                          user?.role === "buyer"
+                            ? "/buyer/profile"
+                            : "/farmer/profile"
+                        }
+                        onClick={() => setProfileMenu(false)}
                         className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100"
                       >
                         <User size={18} />
@@ -215,32 +249,101 @@ const Navbar = () => {
       {mobileMenu && (
         <div className="lg:hidden bg-white border-t">
           <div className="p-5 flex flex-col gap-5">
-            <Link to="/">Home</Link>
+            <Link
+              to={
+                !isAuthenticated
+                  ? "/"
+                  : user?.role === "buyer"
+                    ? "/buyer/dashboard"
+                    : "/farmer/dashboard"
+              }
+            >
+              Home
+            </Link>
 
             {!isAuthenticated && (
               <>
-                <Link to="/products">Products</Link>
-                <Link to="/about">About</Link>
-                <Link to="/login">Login</Link>
-                <Link to="/register">Register</Link>
+                <Link to="/products" onClick={() => setMobileMenu(false)}>
+                  Products
+                </Link>
+                <Link to="/about" onClick={() => setMobileMenu(false)}>
+                  About
+                </Link>
+                <Link to="/login" onClick={() => setMobileMenu(false)}>
+                  Login
+                </Link>
+                <Link to="/register" onClick={() => setMobileMenu(false)}>
+                  Register
+                </Link>
               </>
             )}
 
             {isAuthenticated && user?.role === "buyer" && (
               <>
-                <Link to="/products">Products</Link>
-                <Link to="/orders">My Orders</Link>
-                <Link to="/cart">Cart</Link>
-                <Link to="/profile">Profile</Link>
+                <NavLink
+                  to="/buyer/dashboard"
+                  className={({ isActive }) =>
+                    isActive ? activeClass : "hover:text-green-700"
+                  }
+                >
+                  Dashboard
+                </NavLink>
+                <Link to="/products" onClick={() => setMobileMenu(false)}>
+                  Products
+                </Link>
+                <Link to="/orders" onClick={() => setMobileMenu(false)}>
+                  My Orders
+                </Link>
+                <Link to="/cart" onClick={() => setMobileMenu(false)}>
+                  Cart
+                </Link>
+                <Link to="/buyer/profile" onClick={() => setMobileMenu(false)}>
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-left text-red-500"
+                >
+                  Logout
+                </button>
               </>
             )}
 
             {isAuthenticated && user?.role === "farmer" && (
               <>
-                <Link to="/my-products">My Products</Link>
-                <Link to="/add-product">Add Product</Link>
-                <Link to="/farmer/orders">Orders</Link>
-                <Link to="/profile">Profile</Link>
+                <NavLink
+                  to="/farmer/dashboard"
+                  className={({ isActive }) =>
+                    isActive ? activeClass : "hover:text-green-700"
+                  }
+                >
+                  Dashboard
+                </NavLink>
+                <Link
+                  to="/farmer/products"
+                  onClick={() => setMobileMenu(false)}
+                >
+                  My Products
+                </Link>
+
+                <Link
+                  to="/farmer/products/add"
+                  onClick={() => setMobileMenu(false)}
+                >
+                  Add Product
+                </Link>
+                <Link to="/farmer/orders" onClick={() => setMobileMenu(false)}>
+                  Orders
+                </Link>
+                <Link to="/farmer/profile" onClick={() => setMobileMenu(false)}>
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-left text-red-500"
+                >
+                  Logout
+                </button>
               </>
             )}
           </div>
