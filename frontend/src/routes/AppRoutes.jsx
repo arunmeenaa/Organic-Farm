@@ -16,6 +16,7 @@ import BuyerDashboard from "../pages/buyer/BuyerDashboard";
 import Cart from "../pages/buyer/Cart";
 import MyOrders from "../pages/buyer/MyOrders";
 import BuyerProfile from "../pages/buyer/BuyerProfile";
+import Checkout from "../pages/buyer/Checkout";
 
 import FarmerRoute from "./FarmerRoute";
 import Dashboard from "../pages/farmer/Dashboard";
@@ -44,6 +45,7 @@ const AppRoutes = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/orders" element={<MyOrders />} />
             <Route path="/buyer/profile" element={<BuyerProfile />} />
+            <Route path="/checkout" element={<Checkout />} />
           </Route>
 
           <Route element={<FarmerRoute />}>

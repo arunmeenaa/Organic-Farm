@@ -13,44 +13,61 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-
-    products: [
-      {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
-          required: true,
+    farmerName: {
+      type: String,
+      required: true,
+    },
+    cancelReason: {
+      type: String,
+      default: "",
+    },
+    orderNumber: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    products: {
+      type: [
+        {
+          product: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+            required: true,
+          },
+          productName: {
+            type: String,
+            required: true,
+          },
+          productImage: {
+            type: String,
+            required: true,
+          },
+          unit: {
+            type: String,
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            required: true,
+            min: 1,
+          },
+          priceAtPurchase: {
+            type: Number,
+            required: true,
+            min: 0,
+          },
+          itemTotal: {
+            type: Number,
+            required: true,
+            min: 0,
+          },
         },
-
-        productName: {
-          type: String,
-          required: true,
-        },
-
-        unit: {
-          type: String,
-          required: true,
-        },
-
-        quantity: {
-          type: Number,
-          required: true,
-          min: 1,
-        },
-
-        priceAtPurchase: {
-          type: Number,
-          required: true,
-          min: 0,
-        },
-
-        itemTotal: {
-          type: Number,
-          required: true,
-          min: 0,
-        },
+      ],
+      validate: {
+        validator: (items) => items.length > 0,
+        message: "Order must contain at least one product.",
       },
-    ],
+    },
 
     totalPrice: {
       type: Number,
@@ -64,7 +81,13 @@ const orderSchema = new mongoose.Schema(
         required: true,
         trim: true,
       },
+      estimatedDelivery: {
+        type: Date,
+      },
 
+      deliveredAt: {
+        type: Date,
+      },
       phone: {
         type: String,
         required: true,

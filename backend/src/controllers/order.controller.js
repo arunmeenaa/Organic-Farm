@@ -47,7 +47,7 @@ async function placeOrder(req, res) {
         });
       }
 
-      const dbProduct = await productModel.findById(productId);
+      const dbProduct = await productModel.findById(productId).session(session);
 
       if (!dbProduct) {
         return res.status(404).json({
@@ -104,17 +104,20 @@ async function placeOrder(req, res) {
         item.product.status = "inactive";
       }
 
-      await item.product.save();
+      await item.product.save({ session });
     }
 
-    const order = await orderModel.create({
-      buyer: req.user._id,
-      farmer: farmerId,
-      products: orderProducts,
-      totalPrice,
-      deliveryAddress,
-      paymentMethod,
-    });
+    const order = await orderModel.create(
+      {
+        buyer: req.user._id,
+        farmer: farmerId,
+        products: orderProducts,
+        totalPrice,
+        deliveryAddress,
+        paymentMethod,
+      },
+      { session },
+    );
 
     const createdOrder = await orderModel
       .findById(order._id)
@@ -122,12 +125,12 @@ async function placeOrder(req, res) {
       .populate("farmer", "name email phone")
       .populate("products.product", "name images category");
 
+    await session.commitTransaction();
     return res.status(201).json({
       success: true,
       message: "Order placed successfully",
       order: createdOrder,
     });
-    await session.commitTransaction();
   } catch (err) {
     await session.abortTransaction();
     return res.status(500).json({

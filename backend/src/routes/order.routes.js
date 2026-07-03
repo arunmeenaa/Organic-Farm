@@ -1,8 +1,10 @@
 const express = require("express");
-const auth = require("../middleware/auth.middleware");
-const validateId = require("../middleware/validateId.middleware.js");
-const authorize = require("../middleware/role.middleware");
 const router = express.Router();
+
+const auth = require("../middleware/auth.middleware");
+const authorize = require("../middleware/role.middleware");
+const validateId = require("../middleware/validateId.middleware");
+
 const {
   placeOrder,
   getMyOrders,
@@ -12,28 +14,34 @@ const {
   cancelOrder,
 } = require("../controllers/order.controller");
 
-router.post("/orders", auth, authorize("buyer"), placeOrder);
-router.get("/orders", auth, authorize("buyer"), getMyOrders);
+router.post("/", auth, authorize("buyer"), placeOrder);
+
+router.get("/me", auth, authorize("buyer"), getMyOrders);
+
+router.get("/farmer", auth, authorize("farmer"), getFarmerOrders);
+
 router.get(
-  "/orders/:id",
-  validateId("Order"),
+  "/:id",
   auth,
   authorize("buyer", "farmer"),
-  getOrderById,
-);
-router.get("/orders/farmer", auth, authorize("farmer"), getFarmerOrders);
-router.put(
-  "/orders/:id/status",
   validateId("Order"),
+  getOrderById
+);
+
+router.patch(
+  "/:id/status",
   auth,
   authorize("farmer"),
-  updateOrderStatus,
-);
-router.delete(
-  "/orders/:id",
   validateId("Order"),
+  updateOrderStatus
+);
+
+router.patch(
+  "/:id/cancel",
   auth,
   authorize("buyer"),
-  cancelOrder,
+  validateId("Order"),
+  cancelOrder
 );
+
 module.exports = router;
