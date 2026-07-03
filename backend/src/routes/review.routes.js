@@ -11,8 +11,8 @@ const authorize = require("../middleware/role.middleware");
 const validate = require("../middleware/validateId.middleware");
 
 router.post("/", auth, authorize("buyer"), validate("Product"), createReview);
-router.get("/:productId", auth, validate("Product"), getProductReviews);
-router.put("/:reviewId", auth, validate("Review"), updateReview);
+router.get("/product/:id", auth, validate("Product"), getProductReviews);
+router.patch("/:reviewId", auth, validate("review"), updateReview);
 router.delete("/:reviewId", auth, validate("Review"), deleteReview);
 
 module.exports = router;

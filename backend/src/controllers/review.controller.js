@@ -99,18 +99,19 @@ async function createReview(req, res) {
 }
 
 async function getProductReviews(req, res) {
-  const { productId } = req.params;
   try {
-    const product = await productModel.findById(productId);
+    const { id } = req.params;
+    const product = await productModel.findById(id);
+    
     if (!product) {
       return res.status(404).json({
         success: false,
         message: "Product not found",
       });
     }
-    const reviews = (
-      await reviewModel.find({ product: productId }).populate("user", "name")
-    )
+    const reviews = await reviewModel
+      .find({ product: id })
+      .populate("user", "name")
       .sort({ createdAt: -1 })
       .lean();
 

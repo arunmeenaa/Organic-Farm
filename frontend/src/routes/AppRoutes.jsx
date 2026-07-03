@@ -5,8 +5,11 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
+import Products from "../components/product/Products";
+import ProductDetails from "../components/product/ProductDetails";
 
 import ProtectedRoute from "./ProtectedRoute";
+
 
 import BuyerRoute from "./BuyerRoute";
 import BuyerDashboard from "../pages/buyer/BuyerDashboard";
@@ -26,10 +29,10 @@ const AppRoutes = () => {
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/register" element={<Register />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

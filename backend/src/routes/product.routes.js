@@ -12,22 +12,24 @@ const auth = require("../middleware/auth.middleware");
 const authorize = require("../middleware/role.middleware");
 const router = express.Router();
 
-router.post("/products", auth, authorize("farmer"), createProduct);
-router.get("/products", getAllProducts);
-router.get("/products/me", auth, authorize("farmer"), getMyProducts);
-router.get("/products/:id", validateId("Product"), getProductById);
+router.post("/", auth, authorize("farmer"), createProduct);
+router.get("/", getAllProducts);
+router.get("/me", auth, authorize("farmer"), getMyProducts);
+router.get("/:id", validateId("product"), getProductById);
+
 router.patch(
-  "/products/:id",
+  "/:id",
   auth,
   authorize("farmer"),
-  validateId("Product"),
+  validateId("product"),
   updateProduct,
 );
+
 router.patch(
-  "/products/:id/status",
+  "/:id/status",
   auth,
   authorize("farmer"),
-  validateId("Product"),
+  validateId("product"),
   changeProductStatus,
 );
 module.exports = router;
