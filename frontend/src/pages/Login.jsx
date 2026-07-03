@@ -48,7 +48,7 @@ const Login = () => {
       user: data.user,
     });
 
-    toast.success("Login successful");
+    toast.success(`Welcome back, ${data.user.name}! 👋`);
   } catch (err) {
     toast.error(err.response?.data?.message || "Login failed");
   } finally {

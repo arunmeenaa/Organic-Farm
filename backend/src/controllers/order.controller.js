@@ -1,145 +1,118 @@
-const orderModel = require("../models/order.model");
-const productModel = require("../models/product.model");
 const mongoose = require("mongoose");
+const cartModel = require("../models/cart.model");
+const productModel = require("../models/product.model");
+const orderModel = require("../models/order.model");
+const userModel = require("../models/user.model");
+
 async function placeOrder(req, res) {
-  const { products, deliveryAddress, paymentMethod } = req.body;
+  const { deliveryAddress, paymentMethod } = req.body;
 
   try {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    if (!Array.isArray(products) || products.length === 0) {
-      return res.status(400).json({
-        message: "At least one product is required",
-      });
-    }
-
     const { fullName, phone, addressLine, city, state, pincode } =
       deliveryAddress || {};
 
     if (!fullName || !phone || !addressLine || !city || !state || !pincode) {
       return res.status(400).json({
+        success: false,
         message: "Complete delivery address is required",
       });
     }
 
+    // Load buyer cart
+    const cart = await cartModel
+      .findOne({ buyer: req.user._id })
+      .populate("items.product");
+
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Your cart is empty",
+      });
+    }
+
     let farmerId = null;
+    let farmerName = "";
     let totalPrice = 0;
 
     const orderProducts = [];
-    const productUpdates = [];
 
-    for (const item of products) {
-      const { product: productId, quantity } = item;
-
-      if (!productId) {
-        return res.status(400).json({
-          message: "Product ID is required",
-        });
-      }
-      if (!mongoose.Types.ObjectId.isValid(productId)) {
-        return res.status(400).json({
-          message: `Invalid product ID: ${productId}`,
-        });
-      }
-      if (!quantity || quantity <= 0) {
-        return res.status(400).json({
-          message: "Quantity must be greater than 0",
-        });
-      }
-
-      const dbProduct = await productModel.findById(productId).session(session);
+    for (const item of cart.items) {
+      const dbProduct = item.product;
 
       if (!dbProduct) {
-        return res.status(404).json({
-          message: "Product not found",
-        });
-      }
-      if (dbProduct.farmer.toString() === req.user._id.toString()) {
-        return res.status(400).json({
-          message: "You cannot order your own product",
-        });
-      }
-      if (dbProduct.status !== "active") {
-        return res.status(400).json({
-          message: `${dbProduct.name} is currently unavailable`,
-        });
+        throw new Error("Product not found");
       }
 
-      if (dbProduct.quantity < quantity) {
-        return res.status(400).json({
-          message: `Only ${dbProduct.quantity} ${dbProduct.unit} of ${dbProduct.name} available`,
-        });
+      if (dbProduct.status !== "active") {
+        throw new Error(`${dbProduct.name} is unavailable`);
+      }
+
+      if (dbProduct.quantity < item.quantity) {
+        throw new Error(
+          `Only ${dbProduct.quantity} ${dbProduct.unit} of ${dbProduct.name} available`,
+        );
       }
 
       if (!farmerId) {
         farmerId = dbProduct.farmer.toString();
+
+        const farmer = await userModel.findById(farmerId);
+
+        farmerName = farmer.name;
       } else if (farmerId !== dbProduct.farmer.toString()) {
-        return res.status(400).json({
-          message: "Products must belong to the same farmer",
-        });
+        throw new Error("Cart contains products from multiple farmers.");
       }
 
-      const itemTotal = dbProduct.price * quantity;
+      const itemTotal = dbProduct.price * item.quantity;
       totalPrice += itemTotal;
 
       orderProducts.push({
         product: dbProduct._id,
         productName: dbProduct.name,
+        productImage: dbProduct.images[0],
         unit: dbProduct.unit,
-        quantity,
+        quantity: item.quantity,
         priceAtPurchase: dbProduct.price,
         itemTotal,
       });
 
-      productUpdates.push({
-        product: dbProduct,
-        orderedQuantity: quantity,
-      });
-    }
+      dbProduct.quantity -= item.quantity;
 
-    for (const item of productUpdates) {
-      item.product.quantity -= item.orderedQuantity;
-
-      if (item.product.quantity === 0) {
-        item.product.status = "inactive";
+      if (dbProduct.quantity === 0) {
+        dbProduct.status = "inactive";
       }
 
-      await item.product.save({ session });
+      await dbProduct.save();
     }
 
-    const order = await orderModel.create(
+    const order = await orderModel.create([
       {
         buyer: req.user._id,
         farmer: farmerId,
+        farmerName,
+        orderNumber: `OF${Date.now()}`,
         products: orderProducts,
         totalPrice,
         deliveryAddress,
         paymentMethod,
       },
-      { session },
-    );
+    ]);
 
-    const createdOrder = await orderModel
-      .findById(order._id)
-      .populate("buyer", "name email phone")
-      .populate("farmer", "name email phone")
-      .populate("products.product", "name images category");
+    // Clear cart
+    cart.items = [];
+    await cart.save();
 
-    await session.commitTransaction();
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Order placed successfully",
-      order: createdOrder,
+      order: order[0],
     });
   } catch (err) {
-    await session.abortTransaction();
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: "Failed to place order",
       error: err.message,
     });
-  } finally {
-    session.endSession();
   }
 }
 

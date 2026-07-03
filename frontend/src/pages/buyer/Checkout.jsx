@@ -1,13 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  MapPin,
-  Phone,
-  User,
-  CreditCard,
-  Truck,
-} from "lucide-react";
+import { MapPin, Phone, User, CreditCard, Truck } from "lucide-react";
 import { useCart } from "../../context/CartContext";
+import { placeOrder } from "../../services/order.service";
+import toast from "react-hot-toast";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -33,50 +29,50 @@ const Checkout = () => {
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
 
-    // TODO:
-    // await placeOrder({
-    //   deliveryAddress: {
-    //     fullName: formData.fullName,
-    //     phone: formData.phone,
-    //     addressLine: formData.addressLine,
-    //     city: formData.city,
-    //     state: formData.state,
-    //     pincode: formData.pincode,
-    //   },
-    //   paymentMethod: formData.paymentMethod,
-    // });
+    try {
+      const { data } = await placeOrder({
+        deliveryAddress: {
+          fullName: formData.fullName,
+          phone: formData.phone,
+          addressLine: formData.addressLine,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+        },
+        paymentMethod: formData.paymentMethod,
+      });
 
-    console.log(formData);
+      console.log(data);
 
-    navigate("/orders");
+      toast.success("Order placed successfully");
+
+      navigate("/order-success", {
+        state: {
+          order: data.order,
+        },
+      });
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to place order");
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-100 py-10">
       <div className="max-w-7xl mx-auto px-6">
-
-        <h1 className="text-4xl font-bold text-gray-800 mb-8">
-          Checkout
-        </h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-8">Checkout</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
-
           {/* Delivery Form */}
 
           <form
             onSubmit={handlePlaceOrder}
             className="lg:col-span-2 bg-white rounded-2xl shadow p-8 space-y-6"
           >
-            <h2 className="text-2xl font-semibold">
-              Delivery Address
-            </h2>
+            <h2 className="text-2xl font-semibold">Delivery Address</h2>
 
             <div className="grid md:grid-cols-2 gap-5">
-
               <div>
-                <label className="font-medium">
-                  Full Name
-                </label>
+                <label className="font-medium">Full Name</label>
 
                 <div className="relative mt-2">
                   <User
@@ -96,9 +92,7 @@ const Checkout = () => {
               </div>
 
               <div>
-                <label className="font-medium">
-                  Phone
-                </label>
+                <label className="font-medium">Phone</label>
 
                 <div className="relative mt-2">
                   <Phone
@@ -116,13 +110,10 @@ const Checkout = () => {
                   />
                 </div>
               </div>
-
             </div>
 
             <div>
-              <label className="font-medium">
-                Address
-              </label>
+              <label className="font-medium">Address</label>
 
               <textarea
                 rows={3}
@@ -135,11 +126,8 @@ const Checkout = () => {
             </div>
 
             <div className="grid md:grid-cols-3 gap-5">
-
               <div>
-                <label className="font-medium">
-                  City
-                </label>
+                <label className="font-medium">City</label>
 
                 <input
                   type="text"
@@ -152,9 +140,7 @@ const Checkout = () => {
               </div>
 
               <div>
-                <label className="font-medium">
-                  State
-                </label>
+                <label className="font-medium">State</label>
 
                 <input
                   type="text"
@@ -167,9 +153,7 @@ const Checkout = () => {
               </div>
 
               <div>
-                <label className="font-medium">
-                  Pincode
-                </label>
+                <label className="font-medium">Pincode</label>
 
                 <input
                   type="text"
@@ -180,17 +164,12 @@ const Checkout = () => {
                   className="w-full border rounded-xl mt-2 p-3 outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
-
             </div>
 
             <div>
-
-              <h2 className="text-2xl font-semibold mb-4">
-                Payment Method
-              </h2>
+              <h2 className="text-2xl font-semibold mb-4">Payment Method</h2>
 
               <label className="flex items-center gap-3 border rounded-xl p-4 cursor-pointer">
-
                 <input
                   type="radio"
                   name="paymentMethod"
@@ -202,22 +181,15 @@ const Checkout = () => {
                 <Truck className="text-green-600" />
 
                 <span>Cash on Delivery</span>
-
               </label>
 
               <label className="flex items-center gap-3 border rounded-xl p-4 mt-4 opacity-50 cursor-not-allowed">
-
-                <input
-                  type="radio"
-                  disabled
-                />
+                <input type="radio" disabled />
 
                 <CreditCard className="text-gray-500" />
 
                 <span>UPI (Coming Soon)</span>
-
               </label>
-
             </div>
 
             <button
@@ -226,28 +198,18 @@ const Checkout = () => {
             >
               Place Order
             </button>
-
           </form>
 
           {/* Order Summary */}
 
           <div className="bg-white rounded-2xl shadow p-6 h-fit sticky top-24">
-
-            <h2 className="text-2xl font-semibold mb-6">
-              Order Summary
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6">Order Summary</h2>
 
             <div className="space-y-4">
-
               {cart.map((item) => (
-                <div
-                  key={item.product._id}
-                  className="flex justify-between"
-                >
+                <div key={item.product._id} className="flex justify-between">
                   <div>
-                    <p className="font-medium">
-                      {item.product.name}
-                    </p>
+                    <p className="font-medium">{item.product.name}</p>
 
                     <p className="text-sm text-gray-500">
                       {item.quantity} × ₹{item.product.price}
@@ -259,13 +221,11 @@ const Checkout = () => {
                   </p>
                 </div>
               ))}
-
             </div>
 
             <hr className="my-6" />
 
             <div className="space-y-3">
-
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>₹{subtotal}</span>
@@ -280,16 +240,13 @@ const Checkout = () => {
                 <span>Total</span>
                 <span>₹{subtotal}</span>
               </div>
-
             </div>
 
             <div className="mt-6 flex items-center gap-2 text-sm text-gray-500">
               <MapPin size={18} />
               Delivering to your provided address
             </div>
-
           </div>
-
         </div>
       </div>
     </div>

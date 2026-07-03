@@ -2,16 +2,17 @@ import { MapPin, User, ShoppingCart } from "lucide-react";
 import QuantitySelector from "./QuantitySelector";
 import { useCart } from "../../context/CartContext";
 import toast from "react-hot-toast";
+import { notify } from "../../utils/toast";
 
 const ProductInfo = ({ product, quantity, setQuantity }) => {
   const { addItem } = useCart();
   const handleAddToCart = async () => {
     try {
-     await addItem(product._id, quantity);
+      await addItem(product._id, quantity);
 
-      toast.success("Added to cart");
+      notify.success("Product added successfully 🌱");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add product");
+      notify.error(err.response?.data?.message || "Failed to add product");
     }
   };
   return (

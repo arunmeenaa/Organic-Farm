@@ -8,6 +8,8 @@ import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
 import Products from "../components/product/Products";
 import ProductDetails from "../components/product/ProductDetails";
+import About from "../pages/About";
+import Contact from "../pages/Contact";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -17,6 +19,8 @@ import Cart from "../pages/buyer/Cart";
 import MyOrders from "../pages/buyer/MyOrders";
 import BuyerProfile from "../pages/buyer/BuyerProfile";
 import Checkout from "../pages/buyer/Checkout";
+import BuyerOrderDetails from "../pages/buyer/OrderDetails";
+import OrderSuccess from "../components/order/OrderSuccess";
 
 import FarmerRoute from "./FarmerRoute";
 import Dashboard from "../pages/farmer/Dashboard";
@@ -36,6 +40,8 @@ const AppRoutes = () => {
           <Route path="/register" element={<Register />} />
         </Route>
 
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
 
@@ -44,7 +50,9 @@ const AppRoutes = () => {
             <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/orders" element={<MyOrders />} />
+            <Route path="/orders/:id" element={<BuyerOrderDetails />} />
             <Route path="/buyer/profile" element={<BuyerProfile />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/checkout" element={<Checkout />} />
           </Route>
 
