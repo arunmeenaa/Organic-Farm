@@ -7,6 +7,44 @@ import {
   XCircle,
 } from "lucide-react";
 
+// Matches Navbar/Hero/MyProducts/Orders/AddProduct/FarmerOrderCard/
+// FarmerOrderDetails: glassmorphism, emerald → lime gradient, Space Grotesk.
+const FontImport = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+    .ost-root { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+    .ost-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
+
+    .ost-cancelled {
+      background: rgba(225, 29, 72, 0.08);
+      border: 1px solid rgba(225, 29, 72, 0.25);
+    }
+
+    .ost-panel {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .ost-track-done { background: linear-gradient(90deg, #059669, #84CC16); }
+    .ost-track-pending { background: #DCEBDD; }
+
+    .ost-step-done {
+      background: linear-gradient(135deg, #059669, #84CC16);
+      color: #063527;
+    }
+    .ost-step-pending {
+      background: #E7E9E4;
+      color: #A6B3AA;
+    }
+
+    .ost-label-done { color: #065F46; }
+    .ost-label-pending { color: #A6B3AA; }
+  `}</style>
+);
+
 const steps = [
   {
     key: "placed",
@@ -38,16 +76,19 @@ const steps = [
 const OrderStatusTimeline = ({ status }) => {
   if (status === "cancelled") {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-center gap-3">
-        <XCircle className="text-red-600" size={28} />
-        <div>
-          <h3 className="font-semibold text-red-700">
-            Order Cancelled
-          </h3>
+      <div className="ost-root">
+        <FontImport />
+        <div className="ost-cancelled rounded-xl p-6 flex items-center gap-3">
+          <XCircle style={{ color: "#E11D48" }} size={28} />
+          <div>
+            <h3 className="font-semibold" style={{ color: "#E11D48" }}>
+              Order Cancelled
+            </h3>
 
-          <p className="text-sm text-red-600">
-            This order has been cancelled.
-          </p>
+            <p className="text-sm" style={{ color: "#E11D48" }}>
+              This order has been cancelled.
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -58,13 +99,13 @@ const OrderStatusTimeline = ({ status }) => {
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow p-8">
-      <h2 className="text-2xl font-semibold mb-8">
+    <div className="ost-root ost-panel rounded-2xl shadow-sm p-8">
+      <FontImport />
+      <h2 className="ost-display text-2xl font-semibold mb-8" style={{ color: "#0F2E22" }}>
         Order Progress
       </h2>
 
       <div className="flex justify-between items-start">
-
         {steps.map((step, index) => {
           const Icon = step.icon;
 
@@ -79,17 +120,15 @@ const OrderStatusTimeline = ({ status }) => {
                 <div
                   className={`absolute top-5 left-1/2 w-full h-1 ${
                     index < currentIndex
-                      ? "bg-green-600"
-                      : "bg-gray-300"
+                      ? "ost-track-done"
+                      : "ost-track-pending"
                   }`}
                 />
               )}
 
               <div
                 className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center ${
-                  completed
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-200 text-gray-500"
+                  completed ? "ost-step-done" : "ost-step-pending"
                 }`}
               >
                 <Icon size={22} />
@@ -97,9 +136,7 @@ const OrderStatusTimeline = ({ status }) => {
 
               <p
                 className={`mt-3 text-sm font-medium ${
-                  completed
-                    ? "text-green-700"
-                    : "text-gray-500"
+                  completed ? "ost-label-done" : "ost-label-pending"
                 }`}
               >
                 {step.label}
@@ -107,7 +144,6 @@ const OrderStatusTimeline = ({ status }) => {
             </div>
           );
         })}
-
       </div>
     </div>
   );

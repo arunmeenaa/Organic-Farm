@@ -10,61 +10,78 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-// Shared design tokens with the rest of the app: forest green + harvest
-// marigold on warm parchment, Fraunces display, Inter body.
+// Matches Navbar/Hero/MyProducts/Orders/AddProduct/Dashboard/Footer:
+// glassmorphism over an emerald → lime gradient mesh, Space Grotesk display.
 const FontImport = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-    .fd-root { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background: #F6F4EC; }
-    .fd-display { font-family: 'Fraunces', Georgia, serif; }
+    .fd-root {
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse 60% 50% at 10% 0%, rgba(5, 150, 105, 0.14), transparent),
+        radial-gradient(ellipse 55% 45% at 90% 20%, rgba(132, 204, 22, 0.14), transparent),
+        #F4F9F2;
+    }
+    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
     .fd-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
 
+    .fd-title-gradient {
+      background: linear-gradient(90deg, #065F46, #65A30D);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
     .fd-panel {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
     }
 
     .fd-stat-card {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
-      border-top: 3px solid #1E3527;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
     .fd-stat-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 24px -14px rgba(30, 53, 39, 0.35);
+      box-shadow: 0 16px 32px -18px rgba(6, 95, 70, 0.3);
     }
 
-    .fd-icon-chip-0 { background: rgba(30, 53, 39, 0.1); color: #1E3527; }
-    .fd-icon-chip-1 { background: rgba(231, 168, 60, 0.18); color: #8A5A16; }
-    .fd-icon-chip-2 { background: rgba(47, 82, 51, 0.1); color: #2F5233; }
-    .fd-icon-chip-3 { background: rgba(181, 80, 46, 0.1); color: #B5502E; }
+    .fd-icon-chip-0 { background: rgba(5, 150, 105, 0.12); color: #059669; }
+    .fd-icon-chip-1 { background: rgba(245, 158, 11, 0.16); color: #B45309; }
+    .fd-icon-chip-2 { background: rgba(132, 204, 22, 0.16); color: #4D7C0F; }
+    .fd-icon-chip-3 { background: rgba(13, 148, 136, 0.14); color: #0F766E; }
 
-    .fd-row { border-bottom: 1px solid #EFEBDD; transition: background 0.15s ease; }
+    .fd-row { border-bottom: 1px solid rgba(5, 150, 105, 0.1); transition: background 0.15s ease; }
     .fd-row:last-child { border-bottom: none; }
-    .fd-row:hover { background: #FBFAF4; }
+    .fd-row:hover { background: rgba(5, 150, 105, 0.04); }
 
-    .fd-link-accent { color: #8A5A16; transition: color 0.15s ease; }
-    .fd-link-accent:hover { color: #1E3527; }
+    .fd-link-accent { color: #059669; transition: color 0.15s ease; }
+    .fd-link-accent:hover { color: #065F46; }
 
-    .fd-status-pill { color: #1E3527; }
+    .fd-status-pill { color: #065F46; }
 
     .fd-btn-primary {
-      background: #1E3527;
-      color: #F6F4EC;
-      transition: background 0.15s ease;
+      background: linear-gradient(90deg, #059669, #84CC16);
+      color: #063527;
+      box-shadow: 0 10px 22px -10px rgba(5, 150, 105, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .fd-btn-primary:hover { background: #2F5233; }
+    .fd-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(5, 150, 105, 0.55); }
 
-    .fd-quick-action-0 { background: rgba(30, 53, 39, 0.06); color: #1E3527; transition: background 0.15s ease; }
-    .fd-quick-action-0:hover { background: rgba(30, 53, 39, 0.12); }
-    .fd-quick-action-1 { background: rgba(231, 168, 60, 0.14); color: #8A5A16; transition: background 0.15s ease; }
-    .fd-quick-action-1:hover { background: rgba(231, 168, 60, 0.24); }
-    .fd-quick-action-2 { background: rgba(47, 82, 51, 0.08); color: #2F5233; transition: background 0.15s ease; }
-    .fd-quick-action-2:hover { background: rgba(47, 82, 51, 0.16); }
+    .fd-quick-action-0 { background: rgba(5, 150, 105, 0.08); color: #065F46; transition: background 0.15s ease; }
+    .fd-quick-action-0:hover { background: rgba(5, 150, 105, 0.16); }
+    .fd-quick-action-1 { background: rgba(245, 158, 11, 0.12); color: #B45309; transition: background 0.15s ease; }
+    .fd-quick-action-1:hover { background: rgba(245, 158, 11, 0.2); }
+    .fd-quick-action-2 { background: rgba(132, 204, 22, 0.14); color: #4D7C0F; transition: background 0.15s ease; }
+    .fd-quick-action-2:hover { background: rgba(132, 204, 22, 0.22); }
 
-    .fd-wishlist-count { color: #1E3527; }
+    .fd-wishlist-count { color: #059669; }
   `}</style>
 );
 
@@ -125,18 +142,18 @@ const BuyerDashboard = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-5 mb-10">
           <div>
-            <h1 className="fd-display text-4xl font-semibold" style={{ color: "#1E3527" }}>
+            <h1 className="fd-display fd-title-gradient text-4xl font-bold">
               Buyer Dashboard
             </h1>
 
-            <p className="mt-2" style={{ color: "#8A8578" }}>
+            <p className="mt-2" style={{ color: "#7A8D82" }}>
               Welcome back! Track your orders and continue shopping.
             </p>
           </div>
 
           <Link
             to="/products"
-            className="fd-btn-primary px-6 py-3 rounded-xl flex items-center gap-2 font-medium"
+            className="fd-btn-primary px-6 py-3 rounded-xl flex items-center gap-2 font-semibold"
           >
             <Search size={20} />
             Browse Products
@@ -150,9 +167,9 @@ const BuyerDashboard = () => {
             <div key={item.title} className="fd-stat-card rounded-2xl p-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <p style={{ color: "#8A8578" }}>{item.title}</p>
+                  <p style={{ color: "#7A8D82" }}>{item.title}</p>
 
-                  <h2 className="fd-display text-3xl font-semibold mt-2" style={{ color: "#1E3527" }}>
+                  <h2 className="fd-display text-3xl font-bold mt-2" style={{ color: "#0F2E22" }}>
                     {item.value}
                   </h2>
                 </div>
@@ -171,9 +188,9 @@ const BuyerDashboard = () => {
           <div className="fd-panel lg:col-span-2 rounded-2xl">
             <div
               className="flex justify-between items-center p-6"
-              style={{ borderBottom: "1px solid #E7E2D2" }}
+              style={{ borderBottom: "1px solid rgba(5, 150, 105, 0.14)" }}
             >
-              <h2 className="fd-display text-2xl font-semibold" style={{ color: "#1E3527" }}>
+              <h2 className="fd-display text-2xl font-semibold" style={{ color: "#0F2E22" }}>
                 Recent Orders
               </h2>
 
@@ -189,17 +206,19 @@ const BuyerDashboard = () => {
                   className="fd-row p-5 flex justify-between items-center"
                 >
                   <div>
-                    <h3 className="font-semibold fd-mono text-sm" style={{ color: "#23281F" }}>
+                    <h3 className="font-semibold fd-mono text-sm" style={{ color: "#0F2E22" }}>
                       {order.id}
                     </h3>
 
-                    <p className="text-sm" style={{ color: "#8A8578" }}>
+                    <p className="text-sm" style={{ color: "#7A8D82" }}>
                       Farmer: {order.farmer}
                     </p>
                   </div>
 
                   <div className="text-right">
-                    <p className="font-bold fd-mono">{order.amount}</p>
+                    <p className="font-bold fd-mono" style={{ color: "#0F2E22" }}>
+                      {order.amount}
+                    </p>
 
                     <span className="fd-status-pill text-sm font-medium">
                       {order.status}
@@ -214,7 +233,7 @@ const BuyerDashboard = () => {
 
           <div className="space-y-6">
             <div className="fd-panel rounded-2xl p-6">
-              <h2 className="fd-display text-xl font-semibold mb-5" style={{ color: "#1E3527" }}>
+              <h2 className="fd-display text-xl font-semibold mb-5" style={{ color: "#0F2E22" }}>
                 Quick Actions
               </h2>
 
@@ -259,14 +278,14 @@ const BuyerDashboard = () => {
 
             <div className="fd-panel rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <Heart style={{ color: "#B5502E" }} />
+                <Heart style={{ color: "#E11D48" }} />
 
-                <h2 className="fd-display text-xl font-semibold" style={{ color: "#1E3527" }}>
+                <h2 className="fd-display text-xl font-semibold" style={{ color: "#0F2E22" }}>
                   Wishlist
                 </h2>
               </div>
 
-              <p style={{ color: "#8A8578" }}>
+              <p style={{ color: "#7A8D82" }}>
                 You have
                 <span className="fd-wishlist-count fd-mono font-bold"> 6 </span>
                 saved products.

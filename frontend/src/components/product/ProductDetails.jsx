@@ -4,10 +4,10 @@ import toast from "react-hot-toast";
 
 import { getProductById, getProducts } from "../../services/product.service";
 import { getProductReviews } from "../../services/review.service";
-
+import ReviewsList from "../reviews/ReviewList"
 import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
-import ReviewsSection from "./ReviewsSection";
+import ProductReviews from "../reviews/ProductReviews";
 import RelatedProducts from "./RelatedProducts";
 
 // Shared design tokens with the rest of the app: forest green + harvest
@@ -71,7 +71,7 @@ const ProductDetails = () => {
       });
 
       const filtered = relatedRes.data.products.filter(
-        (item) => item._id !== productData._id
+        (item) => item._id !== productData._id,
       );
 
       setRelatedProducts(filtered.slice(0, 4));
@@ -84,9 +84,7 @@ const ProductDetails = () => {
         setReviews([]);
       }
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Failed to fetch product"
-      );
+      toast.error(err.response?.data?.message || "Failed to fetch product");
     } finally {
       setLoading(false);
     }
@@ -113,7 +111,10 @@ const ProductDetails = () => {
         <FontImport />
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="fd-not-found text-center py-20">
-            <h2 className="fd-display text-3xl font-semibold" style={{ color: "#1E3527" }}>
+            <h2
+              className="fd-display text-3xl font-semibold"
+              style={{ color: "#1E3527" }}
+            >
               Product Not Found
             </h2>
 
@@ -144,7 +145,7 @@ const ProductDetails = () => {
 
         {/* Reviews */}
 
-        <ReviewsSection reviews={reviews} />
+        <ReviewsList productId={product._id} />
 
         {/* Related Products */}
 

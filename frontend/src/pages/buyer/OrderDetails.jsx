@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { getOrderById } from "../../services/order.service";
 import OrderStatusTimeline from "../../components/order/OrderStatusTimeline";
 import { cancelOrder } from "../../services/order.service";
+import ReviewForm from "../../components/reviews/ReviewForm"
 
 // Shared design tokens with the rest of the app: forest green + harvest
 // marigold on warm parchment, Fraunces display, Inter body.
@@ -267,6 +268,21 @@ const OrderDetails = () => {
             </div>
           </div>
         </div>
+        {order.orderStatus === "delivered" && (
+  <div className="mt-10">
+    <h2 className="text-3xl font-bold mb-6">
+      Rate Your Purchase
+    </h2>
+
+    {order.products.map((item) => (
+      <ReviewForm
+        key={item.product}
+        productId={item.product._id}
+        orderId={order._id}
+      />
+    ))}
+  </div>
+)}
       </div>
     </div>
   );

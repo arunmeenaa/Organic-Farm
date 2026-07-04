@@ -8,52 +8,52 @@ import {
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
-// Shared design tokens with the rest of the app: forest green + harvest
-// marigold, Fraunces display, Inter body. The footer stays dark, but now
-// uses the app's own forest green instead of a generic navy slate.
+// Matches Navbar/Hero/MyProducts/Orders/AddProduct/Dashboard: emerald →
+// lime gradient accents, Space Grotesk display type. Footer stays dark,
+// now using a deep emerald base instead of the earlier forest/marigold one.
 const FontImport = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-    .fd-footer { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background: #16281D; color: #C7CDC4; }
-    .fd-display { font-family: 'Fraunces', Georgia, serif; }
+    .fd-footer { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background: #0B2318; color: #B9CFC0; }
+    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
 
     .fd-newsletter-section {
-      border-bottom: 1px solid rgba(231, 168, 60, 0.15);
+      border-bottom: 1px solid rgba(132, 204, 22, 0.15);
       transition: background 0.3s ease;
     }
-    .fd-newsletter-section:hover { background: rgba(231, 168, 60, 0.04); }
+    .fd-newsletter-section:hover { background: rgba(132, 204, 22, 0.04); }
 
     .fd-newsletter-input {
-      background: #1E3527;
-      border: 1px solid rgba(231, 168, 60, 0.2);
-      color: #F6F4EC;
+      background: #123A27;
+      border: 1px solid rgba(132, 204, 22, 0.2);
+      color: #F4F9F2;
       transition: border-color 0.15s ease;
     }
-    .fd-newsletter-input:focus { outline: none; border-color: #E7A83C; }
-    .fd-newsletter-input::placeholder { color: #8FA091; }
+    .fd-newsletter-input:focus { outline: none; border-color: #84CC16; }
+    .fd-newsletter-input::placeholder { color: #7FA08C; }
 
     .fd-newsletter-btn {
-      background: #E7A83C;
-      color: #1E3527;
-      transition: background 0.15s ease;
+      background: linear-gradient(90deg, #059669, #84CC16);
+      color: #063527;
+      transition: filter 0.15s ease;
     }
-    .fd-newsletter-btn:hover { background: #F3BC5D; }
+    .fd-newsletter-btn:hover { filter: brightness(1.08); }
 
     .fd-social-btn {
-      background: #1E3527;
-      transition: background 0.15s ease;
+      background: #123A27;
+      transition: background 0.15s ease, color 0.15s ease;
     }
-    .fd-social-btn:hover { background: #E7A83C; color: #1E3527; }
+    .fd-social-btn:hover { background: linear-gradient(135deg, #059669, #84CC16); color: #063527; }
 
-    .fd-heading { color: #F6F4EC; }
+    .fd-heading { color: #F4F9F2; }
 
     .fd-footer-link { transition: color 0.15s ease; }
-    .fd-footer-link:hover { color: #E7A83C; }
+    .fd-footer-link:hover { color: #84CC16; }
 
-    .fd-contact-icon { color: #E7A83C; }
+    .fd-contact-icon { color: #84CC16; }
 
-    .fd-footer-divider { border-top: 1px solid rgba(231, 168, 60, 0.15); }
+    .fd-footer-divider { border-top: 1px solid rgba(132, 204, 22, 0.15); }
   `}</style>
 );
 
@@ -72,7 +72,7 @@ const Footer = () => {
                   Stay Updated 🌱
                 </h2>
 
-                <p className="mt-2 max-w-xl" style={{ color: "#8FA091" }}>
+                <p className="mt-2 max-w-xl" style={{ color: "#7FA08C" }}>
                   Subscribe to receive updates about fresh organic products,
                   farming tips and exclusive offers.
                 </p>
@@ -85,7 +85,7 @@ const Footer = () => {
                   className="fd-newsletter-input w-full lg:w-80 rounded-l-xl px-5 py-4"
                 />
 
-                <button className="fd-newsletter-btn px-6 rounded-r-xl flex items-center">
+                <button className="fd-newsletter-btn px-6 rounded-r-xl flex items-center font-semibold">
                   <ArrowRight />
                 </button>
               </div>
@@ -102,11 +102,11 @@ const Footer = () => {
 
           <div>
             <div className="fd-display fd-heading flex items-center gap-2 text-2xl font-semibold">
-              <Leaf style={{ color: "#E7A83C" }} />
+              <Leaf style={{ color: "#84CC16" }} />
               Organic Farm
             </div>
 
-            <p className="mt-5 leading-7" style={{ color: "#8FA091" }}>
+            <p className="mt-5 leading-7" style={{ color: "#7FA08C" }}>
               Connecting farmers directly with buyers to provide fresh, organic
               and healthy products while ensuring fair prices for everyone.
             </p>
@@ -236,7 +236,7 @@ const Footer = () => {
 
       <div className="fd-footer-divider">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-center" style={{ color: "#8FA091" }}>
+          <p className="text-center" style={{ color: "#7FA08C" }}>
             © {new Date().getFullYear()} © 2026 Organic Farm. Empowering farmers. Delivering freshness.
           </p>
 

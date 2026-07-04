@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
-// Same direction as Dashboard / About / Farmer Profile: glassmorphism,
-// indigo → emerald gradient accents, Space Grotesk wordmark, Inter body.
+// Same glassmorphic approach as Hero, now on an all-green gradient system
+// (emerald → lime, amber accent) instead of indigo — reads as "organic farm".
 const FontImport = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
@@ -22,25 +22,25 @@ const FontImport = () => (
     .fd-nav { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
     .fd-wordmark { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
     .fd-wordmark-gradient {
-      background: linear-gradient(90deg, #4338CA, #059669);
+      background: linear-gradient(90deg, #065F46, #65A30D);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
 
     .fd-header {
-      background: rgba(245, 246, 250, 0.75);
+      background: rgba(244, 249, 242, 0.75);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(99, 102, 241, 0.14);
+      border-bottom: 1px solid rgba(5, 150, 105, 0.14);
     }
 
     .fd-link {
       position: relative;
-      color: #5B5A87;
+      color: #4B6357;
       transition: color 0.15s ease;
     }
-    .fd-link:hover { color: #1E1B4B; }
+    .fd-link:hover { color: #0F2E22; }
     .fd-link::after {
       content: "";
       position: absolute;
@@ -48,14 +48,14 @@ const FontImport = () => (
       right: 100%;
       bottom: -6px;
       height: 2px;
-      background: linear-gradient(90deg, #6366F1, #10B981);
+      background: linear-gradient(90deg, #059669, #84CC16);
       transition: right 0.2s ease;
       border-radius: 2px;
     }
     .fd-link:hover::after { right: 0; }
 
     .fd-link-active {
-      color: #1E1B4B;
+      color: #0F2E22;
       font-weight: 600;
     }
     .fd-link-active::after {
@@ -65,41 +65,41 @@ const FontImport = () => (
       right: 0;
       bottom: -6px;
       height: 2px;
-      background: linear-gradient(90deg, #6366F1, #10B981);
+      background: linear-gradient(90deg, #059669, #84CC16);
       border-radius: 2px;
     }
 
     .fd-search {
       background: rgba(255, 255, 255, 0.8);
-      border: 1px solid #E0E1EC;
+      border: 1px solid #DCEBDD;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
     .fd-search:focus-within {
-      border-color: #6366F1;
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+      border-color: #059669;
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
     }
 
     .fd-btn-primary {
-      background: linear-gradient(90deg, #4F46E5, #059669);
-      color: white;
-      box-shadow: 0 10px 22px -10px rgba(79, 70, 229, 0.5);
+      background: linear-gradient(90deg, #059669, #84CC16);
+      color: #063527;
+      box-shadow: 0 10px 22px -10px rgba(5, 150, 105, 0.45);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .fd-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(79, 70, 229, 0.6); }
+    .fd-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(5, 150, 105, 0.55); }
     .fd-btn-primary:active { transform: translateY(0); }
 
     .fd-avatar {
-      background: conic-gradient(from 180deg, #6366F1, #10B981, #F59E0B, #6366F1);
+      background: conic-gradient(from 180deg, #059669, #84CC16, #F59E0B, #059669);
       padding: 2px;
     }
     .fd-avatar-inner {
-      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      background: linear-gradient(135deg, #059669, #047857);
       color: white;
     }
 
     .fd-cart-badge {
       background: #F59E0B;
-      color: #1E1B4B;
+      color: #0F2E22;
     }
 
     .fd-dropdown {
@@ -107,24 +107,24 @@ const FontImport = () => (
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 0 20px 40px -18px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 20px 40px -18px rgba(6, 95, 70, 0.3);
     }
     .fd-dropdown-item {
       transition: background 0.15s ease;
     }
-    .fd-dropdown-item:hover { background: rgba(99, 102, 241, 0.08); }
+    .fd-dropdown-item:hover { background: rgba(5, 150, 105, 0.08); }
 
     .fd-mobile-drawer {
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid rgba(99, 102, 241, 0.14);
+      border-top: 1px solid rgba(5, 150, 105, 0.14);
     }
     .fd-mobile-link {
-      color: #1E1B4B;
+      color: #0F2E22;
       transition: color 0.15s ease;
     }
-    .fd-mobile-link:hover { color: #4F46E5; }
+    .fd-mobile-link:hover { color: #059669; }
   `}</style>
 );
 
@@ -174,7 +174,7 @@ const Navbar = () => {
               }
               className="fd-wordmark fd-wordmark-gradient flex items-center gap-2 text-2xl font-bold"
             >
-              <Leaf size={30} style={{ color: "#10B981" }} />
+              <Leaf size={30} style={{ color: "#84CC16" }} />
               <span>Organic Farm</span>
             </Link>
 
@@ -262,13 +262,13 @@ const Navbar = () => {
             {/* Search */}
 
             <div className="fd-search hidden md:flex items-center rounded-full px-4 py-2 w-80">
-              <Search size={18} style={{ color: "#A3A4C2" }} />
+              <Search size={18} style={{ color: "#8FA895" }} />
 
               <input
                 type="text"
                 placeholder="Search organic products..."
                 className="bg-transparent outline-none w-full px-3 text-sm"
-                style={{ color: "#1E1B4B" }}
+                style={{ color: "#0F2E22" }}
               />
             </div>
 
@@ -280,7 +280,7 @@ const Navbar = () => {
                   <Link
                     to="/login"
                     className="font-medium"
-                    style={{ color: "#4F46E5" }}
+                    style={{ color: "#059669" }}
                   >
                     Login
                   </Link>
@@ -297,7 +297,7 @@ const Navbar = () => {
               {isAuthenticated && (
                 <>
                   {user?.role === "buyer" && (
-                    <Link to="/cart" className="relative" style={{ color: "#1E1B4B" }}>
+                    <Link to="/cart" className="relative" style={{ color: "#0F2E22" }}>
                       <ShoppingCart size={24} />
                       {totalItems > 0 && (
                         <span className="fd-cart-badge absolute -top-2 -right-2 rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
@@ -319,16 +319,16 @@ const Navbar = () => {
                       </div>
 
                       <div className="text-left">
-                        <p className="font-medium text-sm" style={{ color: "#1E1B4B" }}>
+                        <p className="font-medium text-sm" style={{ color: "#0F2E22" }}>
                           {user?.name}
                         </p>
 
-                        <p className="text-xs capitalize" style={{ color: "#8B8CA0" }}>
+                        <p className="text-xs capitalize" style={{ color: "#7A8D82" }}>
                           {user?.role}
                         </p>
                       </div>
 
-                      <ChevronDown size={18} style={{ color: "#8B8CA0" }} />
+                      <ChevronDown size={18} style={{ color: "#7A8D82" }} />
                     </button>
 
                     {profileMenu && (
@@ -341,7 +341,7 @@ const Navbar = () => {
                           }
                           onClick={() => setProfileMenu(false)}
                           className="fd-dropdown-item flex items-center gap-2 px-4 py-3"
-                          style={{ color: "#1E1B4B" }}
+                          style={{ color: "#0F2E22" }}
                         >
                           <User size={18} />
                           Profile
@@ -350,7 +350,7 @@ const Navbar = () => {
                         <button
                           onClick={handleLogout}
                           className="fd-dropdown-item flex items-center gap-2 px-4 py-3 w-full"
-                          style={{ color: "#E11D48" }}
+                          style={{ color: "#DC2626" }}
                         >
                           <LogOut size={18} />
                           Logout
@@ -367,7 +367,7 @@ const Navbar = () => {
             <button
               onClick={() => setMobileMenu(!mobileMenu)}
               className="lg:hidden"
-              style={{ color: "#4F46E5" }}
+              style={{ color: "#059669" }}
             >
               {mobileMenu ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -467,7 +467,7 @@ const Navbar = () => {
                   <button
                     onClick={handleLogout}
                     className="text-left font-medium"
-                    style={{ color: "#E11D48" }}
+                    style={{ color: "#DC2626" }}
                   >
                     Logout
                   </button>
@@ -516,7 +516,7 @@ const Navbar = () => {
                   <button
                     onClick={handleLogout}
                     className="text-left font-medium"
-                    style={{ color: "#E11D48" }}
+                    style={{ color: "#DC2626" }}
                   >
                     Logout
                   </button>

@@ -3,17 +3,101 @@ import { createProduct } from "../../services/product.service";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-
 import {
   Package,
   Upload,
   IndianRupee,
   Boxes,
   FileText,
-  Image as ImageIcon,
   Save,
   X,
 } from "lucide-react";
+
+// Matches Navbar/Hero/MyProducts/Orders: glassmorphism over an emerald →
+// lime gradient mesh, Space Grotesk display type.
+const FontImport = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+    .ap-root {
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse 60% 50% at 10% 0%, rgba(5, 150, 105, 0.14), transparent),
+        radial-gradient(ellipse 55% 45% at 90% 20%, rgba(132, 204, 22, 0.14), transparent),
+        #F4F9F2;
+    }
+    .ap-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
+    .ap-title-gradient {
+      background: linear-gradient(90deg, #065F46, #65A30D);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .ap-panel {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .ap-panel-head { border-bottom: 1px solid rgba(5, 150, 105, 0.14); }
+
+    .ap-label { color: #0F2E22; }
+
+    .ap-input-wrap {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid #DCEBDD;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ap-input-wrap:focus-within {
+      border-color: #059669;
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
+    }
+    .ap-input-icon { color: #8FA895; }
+
+    .ap-select {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid #DCEBDD;
+      color: #0F2E22;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ap-select:focus {
+      outline: none;
+      border-color: #059669;
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
+    }
+
+    .ap-dropzone {
+      border: 2px dashed #B7D8BE;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .ap-dropzone:hover { border-color: #059669; background: rgba(5, 150, 105, 0.05); }
+
+    .ap-image-tile {
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .ap-remove-btn {
+      background: #E11D48;
+      color: white;
+    }
+
+    .ap-btn-cancel {
+      border: 1px solid #DCEBDD;
+      color: #4B6357;
+      transition: background 0.15s ease;
+    }
+    .ap-btn-cancel:hover { background: rgba(5, 150, 105, 0.06); }
+
+    .ap-btn-save {
+      background: linear-gradient(90deg, #059669, #84CC16);
+      color: #063527;
+      box-shadow: 0 10px 22px -10px rgba(5, 150, 105, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ap-btn-save:hover { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(5, 150, 105, 0.55); }
+    .ap-btn-save:active { transform: translateY(0); }
+  `}</style>
+);
 
 const categories = [
   "Vegetables",
@@ -58,64 +142,62 @@ const AddProduct = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const data = new FormData();
+    try {
+      const data = new FormData();
 
-    data.append("name", formData.name);
-    data.append("category", formData.category);
-    data.append("price", formData.price);
-    data.append("quantity", formData.quantity);
-    data.append("unit", formData.unit);
-    data.append("description", formData.description);
-    data.append("status", formData.status);
+      data.append("name", formData.name);
+      data.append("category", formData.category);
+      data.append("price", formData.price);
+      data.append("quantity", formData.quantity);
+      data.append("unit", formData.unit);
+      data.append("description", formData.description);
+      data.append("status", formData.status);
 
-    images.forEach((image) => {
-      data.append("images", image);
-    });
+      images.forEach((image) => {
+        data.append("images", image);
+      });
 
-    await createProduct(data);
+      await createProduct(data);
 
-    toast.success("Product added successfully");
+      toast.success("Product added successfully");
 
-    navigate("/farmer/products");
-  } catch (err) {
-    toast.error(
-      err.response?.data?.message || "Failed to add product"
-    );
-  }
-};
+      navigate("/farmer/products");
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to add product"
+      );
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-100 py-10">
+    <div className="ap-root min-h-screen py-10">
+      <FontImport />
       <div className="max-w-5xl mx-auto px-6">
-
-        <div className="bg-white rounded-3xl shadow-lg">
-
+        <div className="ap-panel rounded-3xl shadow-sm">
           {/* Header */}
 
-          <div className="border-b p-8">
-            <h1 className="text-4xl font-bold text-gray-800">
+          <div className="ap-panel-head p-8">
+            <h1 className="ap-display ap-title-gradient text-4xl font-bold">
               Add New Product
             </h1>
 
-            <p className="text-gray-500 mt-2">
+            <p className="mt-2" style={{ color: "#7A8D82" }}>
               Add your fresh organic products to the marketplace.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-8 space-y-8">
-
             {/* Product Name */}
 
             <div>
-              <label className="font-semibold mb-2 block">
+              <label className="ap-label font-semibold mb-2 block">
                 Product Name
               </label>
 
-              <div className="flex items-center border rounded-xl px-4">
-                <Package className="text-gray-400" size={20} />
+              <div className="ap-input-wrap flex items-center rounded-xl px-4">
+                <Package className="ap-input-icon" size={20} />
 
                 <input
                   type="text"
@@ -123,7 +205,8 @@ const AddProduct = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Organic Tomato"
-                  className="w-full px-4 py-4 outline-none"
+                  className="w-full px-4 py-4 outline-none bg-transparent"
+                  style={{ color: "#0F2E22" }}
                 />
               </div>
             </div>
@@ -131,9 +214,8 @@ const AddProduct = () => {
             {/* Category & Unit */}
 
             <div className="grid md:grid-cols-2 gap-6">
-
               <div>
-                <label className="font-semibold mb-2 block">
+                <label className="ap-label font-semibold mb-2 block">
                   Category
                 </label>
 
@@ -141,7 +223,7 @@ const AddProduct = () => {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="w-full border rounded-xl px-4 py-4 outline-none"
+                  className="ap-select w-full rounded-xl px-4 py-4"
                 >
                   <option value="">Select Category</option>
 
@@ -152,7 +234,7 @@ const AddProduct = () => {
               </div>
 
               <div>
-                <label className="font-semibold mb-2 block">
+                <label className="ap-label font-semibold mb-2 block">
                   Unit
                 </label>
 
@@ -160,7 +242,7 @@ const AddProduct = () => {
                   name="unit"
                   value={formData.unit}
                   onChange={handleChange}
-                  className="w-full border rounded-xl px-4 py-4 outline-none"
+                  className="ap-select w-full rounded-xl px-4 py-4"
                 >
                   <option value="kg">Kg</option>
                   <option value="gram">Gram</option>
@@ -169,20 +251,18 @@ const AddProduct = () => {
                   <option value="dozen">Dozen</option>
                 </select>
               </div>
-
             </div>
 
             {/* Price & Quantity */}
 
             <div className="grid md:grid-cols-2 gap-6">
-
               <div>
-                <label className="font-semibold mb-2 block">
+                <label className="ap-label font-semibold mb-2 block">
                   Price
                 </label>
 
-                <div className="flex items-center border rounded-xl px-4">
-                  <IndianRupee size={20} className="text-gray-400" />
+                <div className="ap-input-wrap flex items-center rounded-xl px-4">
+                  <IndianRupee size={20} className="ap-input-icon" />
 
                   <input
                     type="number"
@@ -190,18 +270,19 @@ const AddProduct = () => {
                     value={formData.price}
                     onChange={handleChange}
                     placeholder="50"
-                    className="w-full px-4 py-4 outline-none"
+                    className="w-full px-4 py-4 outline-none bg-transparent"
+                    style={{ color: "#0F2E22" }}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-semibold mb-2 block">
+                <label className="ap-label font-semibold mb-2 block">
                   Available Quantity
                 </label>
 
-                <div className="flex items-center border rounded-xl px-4">
-                  <Boxes size={20} className="text-gray-400" />
+                <div className="ap-input-wrap flex items-center rounded-xl px-4">
+                  <Boxes size={20} className="ap-input-icon" />
 
                   <input
                     type="number"
@@ -209,25 +290,22 @@ const AddProduct = () => {
                     value={formData.quantity}
                     onChange={handleChange}
                     placeholder="100"
-                    className="w-full px-4 py-4 outline-none"
+                    className="w-full px-4 py-4 outline-none bg-transparent"
+                    style={{ color: "#0F2E22" }}
                   />
                 </div>
               </div>
-
             </div>
 
             {/* Description */}
 
             <div>
-              <label className="font-semibold mb-2 block">
+              <label className="ap-label font-semibold mb-2 block">
                 Description
               </label>
 
-              <div className="flex border rounded-xl px-4">
-                <FileText
-                  className="text-gray-400 mt-4"
-                  size={20}
-                />
+              <div className="ap-input-wrap flex rounded-xl px-4">
+                <FileText className="ap-input-icon mt-4" size={20} />
 
                 <textarea
                   rows={5}
@@ -235,7 +313,8 @@ const AddProduct = () => {
                   value={formData.description}
                   onChange={handleChange}
                   placeholder="Describe your organic product..."
-                  className="w-full px-4 py-4 outline-none resize-none"
+                  className="w-full px-4 py-4 outline-none resize-none bg-transparent"
+                  style={{ color: "#0F2E22" }}
                 />
               </div>
             </div>
@@ -243,7 +322,7 @@ const AddProduct = () => {
             {/* Status */}
 
             <div>
-              <label className="font-semibold mb-2 block">
+              <label className="ap-label font-semibold mb-2 block">
                 Status
               </label>
 
@@ -251,7 +330,7 @@ const AddProduct = () => {
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-4"
+                className="ap-select w-full rounded-xl px-4 py-4"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -261,44 +340,31 @@ const AddProduct = () => {
             {/* Images */}
 
             <div>
-
-              <label className="font-semibold mb-3 block">
+              <label className="ap-label font-semibold mb-3 block">
                 Product Images
               </label>
 
-              <label className="border-2 border-dashed rounded-2xl h-48 flex flex-col justify-center items-center cursor-pointer hover:border-green-600 transition">
+              <label className="ap-dropzone rounded-2xl h-48 flex flex-col justify-center items-center cursor-pointer">
+                <Upload style={{ color: "#059669" }} size={45} />
 
-                <Upload
-                  className="text-green-600"
-                  size={45}
-                />
-
-                <p className="mt-4 font-medium">
+                <p className="mt-4 font-medium" style={{ color: "#0F2E22" }}>
                   Click to upload images
                 </p>
 
-                <span className="text-sm text-gray-500">
+                <span className="text-sm" style={{ color: "#7A8D82" }}>
                   JPG, PNG, WEBP
                 </span>
 
-                <input
-                  type="file"
-                  multiple
-                  hidden
-                  onChange={handleImages}
-                />
-
+                <input type="file" multiple hidden onChange={handleImages} />
               </label>
 
               {images.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-6">
-
                   {images.map((img, index) => (
                     <div
                       key={index}
-                      className="relative rounded-xl overflow-hidden border"
+                      className="ap-image-tile relative rounded-xl overflow-hidden"
                     >
-
                       <img
                         src={URL.createObjectURL(img)}
                         alt=""
@@ -308,42 +374,32 @@ const AddProduct = () => {
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                        className="ap-remove-btn absolute top-2 right-2 rounded-full p-1"
                       >
                         <X size={16} />
                       </button>
-
                     </div>
                   ))}
-
                 </div>
               )}
-
             </div>
 
             {/* Buttons */}
 
             <div className="flex justify-end gap-4">
-
-              <button
-                type="reset"
-                className="border px-8 py-3 rounded-xl hover:bg-gray-100"
-              >
+              <button type="reset" className="ap-btn-cancel px-8 py-3 rounded-xl font-medium">
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl flex items-center gap-2"
+                className="ap-btn-save px-8 py-3 rounded-xl flex items-center gap-2 font-semibold"
               >
                 <Save size={20} />
                 Save Product
               </button>
-
             </div>
-
           </form>
-
         </div>
       </div>
     </div>

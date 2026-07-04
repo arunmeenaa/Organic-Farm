@@ -4,13 +4,13 @@ const productModel = require("../models/product.model");
 const orderModel = require("../models/order.model");
 
 async function createReview(req, res) {
-  const { title, productId, rating, comment } = req.body;
+  const { productId, rating, comment } = req.body;
 
   try {
-    if (!title || !productId || rating == null || !comment) {
+    if (!productId || rating == null || !comment?.trim()) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "Product, rating and comment are required",
       });
     }
 
@@ -18,13 +18,6 @@ async function createReview(req, res) {
       return res.status(400).json({
         success: false,
         message: "Rating must be between 1 and 5",
-      });
-    }
-
-    if (title.trim().length === 0 || title.length > 50) {
-      return res.status(400).json({
-        success: false,
-        message: "Title must be between 1 and 50 characters",
       });
     }
 
@@ -77,9 +70,9 @@ async function createReview(req, res) {
     }
 
     const review = await reviewModel.create({
-      title: title.trim(),
       product: productId,
       user: req.user._id,
+      order: order._id,
       rating,
       comment: comment.trim(),
     });
@@ -97,12 +90,32 @@ async function createReview(req, res) {
     });
   }
 }
+async function getMyReview(req, res) {
+  try {
+    const { id } = req.params;
 
+    const review = await reviewModel.findOne({
+      user: req.user._id,
+      product: id,
+    });
+
+    return res.status(200).json({
+      success: true,
+      review,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch review",
+      error: err.message,
+    });
+  }
+}
 async function getProductReviews(req, res) {
   try {
     const { id } = req.params;
     const product = await productModel.findById(id);
-    
+
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -143,11 +156,12 @@ async function getProductReviews(req, res) {
 }
 
 async function updateReview(req, res) {
-  const { reviewId } = req.params;
-  const { title, rating, comment } = req.body;
+  const { id } = req.params;
+
+  const { rating, comment } = req.body;
 
   try {
-    const review = await reviewModel.findById(reviewId);
+    const review = await reviewModel.findById(id);
 
     if (!review) {
       return res.status(404).json({
@@ -162,30 +176,13 @@ async function updateReview(req, res) {
         message: "You can only update your own reviews",
       });
     }
-    if (title === undefined && rating === undefined && comment === undefined) {
+    if (rating === undefined && comment === undefined) {
       return res.status(400).json({
         success: false,
         message: "Provide at least one field to update",
       });
     }
-    if (title !== undefined) {
-      if (typeof title !== "string") {
-        return res.status(400).json({
-          success: false,
-          message: "Title must be a string",
-        });
-      }
-      const trimmedTitle = title.trim();
-      if (trimmedTitle.length === 0 || trimmedTitle.length > 50) {
-        return res.status(400).json({
-          success: false,
-          message: "Title must be between 1 and 50 characters",
-        });
-      }
-
-      review.title = trimmedTitle;
-    }
-
+   
     if (rating !== undefined) {
       if (typeof rating !== "number") {
         return res.status(400).json({
@@ -279,4 +276,5 @@ module.exports = {
   getProductReviews,
   updateReview,
   deleteReview,
+  getMyReview,
 };

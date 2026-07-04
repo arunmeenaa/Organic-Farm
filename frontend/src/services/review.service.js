@@ -1,17 +1,21 @@
 import api from "../api/axios";
 
-export const getProductReviews = (productId) => {
-  return api.get(`/review/product/${productId}`);
-};
-
 export const createReview = (data) => {
-  return api.post("/review", data);
+  return api.post("/reviews", data);
 };
 
-export const updateReview = (reviewId, data) => {
-  return api.patch(`/review/${reviewId}`, data);
+export const getProductReviews = (productId) => {
+  return api.get(`/reviews/product/${productId}`);
 };
 
-export const deleteReview = (reviewId) => {
-  return api.delete(`/review/${reviewId}`);
+export const getMyReview = (productId) => {
+  return api.get(`/reviews/my/${productId}`);
+};
+
+export const updateReview = (id, data) => {
+  return api.patch(`/reviews/${id}`, data);
+};
+
+export const deleteReview = (id) => {
+  return api.delete(`/reviews/${id}`);
 };
