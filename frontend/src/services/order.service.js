@@ -6,7 +6,7 @@ export const placeOrder = (data) => {
 };
 
 export const getMyOrders = () => {
-  return api.get("/orders/me");
+  return api.get("/orders/");
 };
 
 export const getOrderById = (id) => {
@@ -23,7 +23,7 @@ export const getFarmerOrders = () => {
 };
 
 export const updateOrderStatus = (id, status) => {
-  return api.patch(`/orders/${id}/status`, {
+  return api.put(`/orders/${id}/status`, {
     status,
   });
 };

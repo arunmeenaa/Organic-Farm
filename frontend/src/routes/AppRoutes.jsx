@@ -28,6 +28,8 @@ import MyProducts from "../pages/farmer/MyProducts";
 import EditProduct from "../pages/farmer/EditProduct";
 import AddProduct from "../pages/farmer/AddProduct";
 import FarmerProfile from "../pages/farmer/FarmerProfile";
+import FarmerOrders from "../pages/farmer/Order"
+import FarmerOrdersDetails from "../components/order/FarmerOrderDetails"
 
 const AppRoutes = () => {
   return (
@@ -62,6 +64,8 @@ const AppRoutes = () => {
             <Route path="/farmer/products/add" element={<AddProduct />} />
             <Route path="/farmer/products/edit/:id" element={<EditProduct />} />
             <Route path="/farmer/profile" element={<FarmerProfile />} />
+            <Route path="/farmer/orders" element={<FarmerOrders />} />
+            <Route path="/farmer/orders/:id" element={<FarmerOrdersDetails />} />
           </Route>
         </Route>
       </Route>

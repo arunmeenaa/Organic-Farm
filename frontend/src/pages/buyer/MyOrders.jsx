@@ -4,6 +4,55 @@ import { Package, CalendarDays, IndianRupee, Eye } from "lucide-react";
 import toast from "react-hot-toast";
 import { getMyOrders } from "../../services/order.service";
 
+// Shared design tokens with the rest of the app: forest green + harvest
+// marigold on warm parchment, Fraunces display, Inter body.
+const FontImport = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+    .fd-root { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background: #F6F4EC; }
+    .fd-display { font-family: 'Fraunces', Georgia, serif; }
+    .fd-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+
+    .fd-spinner {
+      border: 4px solid #E7E2D2;
+      border-top-color: #1E3527;
+    }
+
+    .fd-empty { background: #FFFFFF; border: 1px solid #E7E2D2; }
+
+    .fd-btn-primary {
+      background: #1E3527;
+      color: #F6F4EC;
+      transition: background 0.15s ease;
+    }
+    .fd-btn-primary:hover { background: #2F5233; }
+
+    .fd-order-card {
+      background: #FFFFFF;
+      border: 1px solid #E7E2D2;
+      transition: box-shadow 0.18s ease, transform 0.18s ease;
+    }
+    .fd-order-card:hover {
+      box-shadow: 0 16px 28px -18px rgba(30, 53, 39, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .fd-status-placed { background: rgba(30, 53, 39, 0.08); color: #1E3527; }
+    .fd-status-accepted { background: rgba(47, 82, 51, 0.1); color: #2F5233; }
+    .fd-status-packed { background: rgba(231, 168, 60, 0.18); color: #8A5A16; }
+    .fd-status-shipped { background: rgba(138, 90, 22, 0.12); color: #8A5A16; }
+    .fd-status-delivered { background: rgba(30, 53, 39, 0.12); color: #1E3527; }
+    .fd-status-cancelled { background: rgba(181, 80, 46, 0.1); color: #B5502E; }
+    .fd-status-default { background: #EFEBDD; color: #4A5147; }
+
+    .fd-divider { border-top: 1px solid #E7E2D2; }
+
+    .fd-view-link { color: #8A5A16; transition: color 0.15s ease; }
+    .fd-view-link:hover { color: #1E3527; }
+  `}</style>
+);
+
 const BuyerOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,53 +75,54 @@ const BuyerOrders = () => {
   const statusColor = (status) => {
     switch (status) {
       case "placed":
-        return "bg-blue-100 text-blue-700";
+        return "fd-status-placed";
       case "accepted":
-        return "bg-indigo-100 text-indigo-700";
+        return "fd-status-accepted";
       case "packed":
-        return "bg-yellow-100 text-yellow-700";
+        return "fd-status-packed";
       case "shipped":
-        return "bg-purple-100 text-purple-700";
+        return "fd-status-shipped";
       case "delivered":
-        return "bg-green-100 text-green-700";
+        return "fd-status-delivered";
       case "cancelled":
-        return "bg-red-100 text-red-700";
+        return "fd-status-cancelled";
       default:
-        return "bg-gray-100 text-gray-700";
+        return "fd-status-default";
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <div className="h-10 w-10 rounded-full border-4 border-green-600 border-t-transparent animate-spin"></div>
+      <div className="fd-root min-h-screen flex justify-center items-center">
+        <FontImport />
+        <div className="fd-spinner h-10 w-10 rounded-full border-4 animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 py-10">
+    <div className="fd-root min-h-screen py-10">
+      <FontImport />
       <div className="max-w-6xl mx-auto px-6">
-
-        <h1 className="text-4xl font-bold text-gray-800 mb-8">
+        <h1 className="fd-display text-4xl font-semibold mb-8" style={{ color: "#1E3527" }}>
           My Orders
         </h1>
 
         {orders.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow p-12 text-center">
-            <Package size={60} className="mx-auto text-gray-400 mb-4" />
+          <div className="fd-empty rounded-2xl p-12 text-center">
+            <Package size={60} className="mx-auto mb-4" style={{ color: "#C9C3B0" }} />
 
-            <h2 className="text-2xl font-semibold">
+            <h2 className="fd-display text-2xl font-semibold" style={{ color: "#1E3527" }}>
               No Orders Yet
             </h2>
 
-            <p className="text-gray-500 mt-2">
+            <p className="mt-2" style={{ color: "#8A8578" }}>
               Start shopping to place your first order.
             </p>
 
             <Link
               to="/products"
-              className="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl"
+              className="fd-btn-primary inline-block mt-6 px-6 py-3 rounded-xl font-medium"
             >
               Browse Products
             </Link>
@@ -80,32 +130,28 @@ const BuyerOrders = () => {
         ) : (
           <div className="space-y-6">
             {orders.map((order) => (
-              <div
-                key={order._id}
-                className="bg-white rounded-2xl shadow p-6"
-              >
+              <div key={order._id} className="fd-order-card rounded-2xl p-6">
                 <div className="flex flex-col md:flex-row justify-between gap-6">
-
                   <div>
-
-                    <h2 className="text-xl font-bold">
+                    <h2 className="fd-display text-xl font-semibold" style={{ color: "#1E3527" }}>
                       {order.orderNumber}
                     </h2>
 
-                    <p className="text-gray-500 mt-1">
+                    <p className="mt-1" style={{ color: "#8A8578" }}>
                       Farmer: {order.farmerName}
                     </p>
 
-                    <div className="flex items-center gap-2 mt-3 text-gray-500">
+                    <div className="flex items-center gap-2 mt-3" style={{ color: "#8A8578" }}>
                       <CalendarDays size={18} />
                       {new Date(order.createdAt).toLocaleDateString()}
                     </div>
-
                   </div>
 
                   <div className="text-right">
-
-                    <div className="flex items-center justify-end gap-1 text-2xl font-bold">
+                    <div
+                      className="fd-mono flex items-center justify-end gap-1 text-2xl font-semibold"
+                      style={{ color: "#1E3527" }}
+                    >
                       <IndianRupee size={20} />
                       {order.totalPrice}
                     </div>
@@ -117,25 +163,21 @@ const BuyerOrders = () => {
                     >
                       {order.orderStatus}
                     </span>
-
                   </div>
-
                 </div>
 
-                <div className="mt-6 border-t pt-5 flex justify-between items-center">
-
-                  <p className="text-gray-500">
+                <div className="fd-divider mt-6 pt-5 flex justify-between items-center">
+                  <p style={{ color: "#8A8578" }}>
                     {order.products.length} item(s)
                   </p>
 
                   <Link
                     to={`/orders/${order._id}`}
-                    className="flex items-center gap-2 text-green-600 hover:text-green-700 font-medium"
+                    className="fd-view-link flex items-center gap-2 font-medium"
                   >
                     <Eye size={18} />
                     View Details
                   </Link>
-
                 </div>
               </div>
             ))}

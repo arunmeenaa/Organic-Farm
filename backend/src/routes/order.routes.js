@@ -16,7 +16,7 @@ const {
 
 router.post("/", auth, authorize("buyer"), placeOrder);
 
-router.get("/me", auth, authorize("buyer"), getMyOrders);
+router.get("/", auth, authorize("buyer"), getMyOrders);
 
 router.get("/farmer", auth, authorize("farmer"), getFarmerOrders);
 
@@ -28,7 +28,7 @@ router.get(
   getOrderById
 );
 
-router.patch(
+router.put(
   "/:id/status",
   auth,
   authorize("farmer"),
@@ -37,7 +37,7 @@ router.patch(
 );
 
 router.patch(
-  "/:id/cancel",
+  "/:id",
   auth,
   authorize("buyer"),
   validateId("Order"),

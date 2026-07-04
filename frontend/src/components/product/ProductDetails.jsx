@@ -10,6 +10,39 @@ import ProductInfo from "./ProductInfo";
 import ReviewsSection from "./ReviewsSection";
 import RelatedProducts from "./RelatedProducts";
 
+// Shared design tokens with the rest of the app: forest green + harvest
+// marigold on warm parchment, Fraunces display, Inter body.
+const FontImport = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
+    .fd-root { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background: #F6F4EC; }
+    .fd-display { font-family: 'Fraunces', Georgia, serif; }
+
+    .fd-product-panel {
+      background: #FFFFFF;
+      border: 1px solid #E7E2D2;
+    }
+
+    .fd-skel {
+      background: linear-gradient(90deg, #EFEBDD 25%, #F6F4EC 37%, #EFEBDD 63%);
+      background-size: 400% 100%;
+      animation: fd-shimmer 1.4s ease infinite;
+      border-radius: 12px;
+    }
+    @keyframes fd-shimmer {
+      0% { background-position: 100% 50%; }
+      100% { background-position: 0 50%; }
+    }
+
+    .fd-not-found {
+      background: #FFFFFF;
+      border: 1px solid #E7E2D2;
+      border-radius: 20px;
+    }
+  `}</style>
+);
+
 const ProductDetails = () => {
   const { id } = useParams();
 
@@ -65,30 +98,41 @@ const ProductDetails = () => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto py-20 text-center">
-        Loading product...
+      <div className="fd-root min-h-screen">
+        <FontImport />
+        <div className="max-w-7xl mx-auto px-6 py-10">
+          <div className="fd-skel h-[28rem] w-full" />
+        </div>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="max-w-7xl mx-auto py-20 text-center">
-        <h2 className="text-3xl font-bold">Product Not Found</h2>
+      <div className="fd-root min-h-screen">
+        <FontImport />
+        <div className="max-w-7xl mx-auto px-6 py-20">
+          <div className="fd-not-found text-center py-20">
+            <h2 className="fd-display text-3xl font-semibold" style={{ color: "#1E3527" }}>
+              Product Not Found
+            </h2>
 
-        <p className="text-gray-500 mt-3">
-          The product you're looking for doesn't exist.
-        </p>
+            <p className="mt-3" style={{ color: "#8A8578" }}>
+              The product you're looking for doesn't exist.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-slate-100 min-h-screen">
+    <div className="fd-root min-h-screen">
+      <FontImport />
       <div className="max-w-7xl mx-auto px-6 py-10">
         {/* Product */}
 
-        <div className="grid lg:grid-cols-2 gap-12 bg-white rounded-3xl shadow-lg p-8">
+        <div className="fd-product-panel grid lg:grid-cols-2 gap-12 rounded-3xl shadow-sm p-8">
           <ProductGallery images={product.images} />
 
           <ProductInfo
