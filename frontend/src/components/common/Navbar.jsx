@@ -195,22 +195,20 @@ const Navbar = () => {
               >
                 Home
               </NavLink>
-              <NavLink
-                to="/products"
-                className={({ isActive }) =>
-                  isActive ? activeClass : linkClass
-                }
-              >
-                Products
-              </NavLink>
-              <NavLink
-                to="/machines"
-                className={({ isActive }) =>
-                  isActive ? activeClass : linkClass
-                }
-              >
-                Machines
-              </NavLink>
+              {(!isAuthenticated || user?.role === "buyer") && (
+                <>
+                  <NavLink
+                    to="/market-place"
+                    className={({ isActive }) =>
+                      isActive ? activeClass : linkClass
+                    }
+                  >
+                    Market Place
+                  </NavLink>
+
+                 
+                </>
+              )}
 
               {isAuthenticated && user?.role === "buyer" && (
                 <>
@@ -222,34 +220,18 @@ const Navbar = () => {
                   >
                     My Orders
                   </NavLink>
-                  <NavLink
-                    to="/buyer/machine-bookings"
-                    className={({ isActive }) =>
-                      isActive ? activeClass : linkClass
-                    }
-                  >
-                    My Machine
-                  </NavLink>
                 </>
               )}
 
               {isAuthenticated && user?.role === "farmer" && (
                 <>
                   <NavLink
-                    to="/farmer/products"
+                    to="/farmer/inventory"
                     className={({ isActive }) =>
                       isActive ? activeClass : linkClass
                     }
                   >
-                    My Products
-                  </NavLink>
-                  <NavLink
-                    to="/farmer/machines"
-                    className={({ isActive }) =>
-                      isActive ? activeClass : linkClass
-                    }
-                  >
-                    My Machines
+                    My Inventory
                   </NavLink>
 
                   <NavLink

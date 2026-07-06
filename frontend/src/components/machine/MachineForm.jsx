@@ -218,7 +218,7 @@ const MachineForm = ({ mode }) => {
         notify.success("Machine Updated Successfully");
       }
 
-      navigate("/farmer/machines");
+      navigate("/farmer/inventory");
     } catch (err) {
       notify.error(err.response?.data?.message);
     } finally {
@@ -431,9 +431,9 @@ return (
         className="w-full border rounded-xl p-3 mt-2"
       >
         <option value="">Select Fuel Type</option>
-        <option value="diesel">Diesel</option>
-        <option value="petrol">Petrol</option>
-        <option value="electric">Electric</option>
+        <option value="Diesel">Diesel</option>
+        <option value="Petrol">Petrol</option>
+        <option value="Electric">Electric</option>
       </select>
     </div>
 
