@@ -86,8 +86,7 @@ exports.getAllMachines = async (req, res) => {
       .populate("owner", "name email phone")
       .sort({ createdAt: -1 })
       .lean();
-console.log(machines[0].owner);
-console.log(machines.length);
+
     return res.status(200).json({
       success: true,
       count: machines.length,

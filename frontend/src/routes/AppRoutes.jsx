@@ -23,6 +23,8 @@ import BuyerProfile from "../pages/buyer/BuyerProfile";
 import Checkout from "../pages/buyer/Checkout";
 import BuyerOrderDetails from "../pages/buyer/OrderDetails";
 import OrderSuccess from "../components/order/OrderSuccess";
+import BookMachine from "../pages/machine/BookMachine";
+import MyMachineBookings from "../pages/buyer/MyMachineBookings";
 
 import FarmerRoute from "./FarmerRoute";
 import Dashboard from "../pages/farmer/Dashboard";
@@ -35,6 +37,8 @@ import FarmerOrdersDetails from "../components/order/FarmerOrderDetails";
 import FarmerMachines from "../pages/farmer/MyMachines";
 import AddMachine from "../pages/farmer/AddMachine";
 import EditMachine from "../pages/farmer/EditMachine";
+import FarmerMachineBookings from "../pages/farmer/FarmerMachineBookings";
+import MachineBookingDetails from "../pages/machine/MachineBookingDetails";
 
 const AppRoutes = () => {
   return (
@@ -55,6 +59,10 @@ const AppRoutes = () => {
         <Route path="/machines/:id" element={<MachineDetails />} />
 
         <Route element={<ProtectedRoute />}>
+          <Route
+            path="/machine-bookings/:id"
+            element={<MachineBookingDetails />}
+          />
           <Route element={<BuyerRoute />}>
             <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
             <Route path="/cart" element={<Cart />} />
@@ -63,6 +71,11 @@ const AppRoutes = () => {
             <Route path="/buyer/profile" element={<BuyerProfile />} />
             <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/machines/book/:id" element={<BookMachine />} />
+            <Route
+              path="/buyer/machine-bookings"
+              element={<MyMachineBookings />}
+            />
           </Route>
 
           <Route element={<FarmerRoute />}>
@@ -79,6 +92,10 @@ const AppRoutes = () => {
             <Route path="/farmer/machines" element={<FarmerMachines />} />
             <Route path="/farmer/machines/add" element={<AddMachine />} />
             <Route path="/farmer/machine/edit/:id" element={<EditMachine />} />
+            <Route
+              path="/farmer/machine-bookings"
+              element={<FarmerMachineBookings />}
+            />
           </Route>
         </Route>
       </Route>

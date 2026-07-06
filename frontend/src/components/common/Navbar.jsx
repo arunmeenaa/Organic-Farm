@@ -222,6 +222,14 @@ const Navbar = () => {
                   >
                     My Orders
                   </NavLink>
+                  <NavLink
+                    to="/buyer/machine-bookings"
+                    className={({ isActive }) =>
+                      isActive ? activeClass : linkClass
+                    }
+                  >
+                    My Machine
+                  </NavLink>
                 </>
               )}
 
