@@ -10,6 +10,8 @@ import Products from "../components/product/Products";
 import ProductDetails from "../components/product/ProductDetails";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
+import Machines from "../pages/machine/Machines";
+import MachineDetails from "../pages/machine/MachineDetails";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -28,8 +30,11 @@ import MyProducts from "../pages/farmer/MyProducts";
 import EditProduct from "../pages/farmer/EditProduct";
 import AddProduct from "../pages/farmer/AddProduct";
 import FarmerProfile from "../pages/farmer/FarmerProfile";
-import FarmerOrders from "../pages/farmer/Order"
-import FarmerOrdersDetails from "../components/order/FarmerOrderDetails"
+import FarmerOrders from "../pages/farmer/Order";
+import FarmerOrdersDetails from "../components/order/FarmerOrderDetails";
+import FarmerMachines from "../pages/farmer/MyMachines";
+import AddMachine from "../pages/farmer/AddMachine";
+import EditMachine from "../pages/farmer/EditMachine";
 
 const AppRoutes = () => {
   return (
@@ -46,6 +51,8 @@ const AppRoutes = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
+        <Route path="/machines" element={<Machines />} />
+        <Route path="/machines/:id" element={<MachineDetails />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<BuyerRoute />}>
@@ -65,7 +72,13 @@ const AppRoutes = () => {
             <Route path="/farmer/products/edit/:id" element={<EditProduct />} />
             <Route path="/farmer/profile" element={<FarmerProfile />} />
             <Route path="/farmer/orders" element={<FarmerOrders />} />
-            <Route path="/farmer/orders/:id" element={<FarmerOrdersDetails />} />
+            <Route
+              path="/farmer/orders/:id"
+              element={<FarmerOrdersDetails />}
+            />
+            <Route path="/farmer/machines" element={<FarmerMachines />} />
+            <Route path="/farmer/machines/add" element={<AddMachine />} />
+            <Route path="/farmer/machine/edit/:id" element={<EditMachine />} />
           </Route>
         </Route>
       </Route>

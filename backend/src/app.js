@@ -7,7 +7,7 @@ const orderRoutes = require("./routes/order.routes")
 const reviewRoutes = require("./routes/review.routes")
 const cartRoutes = require("./routes/cart.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
-
+const machineRoutes = require("./routes/machine.routes")
 const app = express();
 app.use(express.json())
 app.use(cors());
@@ -19,6 +19,7 @@ app.use("/api/product", productRoutes);
 app.use("/api/orders", orderRoutes)
 app.use("/api/reviews", reviewRoutes)
 app.use("/api/cart", cartRoutes);
+app.use("/api/machines", machineRoutes)
 
 app.use("/api/dashboard", dashboardRoutes);
 

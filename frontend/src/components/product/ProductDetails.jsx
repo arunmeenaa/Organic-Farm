@@ -10,22 +10,31 @@ import ProductInfo from "./ProductInfo";
 import ProductReviews from "../reviews/ProductReviews";
 import RelatedProducts from "./RelatedProducts";
 
-// Shared design tokens with the rest of the app: forest green + harvest
-// marigold on warm parchment, Fraunces display, Inter body.
+// Matches Navbar/Hero/MyProducts/Orders/AddProduct/Dashboard/Footer/
+// BuyerDashboard/Cart/BuyerOrders/Products/ProductCard: glassmorphism over
+// an emerald → lime gradient mesh, Space Grotesk display type.
 const FontImport = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-    .fd-root { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background: #F6F4EC; }
-    .fd-display { font-family: 'Fraunces', Georgia, serif; }
+    .fd-root {
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse 60% 50% at 10% 0%, rgba(5, 150, 105, 0.14), transparent),
+        radial-gradient(ellipse 55% 45% at 90% 20%, rgba(132, 204, 22, 0.14), transparent),
+        #F4F9F2;
+    }
+    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
 
     .fd-product-panel {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
     }
 
     .fd-skel {
-      background: linear-gradient(90deg, #EFEBDD 25%, #F6F4EC 37%, #EFEBDD 63%);
+      background: linear-gradient(90deg, #E3EFE4 25%, #F4F9F2 37%, #E3EFE4 63%);
       background-size: 400% 100%;
       animation: fd-shimmer 1.4s ease infinite;
       border-radius: 12px;
@@ -36,8 +45,10 @@ const FontImport = () => (
     }
 
     .fd-not-found {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       border-radius: 20px;
     }
   `}</style>
@@ -113,12 +124,12 @@ const ProductDetails = () => {
           <div className="fd-not-found text-center py-20">
             <h2
               className="fd-display text-3xl font-semibold"
-              style={{ color: "#1E3527" }}
+              style={{ color: "#0F2E22" }}
             >
               Product Not Found
             </h2>
 
-            <p className="mt-3" style={{ color: "#8A8578" }}>
+            <p className="mt-3" style={{ color: "#7A8D82" }}>
               The product you're looking for doesn't exist.
             </p>
           </div>

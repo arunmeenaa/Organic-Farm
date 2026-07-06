@@ -9,55 +9,72 @@ import {
   Camera,
 } from "lucide-react";
 
-// Shared design tokens with the rest of the app: forest green + harvest
-// marigold on warm parchment, Fraunces display, Inter body.
+// Matches Navbar/Hero/MyProducts/Orders/AddProduct/Dashboard/Footer/
+// BuyerDashboard/Cart/BuyerOrders/Products/ProductCard/ProductDetails/
+// ProductInfo: glassmorphism over an emerald → lime gradient mesh.
 const FontImport = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-    .fd-root { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background: #F6F4EC; }
-    .fd-display { font-family: 'Fraunces', Georgia, serif; }
+    .fd-root {
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse 60% 50% at 10% 0%, rgba(5, 150, 105, 0.14), transparent),
+        radial-gradient(ellipse 55% 45% at 90% 20%, rgba(132, 204, 22, 0.14), transparent),
+        #F4F9F2;
+    }
+    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
 
-    .fd-panel { background: #FFFFFF; border: 1px solid #E7E2D2; }
+    .fd-panel {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
 
     .fd-avatar {
-      background: #1E3527;
-      color: #F6F4EC;
+      background: conic-gradient(from 180deg, #059669, #84CC16, #F59E0B, #059669);
+      padding: 3px;
+    }
+    .fd-avatar-inner {
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
     }
 
     .fd-camera-btn {
-      background: #E7A83C;
-      color: #1E3527;
-      transition: background 0.15s ease;
+      background: linear-gradient(90deg, #84CC16, #A3E635);
+      color: #14532D;
+      transition: filter 0.15s ease;
     }
-    .fd-camera-btn:hover { background: #F3BC5D; }
+    .fd-camera-btn:hover { filter: brightness(1.08); }
 
-    .fd-label { color: #23281F; }
+    .fd-label { color: #0F2E22; }
 
     .fd-input {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
-      color: #23281F;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #DCEBDD;
+      color: #0F2E22;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
     .fd-input:focus {
       outline: none;
-      border-color: #1E3527;
-      box-shadow: 0 0 0 3px rgba(30, 53, 39, 0.08);
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
     }
     .fd-input-disabled {
-      background: #F6F4EC;
-      border: 1px solid #E7E2D2;
-      color: #8A8578;
+      background: rgba(228, 236, 229, 0.6);
+      border: 1px solid #DCEBDD;
+      color: #7A8D82;
     }
-    .fd-input-icon { color: #A6A08E; }
+    .fd-input-icon { color: #8FA895; }
 
     .fd-btn-primary {
-      background: #1E3527;
-      color: #F6F4EC;
-      transition: background 0.15s ease;
+      background: linear-gradient(90deg, #059669, #84CC16);
+      color: #063527;
+      box-shadow: 0 10px 22px -10px rgba(5, 150, 105, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .fd-btn-primary:hover { background: #2F5233; }
+    .fd-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(5, 150, 105, 0.55); }
   `}</style>
 );
 
@@ -96,7 +113,7 @@ const Profile = () => {
     <div className="fd-root min-h-screen py-10">
       <FontImport />
       <div className="max-w-6xl mx-auto px-6">
-        <h1 className="fd-display text-4xl font-semibold mb-8" style={{ color: "#1E3527" }}>
+        <h1 className="fd-display text-4xl font-bold mb-8" style={{ color: "#0F2E22" }}>
           My Profile
         </h1>
 
@@ -106,8 +123,10 @@ const Profile = () => {
           <div className="fd-panel rounded-2xl shadow-sm p-8">
             <div className="flex flex-col items-center">
               <div className="relative">
-                <div className="fd-avatar w-28 h-28 rounded-full flex items-center justify-center text-4xl font-bold">
-                  {user?.name?.charAt(0).toUpperCase()}
+                <div className="fd-avatar w-28 h-28 rounded-full">
+                  <div className="fd-avatar-inner w-full h-full rounded-full flex items-center justify-center text-4xl font-bold">
+                    {user?.name?.charAt(0).toUpperCase()}
+                  </div>
                 </div>
 
                 <label className="fd-camera-btn absolute bottom-0 right-0 p-2 rounded-full cursor-pointer">
@@ -117,28 +136,28 @@ const Profile = () => {
                 </label>
               </div>
 
-              <h2 className="fd-display mt-5 text-2xl font-semibold" style={{ color: "#1E3527" }}>
+              <h2 className="fd-display mt-5 text-2xl font-semibold" style={{ color: "#0F2E22" }}>
                 {user?.name}
               </h2>
 
-              <p className="capitalize" style={{ color: "#8A8578" }}>
+              <p className="capitalize" style={{ color: "#7A8D82" }}>
                 {user?.role}
               </p>
             </div>
 
             <div className="mt-8 space-y-5">
-              <div className="flex gap-3" style={{ color: "#23281F" }}>
-                <Mail style={{ color: "#8A5A16" }} />
+              <div className="flex gap-3" style={{ color: "#0F2E22" }}>
+                <Mail style={{ color: "#059669" }} />
                 <span>{user?.email}</span>
               </div>
 
-              <div className="flex gap-3" style={{ color: "#23281F" }}>
-                <Phone style={{ color: "#8A5A16" }} />
+              <div className="flex gap-3" style={{ color: "#0F2E22" }}>
+                <Phone style={{ color: "#059669" }} />
                 <span>{formData.phone || "Not Added"}</span>
               </div>
 
-              <div className="flex gap-3" style={{ color: "#23281F" }}>
-                <MapPin style={{ color: "#8A5A16" }} />
+              <div className="flex gap-3" style={{ color: "#0F2E22" }}>
+                <MapPin style={{ color: "#059669" }} />
                 <span>{formData.location || "Not Added"}</span>
               </div>
             </div>
@@ -147,7 +166,7 @@ const Profile = () => {
           {/* Right */}
 
           <div className="fd-panel lg:col-span-2 rounded-2xl shadow-sm p-8">
-            <h2 className="fd-display text-2xl font-semibold mb-6" style={{ color: "#1E3527" }}>
+            <h2 className="fd-display text-2xl font-semibold mb-6" style={{ color: "#0F2E22" }}>
               Edit Profile
             </h2>
 

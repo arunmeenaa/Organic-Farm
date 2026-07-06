@@ -1,25 +1,25 @@
 import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 
-// Shared design tokens with Navbar/Hero/Categories/FeaturedProducts/Products/Dashboard:
-// forest green + harvest marigold on warm parchment, Fraunces display, Inter body.
+
 const FontImport = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
     .fd-card { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
-    .fd-display { font-family: 'Fraunces', Georgia, serif; }
+    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
     .fd-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
 
     .fd-product-card {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
     .fd-product-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 20px 36px -18px rgba(30, 53, 39, 0.35);
-      border-color: #DDD6C4;
+      box-shadow: 0 20px 36px -18px rgba(6, 95, 70, 0.35);
     }
 
     .fd-product-media { overflow: hidden; }
@@ -27,23 +27,23 @@ const FontImport = () => (
     .fd-product-card:hover .fd-product-media img { transform: scale(1.05); }
 
     .fd-category-chip {
-      background: rgba(231, 168, 60, 0.16);
-      color: #8A5A16;
+      background: rgba(132, 204, 22, 0.18);
+      color: #4D7C0F;
     }
 
-    .fd-farmer-text { color: #8A8578; }
+    .fd-farmer-text { color: #7A8D82; }
 
-    .fd-price { color: #1E3527; }
+    .fd-price { color: #065F46; }
 
-    .fd-stock-text { color: #4A5147; }
+    .fd-stock-text { color: #4B6357; }
 
     .fd-view-btn {
-      background: #1E3527;
-      color: #F6F4EC;
-      transition: background 0.15s ease, transform 0.1s ease;
+      background: linear-gradient(90deg, #059669, #84CC16);
+      color: #063527;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .fd-view-btn:hover { background: #2F5233; }
-    .fd-view-btn:active { transform: scale(0.98); }
+    .fd-view-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 20px -10px rgba(5, 150, 105, 0.5); }
+    .fd-view-btn:active { transform: translateY(0); }
   `}</style>
 );
 
@@ -68,7 +68,7 @@ const ProductCard = ({ product }) => {
           {product.category}
         </span>
 
-        <h2 className="text-xl font-semibold mt-3" style={{ color: "#23281F" }}>
+        <h2 className="text-xl font-semibold mt-3" style={{ color: "#0F2E22" }}>
           {product.name}
         </h2>
 

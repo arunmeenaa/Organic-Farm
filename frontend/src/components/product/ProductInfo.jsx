@@ -2,52 +2,57 @@ import { MapPin, User, ShoppingCart } from "lucide-react";
 import QuantitySelector from "./QuantitySelector";
 import { useCart } from "../../context/CartContext";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import { notify } from "../../utils/toast";
+import { useAuth } from "../../context/AuthContext";
 
-// Shared design tokens with the rest of the app: forest green + harvest
-// marigold on warm parchment, Fraunces display, Inter body.
+// Matches Navbar/Hero/MyProducts/Orders/AddProduct/Dashboard/Footer/
+// BuyerDashboard/Cart/BuyerOrders/Products/ProductCard/ProductDetails:
+// emerald → lime gradient accents, Space Grotesk display type.
 const FontImport = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
     .fd-info { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
-    .fd-display { font-family: 'Fraunces', Georgia, serif; }
+    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
     .fd-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
 
     .fd-category-chip {
-      background: rgba(231, 168, 60, 0.16);
-      color: #8A5A16;
+      background: rgba(132, 204, 22, 0.18);
+      color: #4D7C0F;
     }
 
-    .fd-price { color: #1E3527; }
+    .fd-price { color: #065F46; }
 
-    .fd-meta-row { color: #4A5147; }
+    .fd-meta-row { color: #4B6357; }
 
-    .fd-description { color: #4A5147; }
+    .fd-description { color: #4B6357; }
 
-    .fd-available-value { color: #1E3527; }
+    .fd-available-value { color: #065F46; }
 
     .fd-btn-add {
-      background: #1E3527;
-      color: #F6F4EC;
-      transition: background 0.15s ease, transform 0.1s ease;
+      background: linear-gradient(90deg, #059669, #84CC16);
+      color: #063527;
+      transition: transform 0.1s ease, box-shadow 0.15s ease;
+      box-shadow: 0 10px 22px -10px rgba(5, 150, 105, 0.45);
     }
-    .fd-btn-add:hover:not(:disabled) { background: #2F5233; }
-    .fd-btn-add:active:not(:disabled) { transform: scale(0.98); }
-    .fd-btn-add:disabled { background: #C9C3B0; cursor: not-allowed; }
+    .fd-btn-add:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(5, 150, 105, 0.55); }
+    .fd-btn-add:active:not(:disabled) { transform: translateY(0); }
+    .fd-btn-add:disabled { background: #C9D3CC; color: #8B9B92; box-shadow: none; cursor: not-allowed; }
 
     .fd-btn-buy {
-      border: 2px solid #1E3527;
-      color: #1E3527;
+      border: 2px solid #059669;
+      color: #065F46;
       transition: background 0.15s ease, transform 0.1s ease;
     }
-    .fd-btn-buy:hover:not(:disabled) { background: rgba(30, 53, 39, 0.06); }
+    .fd-btn-buy:hover:not(:disabled) { background: rgba(5, 150, 105, 0.08); }
     .fd-btn-buy:active:not(:disabled) { transform: scale(0.98); }
-    .fd-btn-buy:disabled { border-color: #C9C3B0; color: #C9C3B0; cursor: not-allowed; }
+    .fd-btn-buy:disabled { border-color: #C9D3CC; color: #8B9B92; cursor: not-allowed; }
   `}</style>
 );
 
 const ProductInfo = ({ product, quantity, setQuantity }) => {
+  const { isAuthenticated } = useAuth();
   const { addItem } = useCart();
   const handleAddToCart = async () => {
     try {
@@ -66,7 +71,7 @@ const ProductInfo = ({ product, quantity, setQuantity }) => {
         {product.category}
       </span>
 
-      <h1 className="fd-display text-4xl font-semibold mt-4" style={{ color: "#1E3527" }}>
+      <h1 className="fd-display text-4xl font-semibold mt-4" style={{ color: "#0F2E22" }}>
         {product.name}
       </h1>
 
@@ -88,7 +93,7 @@ const ProductInfo = ({ product, quantity, setQuantity }) => {
 
       <p className="fd-description mt-8 leading-7">{product.description}</p>
 
-      <p className="mt-6 font-semibold" style={{ color: "#23281F" }}>
+      <p className="mt-6 font-semibold" style={{ color: "#0F2E22" }}>
         Available:
         <span className="fd-available-value fd-mono ml-2">{product.quantity}</span>
       </p>
@@ -100,22 +105,33 @@ const ProductInfo = ({ product, quantity, setQuantity }) => {
       />
 
       <div className="flex gap-4 mt-8">
-        <button
-          onClick={handleAddToCart}
-          disabled={product.quantity === 0}
-          className="fd-btn-add flex-1 py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
-        >
-          <ShoppingCart size={20} />
-          Add to Cart
-        </button>
+  {isAuthenticated ? (
+    <>
+      <button
+        onClick={handleAddToCart}
+        disabled={product.quantity === 0}
+        className="fd-btn-add flex-1 py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
+      >
+        <ShoppingCart size={20} />
+        Add to Cart
+      </button>
 
-        <button
-          disabled={product.quantity === 0}
-          className="fd-btn-buy flex-1 py-4 rounded-xl font-semibold"
-        >
-          Buy Now
-        </button>
-      </div>
+      <button
+        disabled={product.quantity === 0}
+        className="fd-btn-buy flex-1 py-4 rounded-xl font-semibold"
+      >
+        Buy Now
+      </button>
+    </>
+  ) : (
+    <Link
+      to="/login"
+      className="flex-1 text-center py-4 rounded-xl font-semibold bg-green-600 hover:bg-green-700 text-white"
+    >
+      Login to Purchase
+    </Link>
+  )}
+</div>
     </div>
   );
 };

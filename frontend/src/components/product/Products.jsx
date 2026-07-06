@@ -5,49 +5,65 @@ import toast from "react-hot-toast";
 import { getProducts } from "../../services/product.service";
 import ProductCard from "./ProductCard";
 
-// Shared design tokens with Navbar/Hero/Categories/FeaturedProducts/Dashboard:
-// forest green + harvest marigold on warm parchment, Fraunces display, Inter body.
+// Matches Navbar/Hero/MyProducts/Orders/AddProduct/Dashboard/Footer/
+// BuyerDashboard/Cart/BuyerOrders: glassmorphism over an emerald → lime
+// gradient mesh, Space Grotesk display type.
 const FontImport = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-    .fd-root { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background: #F6F4EC; }
-    .fd-display { font-family: 'Fraunces', Georgia, serif; }
+    .fd-root {
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse 60% 50% at 10% 0%, rgba(5, 150, 105, 0.14), transparent),
+        radial-gradient(ellipse 55% 45% at 90% 20%, rgba(132, 204, 22, 0.14), transparent),
+        #F4F9F2;
+    }
+    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
     .fd-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
 
-    .fd-rule { background: #E7A83C; }
+    .fd-title-gradient {
+      background: linear-gradient(90deg, #065F46, #65A30D);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
 
     .fd-filter-panel {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
     }
 
     .fd-input {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
-      color: #23281F;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #DCEBDD;
+      color: #0F2E22;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
     .fd-input:focus {
       outline: none;
-      border-color: #1E3527;
-      box-shadow: 0 0 0 3px rgba(30, 53, 39, 0.08);
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
     }
-    .fd-input::placeholder { color: #A6A08E; }
+    .fd-input::placeholder { color: #8FA895; }
 
     .fd-empty {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
-      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 20px;
     }
 
     .fd-skel-card {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.6);
     }
     .fd-skel {
-      background: linear-gradient(90deg, #EFEBDD 25%, #F6F4EC 37%, #EFEBDD 63%);
+      background: linear-gradient(90deg, #E3EFE4 25%, #F4F9F2 37%, #E3EFE4 63%);
       background-size: 400% 100%;
       animation: fd-shimmer 1.4s ease infinite;
       border-radius: 8px;
@@ -58,15 +74,15 @@ const FontImport = () => (
     }
 
     .fd-page-btn {
-      background: #FFFFFF;
-      border: 1px solid #E7E2D2;
-      color: #1E3527;
-      transition: background 0.15s ease, border-color 0.15s ease;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #DCEBDD;
+      color: #065F46;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
     .fd-page-btn:hover:not(:disabled) {
-      background: #1E3527;
-      color: #F6F4EC;
-      border-color: #1E3527;
+      background: linear-gradient(90deg, #059669, #84CC16);
+      color: #063527;
+      border-color: transparent;
     }
     .fd-page-btn:disabled {
       opacity: 0.45;
@@ -74,7 +90,7 @@ const FontImport = () => (
     }
 
     .fd-page-label {
-      color: #4A5147;
+      color: #4B6357;
     }
   `}</style>
 );
@@ -148,11 +164,10 @@ const Products = () => {
         {/* Header */}
 
         <div className="mb-8">
-          <div className="fd-rule w-12 h-1 rounded-full mb-5" />
-          <h1 className="fd-display text-4xl font-semibold" style={{ color: "#1E3527" }}>
+          <h1 className="fd-display fd-title-gradient text-4xl font-bold">
             Fresh Organic Products
           </h1>
-          <p className="mt-2" style={{ color: "#8A8578" }}>
+          <p className="mt-2" style={{ color: "#7A8D82" }}>
             {pagination.totalProducts} products available
           </p>
         </div>
@@ -161,8 +176,8 @@ const Products = () => {
 
         <div className="fd-filter-panel shadow-sm p-6 mb-8">
           <div className="flex items-center gap-2 mb-5">
-            <Filter size={20} style={{ color: "#8A5A16" }} />
-            <h2 className="font-semibold text-lg" style={{ color: "#1E3527" }}>
+            <Filter size={20} style={{ color: "#B45309" }} />
+            <h2 className="font-semibold text-lg" style={{ color: "#0F2E22" }}>
               Filters
             </h2>
           </div>
@@ -174,7 +189,7 @@ const Products = () => {
               <Search
                 size={18}
                 className="absolute left-4 top-1/2 -translate-y-1/2"
-                style={{ color: "#A6A08E" }}
+                style={{ color: "#8FA895" }}
               />
 
               <input
@@ -249,11 +264,11 @@ const Products = () => {
           <div className="fd-empty text-center py-20">
             <div className="text-6xl mb-5">🌱</div>
 
-            <h2 className="fd-display text-2xl font-semibold" style={{ color: "#1E3527" }}>
+            <h2 className="fd-display text-2xl font-semibold" style={{ color: "#0F2E22" }}>
               No Products Found
             </h2>
 
-            <p className="mt-3" style={{ color: "#8A8578" }}>
+            <p className="mt-3" style={{ color: "#7A8D82" }}>
               Try changing your search or filters.
             </p>
           </div>

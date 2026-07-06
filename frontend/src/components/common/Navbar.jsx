@@ -195,18 +195,25 @@ const Navbar = () => {
               >
                 Home
               </NavLink>
+              <NavLink
+                to="/products"
+                className={({ isActive }) =>
+                  isActive ? activeClass : linkClass
+                }
+              >
+                Products
+              </NavLink>
+              <NavLink
+                to="/machines"
+                className={({ isActive }) =>
+                  isActive ? activeClass : linkClass
+                }
+              >
+                Machines
+              </NavLink>
 
               {isAuthenticated && user?.role === "buyer" && (
                 <>
-                  <NavLink
-                    to="/products"
-                    className={({ isActive }) =>
-                      isActive ? activeClass : linkClass
-                    }
-                  >
-                    Products
-                  </NavLink>
-
                   <NavLink
                     to="/orders"
                     className={({ isActive }) =>
@@ -228,14 +235,13 @@ const Navbar = () => {
                   >
                     My Products
                   </NavLink>
-
                   <NavLink
-                    to="/farmer/products/add"
+                    to="/farmer/machines"
                     className={({ isActive }) =>
                       isActive ? activeClass : linkClass
                     }
                   >
-                    Add Product
+                    My Machines
                   </NavLink>
 
                   <NavLink
@@ -297,7 +303,11 @@ const Navbar = () => {
               {isAuthenticated && (
                 <>
                   {user?.role === "buyer" && (
-                    <Link to="/cart" className="relative" style={{ color: "#0F2E22" }}>
+                    <Link
+                      to="/cart"
+                      className="relative"
+                      style={{ color: "#0F2E22" }}
+                    >
                       <ShoppingCart size={24} />
                       {totalItems > 0 && (
                         <span className="fd-cart-badge absolute -top-2 -right-2 rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
@@ -319,11 +329,17 @@ const Navbar = () => {
                       </div>
 
                       <div className="text-left">
-                        <p className="font-medium text-sm" style={{ color: "#0F2E22" }}>
+                        <p
+                          className="font-medium text-sm"
+                          style={{ color: "#0F2E22" }}
+                        >
                           {user?.name}
                         </p>
 
-                        <p className="text-xs capitalize" style={{ color: "#7A8D82" }}>
+                        <p
+                          className="text-xs capitalize"
+                          style={{ color: "#7A8D82" }}
+                        >
                           {user?.role}
                         </p>
                       </div>
