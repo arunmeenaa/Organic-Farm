@@ -12,8 +12,8 @@ import Contact from "../pages/Contact";
 import MachineDetails from "../pages/machine/MachineDetails";
 import Marketplace from "../pages/buyer/MarketPlace";
 
-
 import ProtectedRoute from "./ProtectedRoute";
+import AllNotification from "../components/notification/AllNotification"
 
 
 import BuyerRoute from "./BuyerRoute";
@@ -25,8 +25,6 @@ import Checkout from "../pages/buyer/Checkout";
 import BuyerOrderDetails from "../pages/buyer/OrderDetails";
 import OrderSuccess from "../components/order/OrderSuccess";
 import BookMachine from "../pages/machine/BookMachine";
-
-
 
 import FarmerRoute from "./FarmerRoute";
 import Dashboard from "../pages/farmer/Dashboard";
@@ -62,6 +60,7 @@ const AppRoutes = () => {
             path="/machine-bookings/:id"
             element={<MachineBookingDetails />}
           />
+          <Route path="/notifications" element={<AllNotification />} />
           <Route element={<BuyerRoute />}>
             <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
             <Route path="/cart" element={<Cart />} />

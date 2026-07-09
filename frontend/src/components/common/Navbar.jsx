@@ -10,9 +10,11 @@ import {
   Leaf,
   ChevronDown,
   LogOut,
+  Bell,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-
+import { useNotifications } from "../../context/NotificationContext";
+import NotificationDropdown from "../notification/NotificationDropdown";
 // Same glassmorphic approach as Hero, now on an all-green gradient system
 // (emerald → lime, amber accent) instead of indigo — reads as "organic farm".
 const FontImport = () => (
@@ -134,6 +136,8 @@ const Navbar = () => {
   const { totalItems } = useCart();
 
   const { user, isAuthenticated, logout } = useAuth();
+  const [notificationMenu, setNotificationMenu] = useState(false);
+  const { unreadCount } = useNotifications();
 
   const navigate = useNavigate();
 
@@ -205,8 +209,6 @@ const Navbar = () => {
                   >
                     Market Place
                   </NavLink>
-
-                 
                 </>
               )}
 
@@ -269,7 +271,28 @@ const Navbar = () => {
             </div>
 
             {/* Right Side */}
+            {isAuthenticated && (
+              <div className="relative">
+                <button
+                  onClick={() => setNotificationMenu(!notificationMenu)}
+                  className="relative"
+                >
+                  <Bell size={24} />
 
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {notificationMenu && (
+                  <NotificationDropdown
+                    onClose={() => setNotificationMenu(false)}
+                  />
+                )}
+              </div>
+            )}
             <div className="hidden lg:flex items-center gap-5">
               {!isAuthenticated && (
                 <>

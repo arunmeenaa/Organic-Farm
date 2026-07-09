@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Search,
-  Filter,
   ChevronLeft,
   ChevronRight,
   SlidersHorizontal,
+  Sprout,
+  Tractor,
+  PackageSearch,
+  Wrench,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -12,81 +15,6 @@ import { getProducts } from "../../services/product.service";
 import { getMachines } from "../../services/machine.service";
 import ProductCard from "../../components/product/ProductCard";
 import MachineCard from "../../components/machine/MachineCard";
-
-const FontImport = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-    .mkt-root {
-      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-      background:
-        radial-gradient(ellipse 60% 50% at 10% 0%, rgba(5, 150, 105, 0.14), transparent),
-        radial-gradient(ellipse 55% 45% at 90% 20%, rgba(132, 204, 22, 0.14), transparent),
-        #F4F9F2;
-    }
-    .mkt-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
-    .mkt-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
-
-    .mkt-title-gradient {
-      background: linear-gradient(90deg, #065F46, #65A30D);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .mkt-filter-panel {
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-    }
-
-    .mkt-input {
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid #DCEBDD;
-      color: #0F2E22;
-      transition: all 0.15s ease;
-    }
-    .mkt-input:focus {
-      outline: none;
-      border-color: #059669;
-      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
-    }
-
-    .mkt-empty-card {
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-    }
-
-    .mkt-skel-card {
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-    }
-    .mkt-skel {
-      background: linear-gradient(90deg, #E3EFE4 25%, #F4F9F2 37%, #E3EFE4 63%);
-      background-size: 400% 100%;
-      animation: mkt-shimmer 1.4s ease infinite;
-      border-radius: 12px;
-    }
-    @keyframes mkt-shimmer {
-      0% { background-position: 100% 50%; }
-      100% { background-position: 0 50%; }
-    }
-
-    .mkt-page-btn {
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid #DCEBDD;
-      color: #065F46;
-      transition: all 0.15s ease;
-    }
-    .mkt-page-btn:hover:not(:disabled) {
-      background: linear-gradient(90deg, #059669, #84CC16);
-      color: white;
-      border-color: transparent;
-    }
-  `}</style>
-);
 
 const machineCategories = [
   "All",
@@ -198,59 +126,70 @@ const Marketplace = () => {
   }, [machines, machineSearch, machineCategory, rentalType]);
 
   return (
-    <div className="mkt-root min-h-screen pb-16">
-      <FontImport />
+    <div
+      className="min-h-screen pb-16 relative overflow-hidden"
+      style={{
+        fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif",
+        background:
+          "radial-gradient(ellipse 60% 50% at 10% 0%, rgba(5, 150, 105, 0.14), transparent), radial-gradient(ellipse 55% 45% at 90% 20%, rgba(132, 204, 22, 0.14), transparent), #F4F9F2",
+      }}
+    >
+      {/* Ambient background glow */}
+      <div className="absolute top-[10%] right-[-10%] w-[35%] h-[35%] rounded-full bg-amber-300/10 blur-[120px] pointer-events-none" />
 
-      {/* Dynamic Main Stage Banner */}
-      <div className="max-w-7xl mx-auto px-6 pt-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-slate-200/50 pb-6 mb-8 gap-4">
+      <div className="relative max-w-7xl mx-auto px-6 pt-10">
+        {/* Header + Tab Switcher */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-emerald-900/10 pb-6 mb-8 gap-4">
           <div>
-            <h1 className="mkt-display mkt-title-gradient text-4xl font-extrabold tracking-tight">
+            <h1
+              className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-800 to-lime-600 bg-clip-text text-transparent"
+              style={{ fontFamily: "'Space Grotesk', ui-sans-serif, sans-serif" }}
+            >
               {activeTab === "products"
                 ? "Fresh Organic Marketplace"
                 : "Agricultural Equipment Hub"}
             </h1>
-            <p className="mt-2 text-sm font-medium text-slate-500">
+            <p className="mt-2 text-sm font-medium text-emerald-900/50">
               {activeTab === "products"
                 ? `Discover ${productPagination.totalProducts} completely natural organic crop batches direct from farms.`
                 : `Explore ${filteredMachines.length} machinery listings ready for immediate operations deployment.`}
             </p>
           </div>
 
-          {/* Active Navigation Workspace Swappers */}
-          <div className="flex gap-2.5 bg-slate-200/50 p-1.5 rounded-2xl w-max border border-slate-200/30">
+          {/* Tab Switcher */}
+          <div className="flex gap-1.5 bg-white/60 backdrop-blur-md p-1.5 rounded-2xl w-max border border-emerald-900/10 shadow-sm">
             <button
               onClick={() => {
                 setActiveTab("products");
                 setMachineSearch("");
               }}
-              className={`px-5 py-2 rounded-xl font-bold transition-all text-xs tracking-wider uppercase ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all text-xs tracking-wider uppercase ${
                 activeTab === "products"
-                  ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/10"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-gradient-to-r from-emerald-600 to-lime-500 text-white shadow-[0_8px_16px_-6px_rgba(5,150,105,0.5)]"
+                  : "text-emerald-900/50 hover:text-emerald-900"
               }`}
             >
-              🌱 Crops & Produce
+              <Sprout size={14} /> Crops & Produce
             </button>
             <button
               onClick={() => {
                 setActiveTab("machines");
                 setProductSearch("");
               }}
-              className={`px-5 py-2 rounded-xl font-bold transition-all text-xs tracking-wider uppercase ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all text-xs tracking-wider uppercase ${
                 activeTab === "machines"
-                  ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/10"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-gradient-to-r from-emerald-600 to-lime-500 text-white shadow-[0_8px_16px_-6px_rgba(5,150,105,0.5)]"
+                  : "text-emerald-900/50 hover:text-emerald-900"
               }`}
             >
-              🚜 Farm Machinery
+              <Tractor size={14} /> Farm Machinery
             </button>
           </div>
         </div>
 
-        {/* Unified Parametric Filtering Controller block */}
-        <div className="mkt-filter-panel shadow-sm p-5 rounded-2xl mb-8">
-          <div className="flex items-center gap-2 mb-4 text-emerald-900">
+        {/* Filter Panel */}
+        <div className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_12px_30px_-18px_rgba(5,150,105,0.35)] p-5 rounded-2xl mb-8">
+          <div className="flex items-center gap-2 mb-4 text-emerald-950">
             <SlidersHorizontal size={18} className="text-amber-600" />
             <h2 className="font-bold text-sm uppercase tracking-wider">
               Search Filters
@@ -262,14 +201,14 @@ const Marketplace = () => {
               <div className="relative">
                 <Search
                   size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-900/30"
                 />
                 <input
                   type="text"
                   placeholder="Search harvest produce..."
                   value={productSearch}
                   onChange={(e) => setProductSearch(e.target.value)}
-                  className="mkt-input w-full rounded-xl py-3 pl-11 pr-4 text-sm font-medium placeholder-slate-400"
+                  className="w-full rounded-xl py-3 pl-11 pr-4 text-sm font-medium bg-white/85 border border-emerald-900/10 text-emerald-950 placeholder-emerald-900/30 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all"
                 />
               </div>
 
@@ -279,7 +218,7 @@ const Marketplace = () => {
                   setProductCategory(e.target.value);
                   setProductPage(1);
                 }}
-                className="mkt-input rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none cursor-pointer"
+                className="rounded-xl px-4 py-3 text-sm font-semibold bg-white/85 border border-emerald-900/10 text-emerald-900 outline-none cursor-pointer focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all"
               >
                 {productCategories.map((cat) => (
                   <option key={cat} value={cat}>
@@ -296,7 +235,7 @@ const Marketplace = () => {
                   setMinPrice(e.target.value);
                   setProductPage(1);
                 }}
-                className="mkt-input rounded-xl px-4 py-3 text-sm font-medium"
+                className="rounded-xl px-4 py-3 text-sm font-medium bg-white/85 border border-emerald-900/10 text-emerald-950 placeholder-emerald-900/30 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all"
               />
 
               <input
@@ -307,7 +246,7 @@ const Marketplace = () => {
                   setMaxPrice(e.target.value);
                   setProductPage(1);
                 }}
-                className="mkt-input rounded-xl px-4 py-3 text-sm font-medium"
+                className="rounded-xl px-4 py-3 text-sm font-medium bg-white/85 border border-emerald-900/10 text-emerald-950 placeholder-emerald-900/30 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all"
               />
             </div>
           ) : (
@@ -315,21 +254,21 @@ const Marketplace = () => {
               <div className="relative">
                 <Search
                   size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-900/30"
                 />
                 <input
                   type="text"
                   placeholder="Search dynamic fleet listings..."
                   value={machineSearch}
                   onChange={(e) => setMachineSearch(e.target.value)}
-                  className="mkt-input w-full rounded-xl py-3 pl-11 pr-4 text-sm font-medium placeholder-slate-400"
+                  className="w-full rounded-xl py-3 pl-11 pr-4 text-sm font-medium bg-white/85 border border-emerald-900/10 text-emerald-950 placeholder-emerald-900/30 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all"
                 />
               </div>
 
               <select
                 value={machineCategory}
                 onChange={(e) => setMachineCategory(e.target.value)}
-                className="mkt-input rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none cursor-pointer"
+                className="rounded-xl px-4 py-3 text-sm font-semibold bg-white/85 border border-emerald-900/10 text-emerald-900 outline-none cursor-pointer focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all"
               >
                 {machineCategories.map((cat) => (
                   <option key={cat} value={cat}>
@@ -341,7 +280,7 @@ const Marketplace = () => {
               <select
                 value={rentalType}
                 onChange={(e) => setRentalType(e.target.value)}
-                className="mkt-input rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none cursor-pointer"
+                className="rounded-xl px-4 py-3 text-sm font-semibold bg-white/85 border border-emerald-900/10 text-emerald-900 outline-none cursor-pointer focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 transition-all"
               >
                 <option value="all">All Service Frameworks</option>
                 <option value="machine_only">Machine Profile Only</option>
@@ -353,31 +292,36 @@ const Marketplace = () => {
           )}
         </div>
 
-        {/* Main Content Presentation Matrix Grid */}
+        {/* Content Grid */}
         {loading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {[...Array(activeTab === "products" ? 8 : 6)].map((_, index) => (
               <div
                 key={index}
-                className="mkt-skel-card rounded-3xl p-4 flex flex-col justify-between h-[380px]"
+                className="bg-white/70 border border-white/60 rounded-3xl p-4 flex flex-col justify-between h-[380px] animate-pulse"
               >
                 <div>
-                  <div className="mkt-skel h-48 w-full"></div>
-                  <div className="mkt-skel mt-5 h-5 w-3/4"></div>
-                  <div className="mkt-skel mt-2.5 h-4 w-1/2"></div>
+                  <div className="h-48 w-full rounded-xl bg-emerald-900/5" />
+                  <div className="mt-5 h-5 w-3/4 rounded bg-emerald-900/5" />
+                  <div className="mt-2.5 h-4 w-1/2 rounded bg-emerald-900/5" />
                 </div>
-                <div className="mkt-skel h-11 w-full mt-6"></div>
+                <div className="h-11 w-full mt-6 rounded-xl bg-emerald-900/5" />
               </div>
             ))}
           </div>
         ) : activeTab === "products" ? (
           products.length === 0 ? (
-            <div className="mkt-empty-card text-center py-20 rounded-3xl border border-dashed border-slate-200 shadow-sm max-w-xl mx-auto">
-              <div className="text-5xl mb-4">🌾</div>
-              <h2 className="mkt-display text-2xl font-bold text-slate-800">
+            <div className="bg-white/70 backdrop-blur-xl border border-dashed border-emerald-900/15 text-center py-20 rounded-3xl shadow-sm max-w-xl mx-auto">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-600/10 text-emerald-600 flex items-center justify-center mb-4">
+                <PackageSearch size={28} />
+              </div>
+              <h2
+                className="text-2xl font-bold text-emerald-950"
+                style={{ fontFamily: "'Space Grotesk', ui-sans-serif, sans-serif" }}
+              >
                 No Harvest Batches Found
               </h2>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-sm text-emerald-900/50">
                 We couldn't track active products matching your specific
                 metrics.
               </p>
@@ -390,16 +334,19 @@ const Marketplace = () => {
                 ))}
               </div>
 
-              {/* Products Context Pagination Footer */}
+              {/* Pagination */}
               <div className="flex justify-center items-center gap-4 mt-12">
                 <button
                   onClick={() => setProductPage((p) => p - 1)}
                   disabled={productPagination.currentPage === 1}
-                  className="mkt-page-btn flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-xs uppercase disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-white/85 border border-emerald-900/10 text-emerald-800 shadow-sm transition-all hover:not-disabled:bg-gradient-to-r hover:not-disabled:from-emerald-600 hover:not-disabled:to-lime-500 hover:not-disabled:text-white hover:not-disabled:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft size={16} /> Prev
                 </button>
-                <span className="mkt-mono font-bold text-sm text-slate-600">
+                <span
+                  className="font-bold text-sm text-emerald-900/60"
+                  style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
+                >
                   {productPagination.currentPage} /{" "}
                   {productPagination.totalPages}
                 </span>
@@ -410,7 +357,7 @@ const Marketplace = () => {
                       productPagination.totalPages ||
                     productPagination.totalPages === 0
                   }
-                  className="mkt-page-btn flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-xs uppercase disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-xs uppercase bg-white/85 border border-emerald-900/10 text-emerald-800 shadow-sm transition-all hover:not-disabled:bg-gradient-to-r hover:not-disabled:from-emerald-600 hover:not-disabled:to-lime-500 hover:not-disabled:text-white hover:not-disabled:border-transparent disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Next <ChevronRight size={16} />
                 </button>
@@ -418,12 +365,17 @@ const Marketplace = () => {
             </>
           )
         ) : filteredMachines.length === 0 ? (
-          <div className="mkt-empty-card text-center py-20 rounded-3xl border border-dashed border-slate-200 shadow-sm max-w-xl mx-auto">
-            <div className="text-5xl mb-4">⚙️</div>
-            <h2 className="mkt-display text-2xl font-bold text-slate-800">
+          <div className="bg-white/70 backdrop-blur-xl border border-dashed border-emerald-900/15 text-center py-20 rounded-3xl shadow-sm max-w-xl mx-auto">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-4">
+              <Wrench size={28} />
+            </div>
+            <h2
+              className="text-2xl font-bold text-emerald-950"
+              style={{ fontFamily: "'Space Grotesk', ui-sans-serif, sans-serif" }}
+            >
               No Machinery Uncovered
             </h2>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-emerald-900/50">
               No rental machinery fits the current category or service
               combination parameters.
             </p>
