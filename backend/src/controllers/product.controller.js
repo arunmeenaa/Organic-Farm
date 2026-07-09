@@ -1,6 +1,7 @@
 const productModel = require("../models/product.model");
 const { uploadImage } = require("../utils/imagekit");
 const mongoose = require("mongoose");
+const { createNotification } = require("../services/notification.service");
 
 async function createProduct(req, res) {
   try {

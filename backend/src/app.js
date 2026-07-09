@@ -9,6 +9,9 @@ const cartRoutes = require("./routes/cart.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 const machineRoutes = require("./routes/machine.routes")
 const machineBookingRoutes = require("./routes/machineBooking.routes")
+const notificationRoutes = require("./routes/notification.routes");
+
+
 const app = express();
 app.use(express.json())
 app.use(cors());
@@ -22,7 +25,7 @@ app.use("/api/reviews", reviewRoutes)
 app.use("/api/cart", cartRoutes);
 app.use("/api/machines", machineRoutes)
 app.use("/api/machine-bookings", machineBookingRoutes);
-
+app.use("/api/notifications", notificationRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 module.exports = app;

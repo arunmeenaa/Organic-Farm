@@ -3,9 +3,11 @@ const cartModel = require("../models/cart.model");
 const productModel = require("../models/product.model");
 const orderModel = require("../models/order.model");
 const userModel = require("../models/user.model");
+const { createNotification } = require("../services/notification.service");
 
 async function placeOrder(req, res) {
   const { deliveryAddress, paymentMethod } = req.body;
+  console.log(req.body);
 
   try {
     const { fullName, phone, addressLine, city, state, pincode } =
@@ -98,7 +100,17 @@ async function placeOrder(req, res) {
       },
     ]);
 
-    // Clear cart
+
+
+    await createNotification({
+      receiver: farmerId,
+      sender: req.user._id,
+      title: "New Order",
+      message: `${fullName} placed an order for ${orderProducts[0].productName}.`,
+      type: "order",
+      referenceId: order[0]._id,
+    });
+
     cart.items = [];
     await cart.save();
 
@@ -253,6 +265,15 @@ async function updateOrderStatus(req, res) {
     }
     order.orderStatus = status;
     await order.save();
+
+    await createNotification({
+      receiver: order.buyer,
+      sender: req.user._id,
+      title: "Order Accepted",
+      message: `Your order #${order.orderNumber} has been accepted.`,
+      type: "order",
+      referenceId: order._id,
+    });
     return res.status(200).json({
       success: true,
       message: "Order status updated successfully",
@@ -311,6 +332,14 @@ async function cancelOrder(req, res) {
     }
     order.orderStatus = "cancelled";
     await order.save();
+    await createNotification({
+      receiver: order.buyer,
+      sender: req.user._id,
+      title: "Order Cancelled",
+      message: `Your order #${order.orderNumber} has been cancelled.`,
+      type: "order",
+      referenceId: order._id,
+    });
     return res.status(200).json({
       success: true,
       message: "Order cancelled successfully",

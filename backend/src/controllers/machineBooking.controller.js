@@ -1,5 +1,6 @@
 const MachineBooking = require("../models/machineBooking.model");
 const Machine = require("../models/machine.model");
+const { createNotification } = require("../services/notification.service");
 
 exports.createBooking = async (req, res) => {
   try {
@@ -108,7 +109,14 @@ exports.createBooking = async (req, res) => {
 
       totalAmount,
     });
-
+    await createNotification({
+      receiver: machine.owner,
+      sender: req.user._id,
+      title: "New Machine Booking",
+      message: `${req.user.name} requested to book your ${machine.name}.`,
+      type: "booking",
+      referenceId: booking._id,
+    });
     return res.status(201).json({
       success: true,
       message: "Booking request sent successfully",
@@ -226,7 +234,14 @@ exports.acceptBooking = async (req, res) => {
 
     await machine.save();
     await booking.save();
-
+    await createNotification({
+      receiver: booking.buyer,
+      sender: req.user._id,
+      title: "Booking Accepted",
+      message: `Your booking for ${booking.machine.name} has been accepted.`,
+      type: "booking",
+      referenceId: booking._id,
+    });
     return res.status(200).json({
       success: true,
       message: "Booking accepted successfully",
@@ -273,6 +288,15 @@ exports.rejectBooking = async (req, res) => {
 
     await machine.save();
     await booking.save();
+
+    await createNotification({
+      receiver: booking.buyer,
+      sender: req.user._id,
+      title: "Booking Rejected",
+      message: `Your booking for ${booking.machine.name} has been rejected.`,
+      type: "booking",
+      referenceId: booking._id,
+    });
 
     return res.status(200).json({
       success: true,
@@ -366,7 +390,15 @@ exports.completeBooking = async (req, res) => {
 
     await machine.save();
     await booking.save();
-   
+
+    await createNotification({
+      receiver: booking.buyer,
+      sender: req.user._id,
+      title: "Booking Completed",
+      message: `Your booking for ${booking.machine.name} has been completed.`,
+      type: "booking",
+      referenceId: booking._id,
+    });
 
     return res.status(200).json({
       success: true,
