@@ -1,221 +1,313 @@
-import { ArrowRight, ShoppingBag, Sprout, Star } from "lucide-react";
+import React from "react";
 import { Link } from "react-router-dom";
-
-// Same glassmorphic approach, but swapped to an all-green gradient system
-// (emerald → lime, amber accent) that reads as "organic farm" rather than tech/SaaS.
-const FontImport = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-    .fd-hero {
-      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-      background:
-        radial-gradient(ellipse 60% 50% at 15% 20%, rgba(5, 150, 105, 0.16), transparent),
-        radial-gradient(ellipse 55% 45% at 85% 80%, rgba(132, 204, 22, 0.16), transparent),
-        radial-gradient(ellipse 45% 35% at 60% 10%, rgba(245, 158, 11, 0.10), transparent),
-        #F4F9F2;
-    }
-    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
-    .fd-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
-
-    .fd-title-gradient {
-      background: linear-gradient(90deg, #065F46, #65A30D);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .fd-eyebrow {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      color: #15803D;
-    }
-
-    .fd-btn-primary {
-      background: linear-gradient(90deg, #059669, #84CC16);
-      color: #063527;
-      box-shadow: 0 14px 30px -12px rgba(5, 150, 105, 0.45);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .fd-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -12px rgba(5, 150, 105, 0.55); }
-    .fd-btn-primary:active { transform: translateY(0); }
-
-    .fd-btn-outline {
-      border: 2px solid #059669;
-      color: #065F46;
-      background: rgba(255, 255, 255, 0.5);
-      transition: background 0.15s ease, transform 0.1s ease;
-    }
-    .fd-btn-outline:hover { background: rgba(5, 150, 105, 0.08); transform: translateY(-1px); }
-
-    .fd-stat-num { color: #0F2E22; }
-
-    .fd-image-frame {
-      background: linear-gradient(160deg, #059669 0%, #84CC16 100%);
-      padding: 6px;
-      border-radius: 1.5rem;
-    }
-    .fd-image-inner {
-      background: #F4F9F2;
-      border-radius: 1.25rem;
-      overflow: hidden;
-    }
-
-    .fd-float-card {
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 0 20px 40px -20px rgba(6, 95, 70, 0.35);
-      animation: fd-bob 5s ease-in-out infinite;
-    }
-    .fd-float-card.fd-delay {
-      animation-delay: 1.4s;
-    }
-    @keyframes fd-bob {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .fd-float-card { animation: none; }
-    }
-
-    .fd-badge-icon {
-      background: rgba(132, 204, 22, 0.2);
-    }
-  `}</style>
-);
-
-const Hero = () => {
+/**
+ * Organic Farm — Hero section (colorful / modern)
+ * Bold gradients, glassy floating cards, playful color-coded features.
+ * No required props — drop straight into a page.
+ */
+export default function OrganicFarmHero() {
   return (
-    <section className="fd-hero relative overflow-hidden">
-      <FontImport />
+    <div className="of-hero">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 
-      <div className="max-w-7xl mx-auto px-6 py-20 lg:py-28 relative">
-        <div className="grid lg:grid-cols-2 gap-14 items-center">
-          {/* Left */}
+        .of-hero {
+          --ink: #0f2417;
+          --sub: #3d5a45;
+          --green: #16a34a;
+          --green-deep: #0d7a37;
+          --lime: #a3e635;
+          --orange: #fb923c;
+          --sky: #38bdf8;
+          --violet: #a78bfa;
+          --sun: #facc15;
+          font-family: 'Inter', sans-serif;
+          color: var(--ink);
+          position: relative;
+          overflow: hidden;
+          background:
+            radial-gradient(60% 50% at 85% 8%, rgba(56,189,248,0.25), transparent 60%),
+            radial-gradient(55% 45% at 8% 92%, rgba(250,204,21,0.30), transparent 60%),
+            radial-gradient(70% 60% at 15% 5%, rgba(163,230,53,0.35), transparent 60%),
+            linear-gradient(180deg, #f4fbef 0%, #eaf7e6 100%);
+        }
+        .of-hero * { box-sizing: border-box; }
 
-          <div>
-            <span className="fd-eyebrow inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider">
-              <Sprout size={16} />
-              Fresh · Organic · Direct From Farmers
-            </span>
+        .blob {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(50px);
+          opacity: 0.55;
+          z-index: 0;
+        }
+        .blob1 { width: 320px; height: 320px; background: var(--lime); top: -100px; left: -80px; }
+        .blob2 { width: 260px; height: 260px; background: var(--sky); top: 40px; right: -60px; }
+        .blob3 { width: 280px; height: 280px; background: var(--sun); bottom: -120px; left: 30%; }
 
-            <h1 className="fd-display mt-6 text-5xl md:text-6xl font-bold leading-[1.05]" style={{ color: "#0F2E22" }}>
-              Buy Fresh
-              <span className="fd-title-gradient block">
-                Organic Food
-              </span>
-              Straight From Farmers
-            </h1>
+        .of-wrap {
+          position: relative;
+          z-index: 2;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 96px 32px 90px;
+          display: grid;
+          grid-template-columns: 1.05fr 0.95fr;
+          gap: 48px;
+          align-items: center;
+        }
+        @media (max-width: 880px) {
+          .of-wrap { grid-template-columns: 1fr; padding-top: 64px; }
+        }
 
-            <p className="mt-6 text-lg leading-8 max-w-xl" style={{ color: "#4B6357" }}>
-              Discover fresh vegetables, fruits, grains and dairy products
-              sourced directly from trusted farmers. No middlemen, fair prices,
-              and farm-fresh quality delivered to your doorstep.
-            </p>
+        .of-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 7px 16px 7px 8px;
+          background: #ffffffcc;
+          backdrop-filter: blur(6px);
+          border-radius: 999px;
+          box-shadow: 0 4px 14px rgba(15,36,23,0.08);
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--green-deep);
+          margin-bottom: 24px;
+        }
+        .of-badge-dot {
+          width: 22px; height: 22px; border-radius: 50%;
+          background: linear-gradient(135deg, var(--sun), var(--orange));
+          display: flex; align-items: center; justify-content: center;
+          font-size: 12px;
+        }
 
-            {/* Buttons */}
+        .of-h1 {
+          font-family: 'Space Grotesk', sans-serif;
+          font-weight: 700;
+          font-size: clamp(36px, 4.8vw, 60px);
+          line-height: 1.05;
+          letter-spacing: -0.02em;
+          margin: 0 0 22px;
+        }
+        .of-h1 .grad {
+          background: linear-gradient(100deg, var(--green) 10%, var(--sky) 55%, var(--violet) 100%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
 
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Link
-                to="/products"
-                className="fd-btn-primary inline-flex items-center gap-2 rounded-xl px-7 py-4 font-semibold"
-              >
-                <ShoppingBag size={20} />
-                Shop Now
-              </Link>
+        .of-sub {
+          font-size: 17.5px;
+          line-height: 1.65;
+          color: var(--sub);
+          max-width: 480px;
+          margin: 0 0 34px;
+        }
 
-              <Link
-                to="/register"
-                className="fd-btn-outline inline-flex items-center gap-2 rounded-xl px-7 py-4 font-semibold"
-              >
-                Become a Seller
-                <ArrowRight size={18} />
-              </Link>
-            </div>
+        .of-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 46px; }
+        .of-cta-primary, .of-cta-secondary {
+          font-family: inherit;
+          font-size: 15px;
+          font-weight: 600;
+          padding: 15px 26px;
+          border-radius: 999px;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          border: none;
+        }
+        .of-cta-primary {
+          background: linear-gradient(135deg, var(--green), var(--green-deep));
+          color: #fff;
+          box-shadow: 0 10px 24px rgba(22,163,74,0.35);
+        }
+        .of-cta-secondary {
+          background: #ffffffcc;
+          color: var(--ink);
+          box-shadow: 0 4px 14px rgba(15,36,23,0.08);
+        }
 
-            {/* Stats */}
+        .of-stats { display: flex; gap: 30px; flex-wrap: wrap; }
+        .of-stat-num {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 24px;
+          font-weight: 700;
+        }
+        .of-stat-label {
+          font-size: 12.5px;
+          color: var(--sub);
+          font-weight: 500;
+        }
 
-            <div className="mt-14 grid grid-cols-3 gap-6 pt-8" style={{ borderTop: "1px solid rgba(5, 150, 105, 0.18)" }}>
-              <div>
-                <h2 className="fd-display fd-stat-num text-3xl font-bold">500+</h2>
-                <p className="mt-1 text-sm uppercase tracking-wide" style={{ color: "#7A8D82" }}>
-                  Farmers
-                </p>
-              </div>
+        /* --- colorful floating cards --- */
+        .of-board { position: relative; height: 440px; }
+        .of-card {
+          position: absolute;
+          width: 250px;
+          background: #ffffffe6;
+          backdrop-filter: blur(10px);
+          border-radius: 20px;
+          padding: 20px 22px;
+          box-shadow: 0 16px 36px rgba(15,36,23,0.14);
+        }
+        .of-icon {
+          width: 40px; height: 40px; border-radius: 12px;
+          display: flex; align-items: center; justify-content: center;
+          margin-bottom: 14px;
+        }
+        .of-card-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 17px;
+          font-weight: 700;
+          margin: 0 0 4px;
+        }
+        .of-card-meta { font-size: 13px; color: var(--sub); margin: 0; }
+        .of-card-price {
+          margin-top: 12px;
+          display: inline-block;
+          font-size: 13px;
+          font-weight: 700;
+          padding: 5px 12px;
+          border-radius: 999px;
+        }
 
-              <div>
-                <h2 className="fd-display fd-stat-num text-3xl font-bold">1500+</h2>
-                <p className="mt-1 text-sm uppercase tracking-wide" style={{ color: "#7A8D82" }}>
-                  Products
-                </p>
-              </div>
+        .of-card--produce {
+          top: 0; left: 10px; z-index: 1;
+          border: 1px solid rgba(163,230,53,0.5);
+        }
+        .of-card--produce .of-icon { background: linear-gradient(135deg, var(--lime), var(--green)); }
+        .of-card--produce .of-card-price { background: #e9fbe0; color: var(--green-deep); }
 
-              <div>
-                <h2 className="fd-display fd-stat-num text-3xl font-bold">20K+</h2>
-                <p className="mt-1 text-sm uppercase tracking-wide" style={{ color: "#7A8D82" }}>
-                  Customers
-                </p>
-              </div>
-            </div>
+        .of-card--machine {
+          top: 150px; right: 0; z-index: 2;
+          border: 1px solid rgba(56,189,248,0.5);
+        }
+        .of-card--machine .of-icon { background: linear-gradient(135deg, var(--sky), #0284c7); }
+        .of-card--machine .of-card-price { background: #e3f6fe; color: #0369a1; }
+
+        .of-card--ai {
+          bottom: 0; left: 46px; width: 270px; z-index: 3;
+          border: 1px solid rgba(167,139,250,0.55);
+        }
+        .of-card--ai .of-icon { background: linear-gradient(135deg, var(--violet), #7c3aed); }
+        .of-ai-name {
+          font-size: 11.5px;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: #7c3aed;
+          margin-bottom: 4px;
+        }
+        .of-ai-msg { font-size: 13.5px; line-height: 1.55; margin: 0; color: var(--ink); }
+
+        .of-glow {
+          position: absolute;
+          inset: -6px;
+          border-radius: 26px;
+          background: linear-gradient(135deg, var(--sun), var(--orange));
+          opacity: 0.25;
+          filter: blur(14px);
+          z-index: -1;
+        }
+      `}</style>
+
+      <div className="blob blob1" />
+      <div className="blob blob2" />
+      <div className="blob blob3" />
+
+      <div className="of-wrap">
+        <div>
+          <div className="of-badge">
+            <span className="of-badge-dot">🌱</span>
+            AI-powered smart farming platform
           </div>
 
-          {/* Right */}
+          <h1 className="of-h1">
+            Fresh from the field,
+            <br />
+            <span className="grad">straight to your cart.</span>
+          </h1>
 
-          <div className="relative flex justify-center">
-            {/* Main Image */}
+          <p className="of-sub">
+            Organic Farm connects growers directly to buyers, puts an AI
+            agronomist in every farmer's pocket, and makes renting a tractor as
+            easy as ordering seed.
+          </p>
 
-            <div className="fd-image-frame w-full max-w-xl">
-              <div className="fd-image-inner">
-                <img
-                  src="/hero.png"
-                  alt="Organic Farming"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          <div className="of-ctas">
+            <Link to="/market-place" className="of-cta-primary">
+              Browse the marketplace
+              <span aria-hidden="true">→</span>
+            </Link>
+            <Link to="/farmer/inventory" className="of-cta-secondary">
+              List your farm
+            </Link>
+          </div>
+
+          <div className="of-stats">
+            <div>
+              <div className="of-stat-num">12,400+</div>
+              <div className="of-stat-label">verified farms</div>
             </div>
-
-            {/* Floating Card */}
-
-            <div className="fd-float-card absolute left-0 top-10 rounded-2xl p-5">
-              <div className="flex items-center gap-3">
-                <div className="fd-badge-icon rounded-full p-3 text-lg">🌱</div>
-
-                <div>
-                  <h3 className="font-semibold" style={{ color: "#0F2E22" }}>
-                    100% Organic
-                  </h3>
-                  <p className="text-sm" style={{ color: "#7A8D82" }}>
-                    Chemical Free
-                  </p>
-                </div>
-              </div>
+            <div>
+              <div className="of-stat-num">340</div>
+              <div className="of-stat-label">crop varieties</div>
             </div>
-
-            {/* Floating Rating */}
-
-            <div className="fd-float-card fd-delay absolute right-0 bottom-16 rounded-2xl p-5">
-              <div className="flex items-center gap-3">
-                <Star size={22} fill="#F59E0B" className="text-transparent" style={{ color: "#F59E0B" }} />
-
-                <div>
-                  <h3 className="fd-mono font-semibold" style={{ color: "#0F2E22" }}>
-                    4.9 Rating
-                  </h3>
-                  <p className="text-sm" style={{ color: "#7A8D82" }}>
-                    Trusted by Buyers
-                  </p>
-                </div>
-              </div>
+            <div>
+              <div className="of-stat-num">48</div>
+              <div className="of-stat-label">states covered</div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-};
 
-export default Hero;
+        <div className="of-board">
+          <div className="of-card of-card--produce">
+            <div className="of-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 21C7 21 4 17.5 4 12.5C4 7.8 7.5 4 12 3C12.6 8 16 8.4 16 13C16 17.5 16 21 12 21Z"
+                  fill="#fff"
+                />
+              </svg>
+            </div>
+            <h3 className="of-card-title">Heirloom tomatoes</h3>
+            <p className="of-card-meta">Sunridge Farm · Sonoma, CA</p>
+            <span className="of-card-price">$4.20 / lb</span>
+          </div>
+
+          <div className="of-card of-card--machine">
+            <div className="of-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="12" width="9" height="6" rx="1.5" fill="#fff" />
+                <circle cx="7" cy="19" r="2" fill="#fff" />
+                <circle cx="16" cy="19" r="2.6" fill="#fff" />
+                <path d="M12 14H17L20 17H12V14Z" fill="#fff" />
+              </svg>
+            </div>
+            <h3 className="of-card-title">John Deere 5075E</h3>
+            <p className="of-card-meta">Available Thu – Sun</p>
+            <span className="of-card-price">$180 / day</span>
+          </div>
+
+          <div className="of-card of-card--ai">
+            <div className="of-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="3" fill="#fff" />
+                <path
+                  d="M12 3V6M12 18V21M3 12H6M18 12H21M5.6 5.6L7.8 7.8M16.2 16.2L18.4 18.4M5.6 18.4L7.8 16.2M16.2 7.8L18.4 5.6"
+                  stroke="#fff"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <div className="of-ai-name">AI agronomist</div>
+            <p className="of-ai-msg">
+              Soil moisture is low in Field 3 — irrigate before Thursday's heat.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

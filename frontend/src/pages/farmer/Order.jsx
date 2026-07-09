@@ -178,7 +178,7 @@ const Orders = () => {
             onClick={() => { setOrderType("machine"); setFilter("all"); }}
             className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center gap-2 text-sm ${
               orderType === "machine"
-                ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/10"
+                ? "bg-red-400 text-white shadow-md shadow-emerald-600/10"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >

@@ -180,7 +180,7 @@ const Inventory = () => {
             onClick={() => setActiveTab("machines")}
             className={`px-6 py-2.5 rounded-xl font-bold transition-all text-xs uppercase tracking-wider ${
               activeTab === "machines"
-                ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/10"
+                ? "bg-red-400 text-white shadow-md shadow-emerald-600/10"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >

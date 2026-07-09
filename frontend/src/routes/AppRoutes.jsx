@@ -6,15 +6,15 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
-import Products from "../components/product/Products";
 import ProductDetails from "../components/product/ProductDetails";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
-import Machines from "../pages/machine/Machines";
 import MachineDetails from "../pages/machine/MachineDetails";
-
 import Marketplace from "../pages/buyer/MarketPlace";
+
+
 import ProtectedRoute from "./ProtectedRoute";
+
 
 import BuyerRoute from "./BuyerRoute";
 import BuyerDashboard from "../pages/buyer/BuyerDashboard";
@@ -27,9 +27,9 @@ import OrderSuccess from "../components/order/OrderSuccess";
 import BookMachine from "../pages/machine/BookMachine";
 
 
+
 import FarmerRoute from "./FarmerRoute";
 import Dashboard from "../pages/farmer/Dashboard";
-
 import EditProduct from "../pages/farmer/EditProduct";
 import AddProduct from "../pages/farmer/AddProduct";
 import FarmerProfile from "../pages/farmer/FarmerProfile";
@@ -53,11 +53,9 @@ const AppRoutes = () => {
 
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
-        <Route path="/machines" element={<Machines />} />
         <Route path="/machines/:id" element={<MachineDetails />} />
-        <Route path="/market-place" element={<Marketplace/>}/>
+        <Route path="/market-place" element={<Marketplace />} />
 
         <Route element={<ProtectedRoute />}>
           <Route
@@ -73,7 +71,6 @@ const AppRoutes = () => {
             <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/machines/book/:id" element={<BookMachine />} />
-            
           </Route>
 
           <Route element={<FarmerRoute />}>
