@@ -100,8 +100,6 @@ async function placeOrder(req, res) {
       },
     ]);
 
-
-
     await createNotification({
       receiver: farmerId,
       sender: req.user._id,
@@ -266,11 +264,20 @@ async function updateOrderStatus(req, res) {
     order.orderStatus = status;
     await order.save();
 
+    const statusMessages = {
+      placed: "Your order has been placed successfully.",
+      accepted: "Your order has been accepted.",
+      packed: "Your order has been packed and is ready for shipment.",
+      shipped: "Your order is on the way.",
+      delivered: "Your order has been delivered successfully.",
+      cancelled: "Your order has been cancelled.",
+    };
+
     await createNotification({
       receiver: order.buyer,
       sender: req.user._id,
-      title: "Order Accepted",
-      message: `Your order #${order.orderNumber} has been accepted.`,
+      title: `Order ${order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}`,
+      message: statusMessages[order.orderStatus],
       type: "order",
       referenceId: order._id,
     });

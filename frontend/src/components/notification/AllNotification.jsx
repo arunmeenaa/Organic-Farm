@@ -81,8 +81,10 @@ const AllNotification = () => {
             {notifications.map((notification) => (
               <div
                 key={notification._id}
-                className={`bg-white rounded-2xl shadow p-6 flex gap-5 ${
-                  !notification.isRead ? "border-l-4 border-green-600" : ""
+                className={` rounded-2xl shadow p-6 flex gap-5 ${
+                  !notification.isRead
+                    ? " bg-emerald-100 border-l-4 border-green-600 "
+                    : "bg-white"
                 }`}
               >
                 <div className="bg-green-50 h-12 w-12 rounded-xl flex items-center justify-center">

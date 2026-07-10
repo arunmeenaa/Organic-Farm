@@ -166,7 +166,7 @@ const Navbar = () => {
       <FontImport />
       <header className="fd-nav sticky top-0 z-50 fd-header">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="h-20 flex items-center justify-between">
+          <div className=" h-20 flex items-center justify-between">
             {/* Logo */}
             <Link
               to={
