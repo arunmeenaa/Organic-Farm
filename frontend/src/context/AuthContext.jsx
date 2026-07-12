@@ -1,53 +1,62 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
+import { loginUser, getCurrentUser } from "../services/auth.service";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+  async function checkAuth() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
     }
+    try {
+      const response = await getCurrentUser();
 
-    setLoading(false);
+      setUser(response.data.user);
+      return response.data.user;
+    } catch (error) {
+      localStorage.removeItem("token");
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    checkAuth();
   }, []);
 
-  const login = ({ token, user }) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-
-    setToken(token);
-    setUser(user);
+  const login = async function login(data) {
+    try {
+      console.log("Login data:", data);
+      const response = await loginUser(data);
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      return await checkAuth();
+    } catch (err) {
+      throw err;
+    }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    setToken(null);
     setUser(null);
+    setLoading(false);
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
         loading,
-        isAuthenticated: !!token,
+        isAuthenticated: !!user,
 
         login,
         logout,
-
-        setUser,
-        setToken,
+        refreshUser: checkAuth,
       }}
     >
       {children}

@@ -13,11 +13,8 @@ const initializeSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("User Connected:", socket.id);
-
     socket.on("register", (userId) => {
       userSockets.set(userId, socket.id);
-      console.log(`User ${userId} registered`);
     });
 
     socket.on("disconnect", () => {
@@ -27,8 +24,6 @@ const initializeSocket = (server) => {
           break;
         }
       }
-
-      console.log("User Disconnected");
     });
   });
 };

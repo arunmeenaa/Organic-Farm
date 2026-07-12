@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Leaf, Mail, Lock, ArrowRight, Sprout, Users, ShoppingBasket } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Leaf,
+  Mail,
+  Lock,
+  ArrowRight,
+  Sprout,
+  Users,
+  ShoppingBasket,
+} from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../services/auth.service";
@@ -40,17 +50,12 @@ const Login = () => {
     try {
       setLoading(true);
 
-      const { data } = await loginUser({
+      const user = await login({
         email: formData.email,
         password: formData.password,
       });
 
-      login({
-        token: data.token,
-        user: data.user,
-      });
-
-      toast.success(`Welcome back, ${data.user.name}!`);
+      toast.success(`Welcome back, ${user.name}!`);
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
     } finally {
@@ -97,7 +102,9 @@ const Login = () => {
                 <Sprout size={18} />
               </div>
               <h3 className="text-3xl font-bold text-emerald-700">500+</h3>
-              <p className="text-emerald-900/50 mt-1 text-sm font-medium">Farmers</p>
+              <p className="text-emerald-900/50 mt-1 text-sm font-medium">
+                Farmers
+              </p>
             </div>
 
             <div className="bg-white/70 backdrop-blur-xl border border-emerald-900/5 rounded-2xl shadow-[0_12px_24px_-12px_rgba(5,150,105,0.25)] p-6 hover:-translate-y-1 transition-transform">
@@ -105,7 +112,9 @@ const Login = () => {
                 <ShoppingBasket size={18} />
               </div>
               <h3 className="text-3xl font-bold text-emerald-700">1500+</h3>
-              <p className="text-emerald-900/50 mt-1 text-sm font-medium">Products</p>
+              <p className="text-emerald-900/50 mt-1 text-sm font-medium">
+                Products
+              </p>
             </div>
 
             <div className="bg-white/70 backdrop-blur-xl border border-emerald-900/5 rounded-2xl shadow-[0_12px_24px_-12px_rgba(5,150,105,0.25)] p-6 hover:-translate-y-1 transition-transform">
@@ -113,7 +122,9 @@ const Login = () => {
                 <Users size={18} />
               </div>
               <h3 className="text-3xl font-bold text-emerald-700">20K+</h3>
-              <p className="text-emerald-900/50 mt-1 text-sm font-medium">Buyers</p>
+              <p className="text-emerald-900/50 mt-1 text-sm font-medium">
+                Buyers
+              </p>
             </div>
           </div>
         </div>
@@ -124,7 +135,9 @@ const Login = () => {
             {/* Mobile-only logo */}
             <div className="flex lg:hidden items-center justify-center gap-2 text-emerald-700 mb-6">
               <Leaf size={28} />
-              <span className="text-xl font-bold text-emerald-950">Organic Farm</span>
+              <span className="text-xl font-bold text-emerald-950">
+                Organic Farm
+              </span>
             </div>
 
             <div className="text-center">
@@ -135,7 +148,9 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="mt-10 space-y-6">
               {/* Email */}
               <div>
-                <label className="font-medium text-emerald-950 text-sm">Email</label>
+                <label className="font-medium text-emerald-950 text-sm">
+                  Email
+                </label>
 
                 <div className="mt-2 flex items-center gap-2 border border-emerald-900/10 bg-white/60 rounded-xl px-4 focus-within:ring-2 focus-within:ring-emerald-500/40 focus-within:border-emerald-500/50 transition-all">
                   <Mail className="text-emerald-900/30 shrink-0" size={20} />
@@ -153,7 +168,9 @@ const Login = () => {
 
               {/* Password */}
               <div>
-                <label className="font-medium text-emerald-950 text-sm">Password</label>
+                <label className="font-medium text-emerald-950 text-sm">
+                  Password
+                </label>
 
                 <div className="mt-2 flex items-center gap-2 border border-emerald-900/10 bg-white/60 rounded-xl px-4 focus-within:ring-2 focus-within:ring-emerald-500/40 focus-within:border-emerald-500/50 transition-all">
                   <Lock className="text-emerald-900/30 shrink-0" size={20} />
@@ -171,7 +188,9 @@ const Login = () => {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="text-emerald-900/30 hover:text-emerald-700 transition-colors shrink-0"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>

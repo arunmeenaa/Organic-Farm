@@ -70,4 +70,17 @@ async function login(req, res) {
   }
 }
 
-module.exports = { register, login};
+async function getCurrentUser(req, res) {
+  try {
+    return res.status(200).json({
+      success: true,
+      user: req.user,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+module.exports = { register, login,getCurrentUser};
