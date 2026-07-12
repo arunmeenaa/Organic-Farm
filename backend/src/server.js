@@ -1,10 +1,14 @@
-const app = require('../src/app');
-const PORT = process.env.PORT || 3000;
+const app = require("../src/app");
 const db = require("./config/db");
 
-db(); 
+const http = require("http");
+const server = http.createServer(app);
+const { initializeSocket } = require("./socket");
 
+const PORT = process.env.PORT || 3000;
+initializeSocket(server);
+db();
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
 });

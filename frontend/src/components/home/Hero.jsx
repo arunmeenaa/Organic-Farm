@@ -364,7 +364,7 @@ export default function Home() {
                 ))}
               </ul>
               <Link
-                href="/market-place"
+                to="/market-place"
                 className="inline-flex items-center gap-2 text-primary font-semibold hover:text-emerald-700 transition-colors"
               >
                 Explore local produce <ArrowUpRight size={18} />

@@ -1,16 +1,13 @@
 const Notification = require("../models/notification.model");
+const { sendNotification } = require("../socket");
 
-/**
- * Create a notification
- * @param {Object} data
- */
 exports.createNotification = async ({
   receiver,
-  sender = null,
+  sender,
   title,
   message,
   type,
-  referenceId = null,
+  referenceId,
 }) => {
   try {
     const notification = await Notification.create({
@@ -22,9 +19,14 @@ exports.createNotification = async ({
       referenceId,
     });
 
-    return notification;
+    const populatedNotification = await Notification.findById(notification._id)
+      .populate("sender", "name");
+
+    sendNotification(receiver, populatedNotification);
+
+    return populatedNotification;
   } catch (err) {
-    console.error("Notification Error:", err.message);
+    console.error(err);
     return null;
   }
 };

@@ -152,7 +152,7 @@ const BuyerDashboard = () => {
           </div>
 
           <Link
-            to="/products"
+            to="/market-place"
             className="fd-btn-primary px-6 py-3 rounded-xl flex items-center gap-2 font-semibold"
           >
             <Search size={20} />
@@ -239,7 +239,7 @@ const BuyerDashboard = () => {
 
               <div className="space-y-4">
                 <Link
-                  to="/products"
+                  to="/market-place"
                   className="fd-quick-action-0 flex items-center justify-between rounded-xl p-4"
                 >
                   <span className="flex items-center gap-3">
