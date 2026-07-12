@@ -13,8 +13,8 @@ import MachineDetails from "../pages/machine/MachineDetails";
 import Marketplace from "../pages/buyer/MarketPlace";
 
 import ProtectedRoute from "./ProtectedRoute";
-import AllNotification from "../components/notification/AllNotification"
-
+import AllNotification from "../components/notification/AllNotification";
+import AIAssistant from "../pages/AIAssistant";
 
 import BuyerRoute from "./BuyerRoute";
 import BuyerDashboard from "../pages/buyer/BuyerDashboard";
@@ -42,9 +42,8 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-
         <Route element={<PublicRoute />}>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
@@ -60,6 +59,7 @@ const AppRoutes = () => {
             path="/machine-bookings/:id"
             element={<MachineBookingDetails />}
           />
+          <Route path="/ai" element={<AIAssistant />} />
           <Route path="/notifications" element={<AllNotification />} />
           <Route element={<BuyerRoute />}>
             <Route path="/buyer/dashboard" element={<BuyerDashboard />} />

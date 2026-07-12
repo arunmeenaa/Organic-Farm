@@ -27,5 +27,6 @@ app.use("/api/machines", machineRoutes)
 app.use("/api/machine-bookings", machineBookingRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/ai", require("./routes/ai.routes"));
 
 module.exports = app;

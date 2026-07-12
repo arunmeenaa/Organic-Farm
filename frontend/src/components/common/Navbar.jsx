@@ -15,8 +15,8 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../context/NotificationContext";
 import NotificationDropdown from "../notification/NotificationDropdown";
-// Same glassmorphic approach as Hero, now on an all-green gradient system
-// (emerald → lime, amber accent) instead of indigo — reads as "organic farm".
+
+// Same glassmorphic approach as Hero, on the emerald → lime gradient system.
 const FontImport = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
@@ -104,6 +104,17 @@ const FontImport = () => (
       color: #0F2E22;
     }
 
+    .fd-notif-btn {
+      color: #0F2E22;
+      transition: color 0.15s ease;
+    }
+    .fd-notif-btn:hover { color: #059669; }
+
+    .fd-notif-badge {
+      background: #E11D48;
+      color: #FFFFFF;
+    }
+
     .fd-dropdown {
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(16px);
@@ -127,19 +138,34 @@ const FontImport = () => (
       transition: color 0.15s ease;
     }
     .fd-mobile-link:hover { color: #059669; }
+
+    .fd-mobile-notif-row {
+      color: #0F2E22;
+      border: 1px solid rgba(5, 150, 105, 0.14);
+      background: rgba(5, 150, 105, 0.05);
+      transition: background 0.15s ease;
+    }
+    .fd-mobile-notif-row:hover { background: rgba(5, 150, 105, 0.1); }
   `}</style>
 );
 
 const Navbar = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
-  const { totalItems } = useCart();
-
-  const { user, isAuthenticated, logout } = useAuth();
   const [notificationMenu, setNotificationMenu] = useState(false);
+  const [mobileNotificationMenu, setMobileNotificationMenu] = useState(false);
+
+  const { totalItems } = useCart();
+  const { user, isAuthenticated, logout } = useAuth();
   const { unreadCount } = useNotifications();
 
   const navigate = useNavigate();
+
+  const homeLink = !isAuthenticated
+    ? "/"
+    : user?.role === "buyer"
+      ? "/buyer/dashboard"
+      : "/farmer/dashboard";
 
   const handleLogout = () => {
     logout();
@@ -147,6 +173,8 @@ const Navbar = () => {
     setMobileMenu(false);
     navigate("/", { replace: true });
   };
+
+  
   useEffect(() => {
     const resize = () => {
       if (window.innerWidth >= 1024) {
@@ -158,71 +186,59 @@ const Navbar = () => {
 
     return () => window.removeEventListener("resize", resize);
   }, []);
+
   const activeClass = "fd-link fd-link-active";
   const linkClass = "fd-link py-1";
+
+  const notifBadgeLabel = unreadCount > 9 ? "9+" : unreadCount;
 
   return (
     <>
       <FontImport />
       <header className="fd-nav sticky top-0 z-50 fd-header">
         <div className="max-w-7xl mx-auto px-6">
-          <div className=" h-20 flex items-center justify-between">
+          <div className="h-20 flex items-center justify-between">
             {/* Logo */}
             <Link
-              to={
-                !isAuthenticated
-                  ? "/"
-                  : user?.role === "buyer"
-                    ? "/buyer/dashboard"
-                    : "/farmer/dashboard"
-              }
+              to={homeLink}
               className="fd-wordmark fd-wordmark-gradient flex items-center gap-2 text-2xl font-bold"
             >
               <Leaf size={30} style={{ color: "#84CC16" }} />
-              <span>Organic Farm</span>
+              <span>GreenHarvest</span>
             </Link>
 
             {/* Desktop Navigation */}
 
             <nav className="hidden lg:flex items-center gap-8">
               <NavLink
-                to={
-                  !isAuthenticated
-                    ? "/"
-                    : user?.role === "buyer"
-                      ? "/buyer/dashboard"
-                      : "/farmer/dashboard"
-                }
+                to={homeLink}
                 className={({ isActive }) =>
                   isActive ? activeClass : linkClass
                 }
               >
                 Home
               </NavLink>
+
               {(!isAuthenticated || user?.role === "buyer") && (
-                <>
-                  <NavLink
-                    to="/market-place"
-                    className={({ isActive }) =>
-                      isActive ? activeClass : linkClass
-                    }
-                  >
-                    Market Place
-                  </NavLink>
-                </>
+                <NavLink
+                  to="/market-place"
+                  className={({ isActive }) =>
+                    isActive ? activeClass : linkClass
+                  }
+                >
+                  Market Place
+                </NavLink>
               )}
 
               {isAuthenticated && user?.role === "buyer" && (
-                <>
-                  <NavLink
-                    to="/orders"
-                    className={({ isActive }) =>
-                      isActive ? activeClass : linkClass
-                    }
-                  >
-                    My Orders
-                  </NavLink>
-                </>
+                <NavLink
+                  to="/orders"
+                  className={({ isActive }) =>
+                    isActive ? activeClass : linkClass
+                  }
+                >
+                  My Orders
+                </NavLink>
               )}
 
               {isAuthenticated && user?.role === "farmer" && (
@@ -248,51 +264,17 @@ const Navbar = () => {
               )}
 
               <NavLink
-                to="/about"
+                to="/ai"
                 className={({ isActive }) =>
                   isActive ? activeClass : linkClass
                 }
               >
-                About
+                Ai Assistant
               </NavLink>
             </nav>
 
-            {/* Search */}
+            
 
-            <div className="fd-search hidden md:flex items-center rounded-full px-4 py-2 w-80">
-              <Search size={18} style={{ color: "#8FA895" }} />
-
-              <input
-                type="text"
-                placeholder="Search organic products..."
-                className="bg-transparent outline-none w-full px-3 text-sm"
-                style={{ color: "#0F2E22" }}
-              />
-            </div>
-
-            {/* Right Side */}
-            {isAuthenticated && (
-              <div className="relative">
-                <button
-                  onClick={() => setNotificationMenu(!notificationMenu)}
-                  className="relative"
-                >
-                  <Bell size={24} />
-
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">
-                      {unreadCount > 9 ? "9+" : unreadCount}
-                    </span>
-                  )}
-                </button>
-
-                {notificationMenu && (
-                  <NotificationDropdown
-                    onClose={() => setNotificationMenu(false)}
-                  />
-                )}
-              </div>
-            )}
             <div className="hidden lg:flex items-center gap-5">
               {!isAuthenticated && (
                 <>
@@ -315,6 +297,28 @@ const Navbar = () => {
 
               {isAuthenticated && (
                 <>
+                  <div className="relative">
+                    <button
+                      onClick={() => setNotificationMenu(!notificationMenu)}
+                      className="fd-notif-btn relative"
+                      aria-label="Notifications"
+                    >
+                      <Bell size={22} />
+
+                      {unreadCount > 0 && (
+                        <span className="fd-notif-badge absolute -top-2 -right-2 rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
+                          {notifBadgeLabel}
+                        </span>
+                      )}
+                    </button>
+
+                    {notificationMenu && (
+                      <NotificationDropdown
+                        onClose={() => setNotificationMenu(false)}
+                      />
+                    )}
+                  </div>
+
                   {user?.role === "buyer" && (
                     <Link
                       to="/cart"
@@ -391,52 +395,70 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile */}
+            <div className="flex items-center gap-4 lg:hidden">
+              {isAuthenticated && (
+                <div className="relative">
+                  <button
+                    onClick={() => setNotificationMenu(!notificationMenu)}
+                    className="fd-notif-btn relative"
+                    aria-label="Notifications"
+                  >
+                    <Bell size={24} />
 
-            <button
-              onClick={() => setMobileMenu(!mobileMenu)}
-              className="lg:hidden"
-              style={{ color: "#059669" }}
-            >
-              {mobileMenu ? <X size={28} /> : <Menu size={28} />}
-            </button>
+                    {unreadCount > 0 && (
+                      <span className="fd-notif-badge absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold">
+                        {notifBadgeLabel}
+                      </span>
+                    )}
+                  </button>
+
+                  {notificationMenu && (
+                    <NotificationDropdown
+                      onClose={() => setNotificationMenu(false)}
+                    />
+                  )}
+                </div>
+              )}
+
+              <button
+                onClick={() => setMobileMenu(!mobileMenu)}
+                style={{ color: "#059669" }}
+              >
+                {mobileMenu ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Mobile Drawer */}
 
         {mobileMenu && (
           <div className="fd-mobile-drawer lg:hidden">
             <div className="p-5 flex flex-col gap-5">
               <Link
                 className="fd-mobile-link font-medium"
-                to={
-                  !isAuthenticated
-                    ? "/"
-                    : user?.role === "buyer"
-                      ? "/buyer/dashboard"
-                      : "/farmer/dashboard"
-                }
+                to={homeLink}
                 onClick={() => setMobileMenu(false)}
               >
                 Home
               </Link>
 
+              {(!isAuthenticated || user?.role === "buyer") && (
+                <Link
+                  to="/market-place"
+                  className="fd-mobile-link"
+                  onClick={() => setMobileMenu(false)}
+                >
+                  Market Place
+                </Link>
+              )}
+
               {!isAuthenticated && (
                 <>
                   <Link
-                    to="/products"
+                    to="/ai"
                     className="fd-mobile-link"
                     onClick={() => setMobileMenu(false)}
                   >
-                    Products
-                  </Link>
-                  <Link
-                    to="/about"
-                    className="fd-mobile-link"
-                    onClick={() => setMobileMenu(false)}
-                  >
-                    About
+                   Ai Assistant
                   </Link>
                   <Link
                     to="/login"
@@ -466,13 +488,6 @@ const Navbar = () => {
                     Dashboard
                   </NavLink>
                   <Link
-                    to="/products"
-                    className="fd-mobile-link"
-                    onClick={() => setMobileMenu(false)}
-                  >
-                    Products
-                  </Link>
-                  <Link
                     to="/orders"
                     className="fd-mobile-link"
                     onClick={() => setMobileMenu(false)}
@@ -492,6 +507,13 @@ const Navbar = () => {
                     onClick={() => setMobileMenu(false)}
                   >
                     Profile
+                  </Link>
+                  <Link
+                    to="/about"
+                    className="fd-mobile-link"
+                    onClick={() => setMobileMenu(false)}
+                  >
+                    About
                   </Link>
                   <button
                     onClick={handleLogout}
@@ -514,19 +536,11 @@ const Navbar = () => {
                     Dashboard
                   </NavLink>
                   <Link
-                    to="/farmer/products"
+                    to="/farmer/inventory"
                     className="fd-mobile-link"
                     onClick={() => setMobileMenu(false)}
                   >
-                    My Products
-                  </Link>
-
-                  <Link
-                    to="/farmer/products/add"
-                    className="fd-mobile-link"
-                    onClick={() => setMobileMenu(false)}
-                  >
-                    Add Product
+                    My Inventory
                   </Link>
                   <Link
                     to="/farmer/orders"
@@ -541,6 +555,13 @@ const Navbar = () => {
                     onClick={() => setMobileMenu(false)}
                   >
                     Profile
+                  </Link>
+                  <Link
+                    to="/about"
+                    className="fd-mobile-link"
+                    onClick={() => setMobileMenu(false)}
+                  >
+                    About
                   </Link>
                   <button
                     onClick={handleLogout}
