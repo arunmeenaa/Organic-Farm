@@ -1,5 +1,25 @@
 const { chatWithAI } = require("../services/ai.service");
+const { getCurrentWeather } = require("../services/weather.service");
 
+function isWeatherQuestion(message) {
+  const keywords = [
+    "weather",
+    "rain",
+    "temperature",
+    "forecast",
+    "humidity",
+    "wind",
+    "climate",
+    "hot",
+    "cold",
+    "irrigation",
+    "irrigate",
+  ];
+
+  const text = message.toLowerCase();
+
+  return keywords.some((keyword) => text.includes(keyword));
+}
 async function chat(req, res) {
   try {
     const { message } = req.body;
@@ -11,7 +31,13 @@ async function chat(req, res) {
       });
     }
 
-    const reply = await chatWithAI(message, req.user);
+    let weather = null;
+
+    if (isWeatherQuestion(message)) {
+      weather = await getCurrentWeather(req.user.location);
+    }
+
+    const reply = await chatWithAI(message, req.user, weather);
 
     return res.status(200).json({
       success: true,

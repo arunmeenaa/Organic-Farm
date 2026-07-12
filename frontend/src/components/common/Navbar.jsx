@@ -509,11 +509,11 @@ const Navbar = () => {
                     Profile
                   </Link>
                   <Link
-                    to="/about"
+                    to="/ai"
                     className="fd-mobile-link"
                     onClick={() => setMobileMenu(false)}
                   >
-                    About
+                    Ai Assistant
                   </Link>
                   <button
                     onClick={handleLogout}
