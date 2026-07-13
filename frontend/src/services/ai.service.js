@@ -5,3 +5,7 @@ export const sendMessage = (message) => {
     message,
   });
 };
+
+export const getWeatherAdvice = () => {
+  return api.get("/dashboard/farmer/weather-advice");
+};

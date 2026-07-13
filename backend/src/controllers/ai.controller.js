@@ -20,6 +20,25 @@ function isWeatherQuestion(message) {
 
   return keywords.some((keyword) => text.includes(keyword));
 }
+
+function isPureWeatherQuestion(message) {
+  const text = message.toLowerCase().trim();
+
+  const keywords = [
+    "weather",
+    "temperature",
+    "humidity",
+    "wind",
+    "forecast",
+    "rain",
+    "today weather",
+    "current weather",
+    "weather update",
+  ];
+
+  return keywords.some((keyword) => text.includes(keyword));
+}
+
 async function chat(req, res) {
   try {
     const { message } = req.body;
@@ -33,11 +52,31 @@ async function chat(req, res) {
 
     let weather = null;
 
-    if (isWeatherQuestion(message)) {
-      weather = await getCurrentWeather(req.user.location);
-    }
+if (isWeatherQuestion(message)) {
+  weather = await getCurrentWeather(req.user.location);
+}
 
-    const reply = await chatWithAI(message, req.user, weather);
+
+if (weather && isPureWeatherQuestion(message)) {
+  return res.status(200).json({
+    success: true,
+    reply: `
+🌤 Weather Update for ${weather.city}
+
+🌡 Temperature: ${weather.temperature}°C
+☁ Condition: ${weather.description}
+💧 Humidity: ${weather.humidity}%
+💨 Wind: ${weather.windSpeed} m/s
+`,
+  });
+}
+
+const reply = await chatWithAI(message, req.user, weather);
+
+return res.status(200).json({
+  success: true,
+  reply,
+});
 
     return res.status(200).json({
       success: true,

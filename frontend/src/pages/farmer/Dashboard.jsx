@@ -10,13 +10,17 @@ import {
   CheckCircle,
   Sprout,
   ArrowUpRight,
+  Thermometer,
+  Droplets,
+  Wind,
+  MapPin,
+  Sparkles,
 } from "lucide-react";
+
 import { getFarmerDashboard } from "../../services/dashboard.service";
+import { getWeatherAdvice } from "../../services/ai.service";
 import toast from "react-hot-toast";
 
-// Matches Navbar/Hero/MyProducts/Orders/AddProduct/FarmerOrderCard/
-// FarmerOrderDetails/OrderStatusTimeline: glassmorphism over an emerald →
-// lime gradient mesh (swapped from the earlier indigo version), amber accent.
 const FontImport = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -80,53 +84,112 @@ const FontImport = () => (
     }
     .fd-tile:hover { transform: translateY(-3px); box-shadow: 0 16px 32px -16px rgba(15, 46, 34, 0.35); }
 
-    .fd-badge-active { background: rgba(5, 150, 105, 0.12); color: #059669; }
-    .fd-badge-inactive { background: rgba(225, 29, 72, 0.1); color: #E11D48; }
-    .fd-badge-order { background: rgba(245, 158, 11, 0.14); color: #B45309; }
+    .fd-badge-active   { background: rgba(5, 150, 105, 0.12); color: #059669; }
+    .fd-badge-inactive { background: rgba(225, 29, 72, 0.1);  color: #E11D48; }
+    .fd-badge-order    { background: rgba(245, 158, 11, 0.14); color: #B45309; }
 
+    /* Full-page shimmer skeleton */
     .fd-skel {
       background: linear-gradient(90deg, #E3EFE4 25%, #F4F9F2 37%, #E3EFE4 63%);
       background-size: 400% 100%;
       animation: fd-shimmer 1.4s ease infinite;
       border-radius: 12px;
     }
+
+    /* Inline skeleton for weather / advice — narrower pulse */
+    .fd-skel-inline {
+      background: linear-gradient(90deg, rgba(5,150,105,0.08) 25%, rgba(5,150,105,0.03) 50%, rgba(5,150,105,0.08) 75%);
+      background-size: 400% 100%;
+      animation: fd-shimmer 1.6s ease infinite;
+      border-radius: 8px;
+    }
+
     @keyframes fd-shimmer {
-      0% { background-position: 100% 50%; }
-      100% { background-position: 0 50%; }
+      0%   { background-position: 100% 50%; }
+      100% { background-position: 0   50%; }
     }
 
     .fd-stock-track { background: #E3EFE4; border-radius: 999px; overflow: hidden; }
-    .fd-stock-fill {
+    .fd-stock-fill  {
       background: linear-gradient(90deg, #059669, #84CC16);
       height: 100%;
       border-radius: 999px;
     }
+
+    .fd-weather-pill {
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(5, 150, 105, 0.16);
+    }
   `}</style>
 );
 
+// ── Skeleton shown while weather/advice loads ────────────────────────────────
+const WeatherSkeleton = () => (
+  <div className="flex items-center gap-3 mt-4">
+    <div className="fd-skel-inline h-5 w-24" />
+    <div className="fd-skel-inline h-5 w-28" />
+    <div className="fd-skel-inline h-5 w-20" />
+    <div className="fd-skel-inline h-5 w-16" />
+  </div>
+);
+
+const AdviceSkeleton = () => (
+  <div className="p-6 grid sm:grid-cols-2 gap-3">
+    {[1, 2, 3, 4].map((i) => (
+      <div key={i} className="fd-skel-inline h-10" />
+    ))}
+  </div>
+);
+// ────────────────────────────────────────────────────────────────────────────
+
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  // ── Stage 1: farmer data (stats / products / orders) ──
   const [stats, setStats] = useState(null);
   const [recentProducts, setRecentProducts] = useState([]);
   const [recentOrders, setRecentOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // full-page skeleton
 
+  // ── Stage 2: external API data (weather / advice) ──────
+  const [weather, setWeather] = useState(null);
+  const [advice, setAdvice] = useState([]);
+  const [weatherLoading, setWeatherLoading] = useState(true); // inline skeletons
+
+  // ── Stage 1: fetch farmer data first ────────────────────
   const fetchDashboard = async () => {
     try {
       const { data } = await getFarmerDashboard();
-
       setStats(data.stats);
       setRecentProducts(data.recentProducts);
       setRecentOrders(data.recentOrders);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to load dashboard");
     } finally {
-      setLoading(false);
+      setLoading(false); // page becomes visible immediately after this
+    }
+  };
+
+  // ── Stage 2: fetch weather + advice after farmer data is ready ──
+  const fetchWeatherAdvice = async () => {
+    setWeatherLoading(true);
+    try {
+      const { data } = await getWeatherAdvice();
+      setWeather(data.weather);
+      setAdvice(data.advice);
+    } catch (err) {
+      // Non-critical — weather/advice failure shouldn't break the dashboard
+      console.error("Weather/advice fetch failed:", err);
+    } finally {
+      setWeatherLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDashboard();
+    // Kick off farmer data first; when it resolves, then fetch weather+advice
+    fetchDashboard().then(() => fetchWeatherAdvice());
   }, []);
 
   const todayLabel = new Date().toLocaleDateString("en-IN", {
@@ -166,6 +229,7 @@ const Dashboard = () => {
     },
   ];
 
+  // ── Full-page skeleton only while Stage 1 is loading ────
   if (loading) {
     return (
       <div className="fd-root min-h-screen">
@@ -191,19 +255,82 @@ const Dashboard = () => {
     <div className="fd-root min-h-screen">
       <FontImport />
       <div className="max-w-7xl mx-auto px-6 py-10">
-        {/* Masthead */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10 pb-6" style={{ borderBottom: "1px solid rgba(5, 150, 105, 0.18)" }}>
-          <div>
-            <div className="flex items-center gap-2 mb-2 text-xs uppercase tracking-[0.2em] font-semibold" style={{ color: "#B45309" }}>
+        {/* ── Masthead ── */}
+        <div
+          className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10 pb-6"
+          style={{ borderBottom: "1px solid rgba(5, 150, 105, 0.18)" }}
+        >
+          <div className="flex-1">
+            <div
+              className="flex items-center gap-2 mb-2 text-xs uppercase tracking-[0.2em] font-semibold"
+              style={{ color: "#B45309" }}
+            >
               <Sprout size={14} />
               <span>{todayLabel}</span>
             </div>
+
             <h1 className="fd-display fd-title-gradient text-4xl md:text-5xl font-bold">
               Farmer Dashboard
             </h1>
+
             <p className="mt-2" style={{ color: "#5B7A6A" }}>
               Welcome back! Here's an overview of your farm.
             </p>
+
+            {/* Weather strip — shows skeleton while Stage 2 loads */}
+            <div className="mt-4">
+              {weatherLoading ? (
+                <WeatherSkeleton />
+              ) : weather ? (
+                <div className="fd-weather-pill inline-flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5 rounded-2xl">
+                  <div className="flex items-center gap-2">
+                    <Thermometer size={15} style={{ color: "#059669" }} />
+                    <span
+                      className="fd-mono font-semibold text-sm"
+                      style={{ color: "#0F2E22" }}
+                    >
+                      {weather.temperature}°C
+                    </span>
+                    <span
+                      className="text-sm capitalize"
+                      style={{ color: "#5B7A6A" }}
+                    >
+                      {weather.description}
+                    </span>
+                  </div>
+
+                  <span style={{ color: "rgba(5,150,105,0.25)" }}>|</span>
+
+                  <div className="flex items-center gap-1.5">
+                    <Droplets size={14} style={{ color: "#0F766E" }} />
+                    <span className="text-sm" style={{ color: "#5B7A6A" }}>
+                      {weather.humidity}% humidity
+                    </span>
+                  </div>
+
+                  <span style={{ color: "rgba(5,150,105,0.25)" }}>|</span>
+
+                  <div className="flex items-center gap-1.5">
+                    <Wind size={14} style={{ color: "#65A30D" }} />
+                    <span className="text-sm" style={{ color: "#5B7A6A" }}>
+                      {weather.windSpeed} m/s
+                    </span>
+                  </div>
+
+                  <span style={{ color: "rgba(5,150,105,0.25)" }}>|</span>
+
+                  <div className="flex items-center gap-1.5">
+                    <MapPin size={14} style={{ color: "#B45309" }} />
+                    <span
+                      className="text-sm font-medium"
+                      style={{ color: "#5B7A6A" }}
+                    >
+                      {weather.city}
+                    </span>
+                  </div>
+                </div>
+              ) : null}
+            </div>
           </div>
 
           <button
@@ -215,26 +342,36 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* Stats */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          <div className="grid md:grid-cols-4 gap-5 mb-10 lg:col-span-2">
-            {statCards.map(({ key, label, value, icon: Icon, accent }) => (
-              <div key={key} className="fd-glass-card rounded-2xl p-6">
-                <Icon size={26} style={{ color: accent }} className="mb-3" />
-                <p className="text-xs uppercase tracking-wider font-medium mb-1" style={{ color: "#7A8D82" }}>
-                  {label}
-                </p>
-                <h2 className="fd-display fd-mono text-3xl font-bold" style={{ color: "#0F2E22" }}>
-                  {value}
-                </h2>
-              </div>
-            ))}
-          </div>
+        {/* ── Stat Cards — visible immediately after Stage 1 ── */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-5 mb-8">
+          {statCards.map(({ key, label, value, icon: Icon, accent }) => (
+            <div key={key} className="fd-glass-card rounded-2xl p-6">
+              <Icon size={26} style={{ color: accent }} className="mb-3" />
+              <p
+                className="text-xs uppercase tracking-wider font-medium mb-1"
+                style={{ color: "#7A8D82" }}
+              >
+                {label}
+              </p>
+              <h2
+                className="fd-display fd-mono text-3xl font-bold"
+                style={{ color: "#0F2E22" }}
+              >
+                {value}
+              </h2>
+            </div>
+          ))}
+        </div>
 
+        {/* ── Products + Orders — visible immediately after Stage 1 ── */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-8">
           {/* Products */}
           <div className="fd-panel rounded-2xl">
             <div className="fd-panel-head p-6 flex items-center justify-between">
-              <h2 className="fd-display text-2xl font-semibold" style={{ color: "#0F2E22" }}>
+              <h2
+                className="fd-display text-2xl font-semibold"
+                style={{ color: "#0F2E22" }}
+              >
                 Recent Products
               </h2>
               <button
@@ -259,16 +396,24 @@ const Dashboard = () => {
                     <div key={product._id} className="fd-row p-5">
                       <div className="flex justify-between items-center mb-2">
                         <div>
-                          <h3 className="font-semibold" style={{ color: "#0F2E22" }}>
+                          <h3
+                            className="font-semibold"
+                            style={{ color: "#0F2E22" }}
+                          >
                             {product.name}
                           </h3>
-                          <p className="fd-mono text-sm" style={{ color: "#7A8D82" }}>
+                          <p
+                            className="fd-mono text-sm"
+                            style={{ color: "#7A8D82" }}
+                          >
                             ₹{product.price}/{product.unit}
                           </p>
                         </div>
-
                         <div className="text-right">
-                          <p className="font-medium text-sm" style={{ color: "#0F2E22" }}>
+                          <p
+                            className="font-medium text-sm"
+                            style={{ color: "#0F2E22" }}
+                          >
                             Stock: {product.quantity}
                           </p>
                           <span
@@ -283,7 +428,10 @@ const Dashboard = () => {
                         </div>
                       </div>
                       <div className="fd-stock-track h-1.5 w-full">
-                        <div className="fd-stock-fill" style={{ width: `${stockPct}%` }} />
+                        <div
+                          className="fd-stock-fill"
+                          style={{ width: `${stockPct}%` }}
+                        />
                       </div>
                     </div>
                   );
@@ -295,7 +443,10 @@ const Dashboard = () => {
           {/* Orders */}
           <div className="fd-panel rounded-2xl">
             <div className="fd-panel-head p-6 flex items-center justify-between">
-              <h2 className="fd-display text-2xl font-semibold" style={{ color: "#0F2E22" }}>
+              <h2
+                className="fd-display text-2xl font-semibold"
+                style={{ color: "#0F2E22" }}
+              >
                 Recent Orders
               </h2>
               <button
@@ -315,16 +466,26 @@ const Dashboard = () => {
                 </div>
               ) : (
                 recentOrders.map((order) => (
-                  <div key={order.id} className="fd-row p-5 flex justify-between items-center">
+                  <div
+                    key={order.id}
+                    className="fd-row p-5 flex justify-between items-center"
+                  >
                     <div>
-                      <h3 className="font-semibold fd-mono text-sm" style={{ color: "#0F2E22" }}>
+                      <h3
+                        className="font-semibold fd-mono text-sm"
+                        style={{ color: "#0F2E22" }}
+                      >
                         {order.id}
                       </h3>
-                      <p className="text-sm" style={{ color: "#7A8D82" }}>{order.buyer}</p>
+                      <p className="text-sm" style={{ color: "#7A8D82" }}>
+                        {order.buyer}
+                      </p>
                     </div>
-
                     <div className="text-right">
-                      <p className="font-semibold fd-mono" style={{ color: "#0F2E22" }}>
+                      <p
+                        className="font-semibold fd-mono"
+                        style={{ color: "#0F2E22" }}
+                      >
                         {order.amount}
                       </p>
                       <span className="fd-badge-order text-xs font-medium px-2 py-1 rounded-full inline-block mt-1">
@@ -338,34 +499,83 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="mt-10">
-          <h2 className="fd-display text-2xl font-semibold mb-5" style={{ color: "#0F2E22" }}>
+        {/* ── AI Recommendations — skeleton while Stage 2 loads ── */}
+        <div className="fd-panel rounded-2xl mb-8">
+          <div className="fd-panel-head p-6 flex items-center gap-2">
+            <Sparkles size={18} style={{ color: "#B45309" }} />
+            <h2
+              className="fd-display text-2xl font-semibold"
+              style={{ color: "#0F2E22" }}
+            >
+              AI Recommendations
+            </h2>
+          </div>
+
+          {weatherLoading ? (
+            <AdviceSkeleton />
+          ) : advice.length > 0 ? (
+            <ul className="p-6 grid sm:grid-cols-2 gap-3">
+              {advice.map((item, index) => (
+                <li
+                  key={index}
+                  className="flex items-start gap-3 p-3 rounded-xl"
+                  style={{ background: "rgba(5,150,105,0.05)" }}
+                >
+                  <CheckCircle
+                    size={16}
+                    className="mt-0.5 shrink-0"
+                    style={{ color: "#059669" }}
+                  />
+                  <span className="text-sm" style={{ color: "#2D4A3A" }}>
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="p-6 text-sm" style={{ color: "#7A8D82" }}>
+              No recommendations available right now.
+            </p>
+          )}
+        </div>
+
+        {/* ── Quick Actions ── */}
+        <div>
+          <h2
+            className="fd-display text-2xl font-semibold mb-5"
+            style={{ color: "#0F2E22" }}
+          >
             Quick Actions
           </h2>
-
           <div className="grid sm:grid-cols-3 gap-5">
             <button
               className="fd-tile rounded-xl p-6 flex items-center justify-center gap-2 font-semibold"
-              style={{ background: "linear-gradient(135deg, #059669, #047857)", color: "white" }}
+              style={{
+                background: "linear-gradient(135deg, #059669, #047857)",
+                color: "white",
+              }}
               onClick={() => navigate("/farmer/products/add")}
             >
               <Plus size={20} />
               Add Product
             </button>
-
             <button
               className="fd-tile rounded-xl p-6 flex items-center justify-center gap-2 font-semibold"
-              style={{ background: "linear-gradient(135deg, #84CC16, #65A30D)", color: "#063527" }}
+              style={{
+                background: "linear-gradient(135deg, #84CC16, #65A30D)",
+                color: "#063527",
+              }}
               onClick={() => navigate("/farmer/products")}
             >
               <Eye size={20} />
               View Products
             </button>
-
             <button
               className="fd-tile rounded-xl p-6 flex items-center justify-center gap-2 font-semibold"
-              style={{ background: "linear-gradient(135deg, #F59E0B, #D97706)", color: "white" }}
+              style={{
+                background: "linear-gradient(135deg, #F59E0B, #D97706)",
+                color: "white",
+              }}
               onClick={() => navigate("/farmer/orders")}
             >
               <Clock size={20} />

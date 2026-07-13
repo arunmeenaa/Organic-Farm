@@ -1,5 +1,8 @@
 const productModel = require("../models/product.model");
-const orderModel = require("../models/order.model")
+const orderModel = require("../models/order.model");
+const { getCurrentWeather } = require("../services/weather.service");
+const { generateFarmerAdvice } = require("../services/ai.service");
+
 async function getFarmerDashboard(req, res) {
   try {
     const products = await productModel
@@ -8,7 +11,9 @@ async function getFarmerDashboard(req, res) {
 
     const totalProducts = products.length;
 
-    const activeProducts = products.filter((p) => p.status === "active").length;
+    const activeProducts = products.filter(
+      (product) => product.status === "active"
+    ).length;
 
     const inactiveProducts = totalProducts - activeProducts;
 
@@ -30,6 +35,40 @@ async function getFarmerDashboard(req, res) {
     return res.status(500).json({
       success: false,
       message: err.message,
+    });
+  }
+}
+
+async function getWeatherAdvice(req, res) {
+  try {
+    // Weather is essential
+    const weather = await getCurrentWeather(req.user.location);
+
+    let advice = [];
+
+    try {
+      const aiAdvice = await generateFarmerAdvice(req.user, weather);
+      advice = aiAdvice.advice;
+    } catch (err) {
+      console.error("Gemini Error:", err.message);
+
+      advice = [
+        "AI recommendations are temporarily unavailable.",
+        "Monitor soil moisture before irrigation.",
+        "Check your crops regularly for pests and diseases.",
+      ];
+    }
+
+    return res.status(200).json({
+      success: true,
+      weather,
+      advice,
+    });
+  } catch (err) {
+    // Weather failed
+    return res.status(500).json({
+      success: false,
+      message: "Unable to fetch weather information.",
     });
   }
 }
@@ -63,4 +102,5 @@ async function getBuyerDashboard(req, res) {
 module.exports = {
   getFarmerDashboard,
   getBuyerDashboard,
+  getWeatherAdvice,
 };
