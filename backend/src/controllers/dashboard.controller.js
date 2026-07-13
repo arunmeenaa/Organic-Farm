@@ -10,14 +10,36 @@ async function getFarmerDashboard(req, res) {
       .sort({ createdAt: -1 });
 
     const totalProducts = products.length;
-
     const activeProducts = products.filter(
-      (product) => product.status === "active"
+      (product) => product.status === "active",
     ).length;
-
     const inactiveProducts = totalProducts - activeProducts;
-
     const recentProducts = products.slice(0, 5);
+
+    const orders = await orderModel
+      .find({ farmer: req.user._id })
+      .populate("buyer", "name email")
+      .sort({ createdAt: -1 });
+
+    const recentOrders = orders.slice(0, 3);
+    const revenueResult = await orderModel.aggregate([
+      {
+        $match: {
+          farmer: req.user._id,
+          orderStatus: "delivered",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          revenue: {
+            $sum: "$totalPrice",
+          },
+        },
+      },
+    ]);
+
+    const revenue = revenueResult.length > 0 ? revenueResult[0].revenue : 0;
 
     return res.status(200).json({
       success: true,
@@ -25,11 +47,11 @@ async function getFarmerDashboard(req, res) {
         totalProducts,
         activeProducts,
         inactiveProducts,
-        totalOrders: 0,
-        revenue: 0,
+        totalOrders: orders.length,
+        revenue,
       },
       recentProducts,
-      recentOrders: [],
+      recentOrders,
     });
   } catch (err) {
     return res.status(500).json({

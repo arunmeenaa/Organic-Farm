@@ -125,7 +125,6 @@ const FontImport = () => (
   `}</style>
 );
 
-// ── Skeleton shown while weather/advice loads ────────────────────────────────
 const WeatherSkeleton = () => (
   <div className="flex items-center gap-3 mt-4">
     <div className="fd-skel-inline h-5 w-24" />
@@ -467,29 +466,31 @@ const Dashboard = () => {
               ) : (
                 recentOrders.map((order) => (
                   <div
-                    key={order.id}
+                    key={order._id}
                     className="fd-row p-5 flex justify-between items-center"
                   >
                     <div>
-                      <h3
-                        className="font-semibold fd-mono text-sm"
-                        style={{ color: "#0F2E22" }}
-                      >
-                        {order.id}
+                      <h3 className="font-semibold">
+                        {order.products[0].productName}
+                        {order.products.length > 1 &&
+                          ` +${order.products.length - 1} more`}
                       </h3>
+
                       <p className="text-sm" style={{ color: "#7A8D82" }}>
-                        {order.buyer}
+                        Buyer: {order.buyer?.name}
                       </p>
                     </div>
+
                     <div className="text-right">
                       <p
                         className="font-semibold fd-mono"
                         style={{ color: "#0F2E22" }}
                       >
-                        {order.amount}
+                        ₹{order.totalPrice}
                       </p>
+
                       <span className="fd-badge-order text-xs font-medium px-2 py-1 rounded-full inline-block mt-1">
-                        {order.status}
+                        {order.orderStatus}
                       </span>
                     </div>
                   </div>
