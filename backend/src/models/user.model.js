@@ -38,10 +38,14 @@ const userModel = new mongoose.Schema(
       enum: { values: ["buyer", "farmer"] },
       required: true,
     },
-     isVerified:{
-        type:Boolean,
-        default:false
-     }
+    bio: {
+      type: String,
+      default: "",
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
