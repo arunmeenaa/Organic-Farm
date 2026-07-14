@@ -180,7 +180,10 @@ const Navbar = () => {
                     {/* Notifications */}
                     <div className="relative">
                       <button
-                        onClick={() => setNotificationMenu(!notificationMenu)}
+                        onClick={(e) => {
+  e.stopPropagation();
+  setNotificationMenu((prev) => !prev);
+}}
                         aria-label="Notifications"
                         className="relative text-[#0F2E22] hover:text-emerald-600 dark:text-emerald-100/75 dark:hover:text-emerald-300 transition-colors"
                       >
@@ -288,7 +291,10 @@ const Navbar = () => {
                 {isAuthenticated && (
                   <div className="relative">
                     <button
-                      onClick={() => setNotificationMenu(!notificationMenu)}
+                      onClick={(e) => {
+  e.stopPropagation();
+  setNotificationMenu((prev) => !prev);
+}}
                       aria-label="Notifications"
                       className="relative text-[#0F2E22] dark:text-emerald-100/75"
                     >

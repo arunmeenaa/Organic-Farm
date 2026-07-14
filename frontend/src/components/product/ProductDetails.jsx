@@ -4,65 +4,18 @@ import toast from "react-hot-toast";
 
 import { getProductById, getProducts } from "../../services/product.service";
 import { getProductReviews } from "../../services/review.service";
-import ReviewsList from "../reviews/ReviewList"
+import ReviewsList from "../reviews/ReviewList";
 import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
-import ProductReviews from "../reviews/ProductReviews";
 import RelatedProducts from "./RelatedProducts";
-
-// Matches Navbar/Hero/MyProducts/Orders/AddProduct/Dashboard/Footer/
-// BuyerDashboard/Cart/BuyerOrders/Products/ProductCard: glassmorphism over
-// an emerald → lime gradient mesh, Space Grotesk display type.
-const FontImport = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-    .fd-root {
-      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-      background:
-        radial-gradient(ellipse 60% 50% at 10% 0%, rgba(5, 150, 105, 0.14), transparent),
-        radial-gradient(ellipse 55% 45% at 90% 20%, rgba(132, 204, 22, 0.14), transparent),
-        #F4F9F2;
-    }
-    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
-
-    .fd-product-panel {
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-    }
-
-    .fd-skel {
-      background: linear-gradient(90deg, #E3EFE4 25%, #F4F9F2 37%, #E3EFE4 63%);
-      background-size: 400% 100%;
-      animation: fd-shimmer 1.4s ease infinite;
-      border-radius: 12px;
-    }
-    @keyframes fd-shimmer {
-      0% { background-position: 100% 50%; }
-      100% { background-position: 0 50%; }
-    }
-
-    .fd-not-found {
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      border-radius: 20px;
-    }
-  `}</style>
-);
 
 const ProductDetails = () => {
   const { id } = useParams();
-
+ 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [relatedProducts, setRelatedProducts] = useState([]);
-
   const [quantity, setQuantity] = useState(1);
-
   const [loading, setLoading] = useState(true);
 
   const fetchProduct = async () => {
@@ -70,7 +23,6 @@ const ProductDetails = () => {
       setLoading(true);
 
       const { data } = await getProductById(id);
-
       const productData = data.product;
 
       setProduct(productData);
@@ -105,32 +57,56 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
+  // Premium Fluid Canvas Background Mesh supporting Light and Dark modes
+  const rootClasses = "min-h-screen";
+
+  const panelClasses = 
+    "bg-white/75 dark:bg-[#121E18]/60 backdrop-blur-xl " +
+    "border border-white/60 dark:border-white/[0.06] " +
+    "shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.2)]";
+
+  // 1. LOADING / SKELETON STATE
   if (loading) {
     return (
-      <div className="fd-root min-h-screen">
-        <FontImport />
-        <div className="max-w-7xl mx-auto px-6 py-10">
-          <div className="fd-skel h-[28rem] w-full" />
+      <div className={rootClasses}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-10 space-y-12">
+          {/* Main Content Card Skeleton */}
+          <div className={`${panelClasses} grid md:grid-cols-2 gap-8 lg:gap-12 rounded-3xl p-6 sm:p-8 animate-pulse`}>
+            {/* Gallery Image Skeleton */}
+            <div className="aspect-square w-full bg-neutral-200/60 dark:bg-neutral-800/60 rounded-2xl" />
+            
+            {/* Info Side Skeleton */}
+            <div className="flex flex-col justify-between py-2 space-y-6">
+              <div className="space-y-4">
+                <div className="h-4 w-1/4 bg-neutral-200/60 dark:bg-neutral-800/60 rounded" />
+                <div className="h-8 w-3/4 bg-neutral-200/70 dark:bg-neutral-800/70 rounded" />
+                <div className="h-4 w-1/2 bg-neutral-200/60 dark:bg-neutral-800/60 rounded" />
+                <div className="h-20 w-full bg-neutral-200/40 dark:bg-neutral-800/40 rounded-xl" />
+              </div>
+              <div className="h-12 w-full bg-neutral-200/70 dark:bg-neutral-800/70 rounded-xl" />
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
+  // 2. ERROR / NOT FOUND STATE
   if (!product) {
     return (
-      <div className="fd-root min-h-screen">
-        <FontImport />
-        <div className="max-w-7xl mx-auto px-6 py-20">
-          <div className="fd-not-found text-center py-20">
-            <h2
-              className="fd-display text-3xl font-semibold"
-              style={{ color: "#0F2E22" }}
-            >
+      <div className={rootClasses}>
+        <div className="max-w-3xl mx-auto px-6 py-24">
+          <div className={`${panelClasses} text-center py-16 px-8 rounded-3xl`}>
+            <div className="inline-flex p-4 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 mb-4">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="font-['Space_Grotesk',_sans-serif] text-3xl font-bold text-[#0F2E22] dark:text-[#E4F2EB]">
               Product Not Found
             </h2>
-
-            <p className="mt-3" style={{ color: "#7A8D82" }}>
-              The product you're looking for doesn't exist.
+            <p className="mt-3 text-sm text-[#5C6E64] dark:text-[#97A89E] max-w-sm mx-auto">
+              The product you're looking for doesn't exist, has been archived, or moved to another link.
             </p>
           </div>
         </div>
@@ -138,29 +114,39 @@ const ProductDetails = () => {
     );
   }
 
+  // 3. MAIN UI STATE
   return (
-    <div className="fd-root min-h-screen">
-      <FontImport />
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        {/* Product */}
+    <div className={rootClasses}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-12">
+        {/* Dynamic Product Hero Panel */}
+        <main className={`${panelClasses} grid md:grid-cols-2 gap-8 lg:gap-12 rounded-3xl p-6 sm:p-8`}>
+          <section aria-label="Product Images">
+            <ProductGallery images={product.images} />
+          </section>
 
-        <div className="fd-product-panel grid lg:grid-cols-2 gap-12 rounded-3xl shadow-sm p-8">
-          <ProductGallery images={product.images} />
+          <section aria-label="Product Configuration" className="flex flex-col justify-between">
+            <ProductInfo
+              product={product}
+              quantity={quantity}
+              setQuantity={setQuantity}
+            />
+          </section>
+        </main>
 
-          <ProductInfo
-            product={product}
-            quantity={quantity}
-            setQuantity={setQuantity}
-          />
-        </div>
+        {/* Separator Line */}
+        <hr className="border-t border-[#E3EFE4] dark:border-[#1E3026] opacity-60" />
 
-        {/* Reviews */}
+        {/* Reviews Section */}
+        <section aria-label="Customer Reviews" className="space-y-6">
+          <ReviewsList productId={product._id} />
+        </section>
 
-        <ReviewsList productId={product._id} />
-
-        {/* Related Products */}
-
-        <RelatedProducts products={relatedProducts} />
+        {/* Related Products Section */}
+        {relatedProducts.length > 0 && (
+          <section aria-label="Related items" className="space-y-6 pt-4">
+            <RelatedProducts products={relatedProducts} />
+          </section>
+        )}
       </div>
     </div>
   );
