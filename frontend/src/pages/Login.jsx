@@ -7,6 +7,7 @@ import {
   Mail,
   Lock,
   ArrowRight,
+  ArrowLeft,
   Sprout,
   Users,
   ShoppingBasket,
@@ -64,15 +65,29 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#F4F9F2] selection:bg-emerald-200/60">
-      {/* Ambient background glows */}
-      <div className="absolute top-[-15%] left-[-10%] w-[45%] h-[45%] rounded-full bg-emerald-400/20 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-15%] right-[-10%] w-[45%] h-[45%] rounded-full bg-lime-400/20 blur-[120px] pointer-events-none" />
-      <div className="absolute top-[30%] right-[10%] w-[25%] h-[25%] rounded-full bg-amber-300/10 blur-[100px] pointer-events-none" />
+    <div>
+      <div />
+      <div />
+      <div />
+      {/* ── Home button ── */}
+      <div className="relative z-20 px-6 pt-6">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+            bg-white/70 backdrop-blur-md border border-emerald-900/10
+            text-emerald-700 text-sm font-medium
+            hover:bg-white hover:shadow-[0_4px_16px_-4px_rgba(5,150,105,0.20)]
+            hover:-translate-y-0.5 transition-all duration-200"
+        >
+          <ArrowLeft size={16} />
+          Home
+        </Link>
+      </div>
 
       <div className="relative max-w-7xl mx-auto min-h-screen grid lg:grid-cols-2">
-        {/* Left Section */}
+        {/* ── Left Section ── */}
         <div className="hidden lg:flex flex-col justify-center px-14 relative z-10">
+          {/* Logo */}
           <div className="flex items-center gap-3 text-emerald-700">
             <div className="p-2.5 rounded-2xl bg-emerald-600/10 border border-emerald-600/20">
               <Leaf size={32} />
@@ -82,7 +97,8 @@ const Login = () => {
             </h1>
           </div>
 
-          <div className="inline-flex items-center gap-2 mt-10 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 w-fit text-sm font-medium text-amber-700">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 mt-10 px-3 py-1.5 rounded-full bg-emerald-600/10 border border-emerald-600/20 w-fit text-sm font-medium text-emerald-700">
             <Sprout size={14} />
             <span>Field to cart, made simple</span>
           </div>
@@ -96,40 +112,30 @@ const Login = () => {
             your farm business from one modern platform.
           </p>
 
+          {/* Stat cards */}
           <div className="grid grid-cols-3 gap-6 mt-14">
-            <div className="bg-white/70 backdrop-blur-xl border border-emerald-900/5 rounded-2xl shadow-[0_12px_24px_-12px_rgba(5,150,105,0.25)] p-6 hover:-translate-y-1 transition-transform">
-              <div className="w-9 h-9 rounded-xl bg-emerald-600/10 text-emerald-600 flex items-center justify-center mb-3">
-                <Sprout size={18} />
+            {[
+              { Icon: Sprout, value: "500+", label: "Farmers" },
+              { Icon: ShoppingBasket, value: "1500+", label: "Products" },
+              { Icon: Users, value: "20K+", label: "Buyers" },
+            ].map(({ Icon, value, label }) => (
+              <div
+                key={label}
+                className="bg-white/70 backdrop-blur-xl border border-emerald-900/5 rounded-2xl shadow-[0_12px_24px_-12px_rgba(5,150,105,0.20)] p-6 hover:-translate-y-1 transition-transform"
+              >
+                <div className="w-9 h-9 rounded-xl bg-emerald-600/10 text-emerald-600 flex items-center justify-center mb-3">
+                  <Icon size={18} />
+                </div>
+                <h3 className="text-3xl font-bold text-emerald-700">{value}</h3>
+                <p className="text-emerald-900/50 mt-1 text-sm font-medium">
+                  {label}
+                </p>
               </div>
-              <h3 className="text-3xl font-bold text-emerald-700">500+</h3>
-              <p className="text-emerald-900/50 mt-1 text-sm font-medium">
-                Farmers
-              </p>
-            </div>
-
-            <div className="bg-white/70 backdrop-blur-xl border border-emerald-900/5 rounded-2xl shadow-[0_12px_24px_-12px_rgba(5,150,105,0.25)] p-6 hover:-translate-y-1 transition-transform">
-              <div className="w-9 h-9 rounded-xl bg-lime-500/10 text-lime-600 flex items-center justify-center mb-3">
-                <ShoppingBasket size={18} />
-              </div>
-              <h3 className="text-3xl font-bold text-emerald-700">1500+</h3>
-              <p className="text-emerald-900/50 mt-1 text-sm font-medium">
-                Products
-              </p>
-            </div>
-
-            <div className="bg-white/70 backdrop-blur-xl border border-emerald-900/5 rounded-2xl shadow-[0_12px_24px_-12px_rgba(5,150,105,0.25)] p-6 hover:-translate-y-1 transition-transform">
-              <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-3">
-                <Users size={18} />
-              </div>
-              <h3 className="text-3xl font-bold text-emerald-700">20K+</h3>
-              <p className="text-emerald-900/50 mt-1 text-sm font-medium">
-                Buyers
-              </p>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* Right Section */}
+        {/* ── Right Section ── */}
         <div className="flex items-center justify-center px-6 py-12 relative z-10">
           <div className="w-full max-w-md bg-white/80 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-[0_25px_60px_-15px_rgba(5,150,105,0.25)] p-8">
             {/* Mobile-only logo */}
@@ -151,10 +157,8 @@ const Login = () => {
                 <label className="font-medium text-emerald-950 text-sm">
                   Email
                 </label>
-
                 <div className="mt-2 flex items-center gap-2 border border-emerald-900/10 bg-white/60 rounded-xl px-4 focus-within:ring-2 focus-within:ring-emerald-500/40 focus-within:border-emerald-500/50 transition-all">
                   <Mail className="text-emerald-900/30 shrink-0" size={20} />
-
                   <input
                     type="email"
                     name="email"
@@ -171,10 +175,8 @@ const Login = () => {
                 <label className="font-medium text-emerald-950 text-sm">
                   Password
                 </label>
-
                 <div className="mt-2 flex items-center gap-2 border border-emerald-900/10 bg-white/60 rounded-xl px-4 focus-within:ring-2 focus-within:ring-emerald-500/40 focus-within:border-emerald-500/50 transition-all">
                   <Lock className="text-emerald-900/30 shrink-0" size={20} />
-
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
@@ -183,7 +185,6 @@ const Login = () => {
                     onChange={handleChange}
                     className="w-full py-4 outline-none bg-transparent text-emerald-950 placeholder:text-emerald-900/30"
                   />
-
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -197,6 +198,7 @@ const Login = () => {
                 </div>
               </div>
 
+              {/* Remember me / Forgot password */}
               <div className="flex justify-between items-center text-sm">
                 <label className="flex items-center gap-2 text-emerald-900/60 cursor-pointer select-none">
                   <input
@@ -205,7 +207,6 @@ const Login = () => {
                   />
                   Remember me
                 </label>
-
                 <Link
                   to="/forgot-password"
                   className="text-emerald-600 font-medium hover:text-emerald-700 transition-colors"
@@ -214,12 +215,18 @@ const Login = () => {
                 </Link>
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-emerald-600 to-lime-500 hover:brightness-105 disabled:opacity-60 disabled:cursor-not-allowed transition-all rounded-xl text-white py-4 font-semibold flex justify-center items-center gap-2 shadow-[0_12px_24px_-8px_rgba(5,150,105,0.5)] hover:shadow-[0_16px_32px_-8px_rgba(5,150,105,0.65)] hover:-translate-y-0.5"
+                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed
+                  transition-all rounded-xl text-white py-4 font-semibold
+                  flex justify-center items-center gap-2
+                  shadow-[0_12px_24px_-8px_rgba(5,150,105,0.45)]
+                  hover:shadow-[0_16px_32px_-8px_rgba(5,150,105,0.60)]
+                  hover:-translate-y-0.5"
               >
-                {loading ? "Signing In..." : "Login"}
+                {loading ? "Signing In…" : "Login"}
                 {!loading && <ArrowRight size={20} />}
               </button>
             </form>

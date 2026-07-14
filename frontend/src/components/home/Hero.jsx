@@ -8,12 +8,12 @@ import {
   BrainCircuit,
   Star,
   Quote,
-  ChevronRight,
   CheckCircle2,
   Zap,
   Droplets,
   ArrowUpRight,
 } from "lucide-react";
+import { useTheme } from "../../context/ThemeContext";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -30,13 +30,54 @@ const staggerContainer = {
 };
 
 export default function Home() {
-  return (
-    <main className="min-h-screen w-full bg-background relative overflow-hidden selection:bg-primary/20 selection:text-primary">
-      {/* Ambient Background Glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
-      <div className="absolute top-[40%] right-[-5%] w-[40%] h-[40%] rounded-full bg-secondary/10 blur-[120px] pointer-events-none" />
+  const { darkMode } = useTheme();
 
-      {/* HERO SECTION */}
+  // ── Style tokens ─────────────────────────────────────────────────────────
+  const textFg = darkMode ? "text-emerald-50" : "text-[#0F2E22]";
+  const textMuted = darkMode ? "text-emerald-300/70" : "text-[#5A7A68]";
+  const textPrimary = darkMode ? "text-emerald-400" : "text-emerald-600";
+  const textSecond = darkMode ? "text-lime-400" : "text-lime-500";
+  const borderColor = darkMode
+    ? "border-emerald-100/10"
+    : "border-emerald-900/10";
+
+  // font-display
+  const fd = "font-['Space_Grotesk']";
+
+  // gradient text (replaces text-gradient class)
+  const gradientText = darkMode
+    ? "bg-gradient-to-r from-emerald-400 via-green-400 to-lime-300 bg-clip-text text-transparent"
+    : "bg-gradient-to-r from-emerald-700 via-green-500 to-lime-400 bg-clip-text text-transparent";
+
+  // glass card (replaces glass-card class)
+  const glassCard = darkMode
+    ? "bg-[rgba(12,28,20,0.75)] backdrop-blur-xl border border-emerald-100/10 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.30)]"
+    : "bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_-8px_rgba(5,150,105,0.08)]";
+
+  // glass panel (replaces glass-panel class)
+  const glassPanel = darkMode
+    ? "bg-[rgba(12,28,20,0.55)] backdrop-blur-md border border-emerald-100/10"
+    : "bg-white/50 backdrop-blur-md border border-white/30";
+
+  // bg-muted (avatar placeholder bg)
+  const bgMuted = darkMode ? "bg-emerald-900/50" : "bg-[#E8F2EC]";
+  // ─────────────────────────────────────────────────────────────────────────
+
+  return (
+    <main
+      className="
+    fd-root
+    min-h-screen
+    w-full
+    relative
+    overflow-hidden
+    selection:bg-emerald-600/20
+    selection:text-emerald-600
+  "
+    >
+    
+      
+      {/* ── HERO ── */}
       <section className="relative pt-24 pb-32 lg:pt-32 lg:pb-40 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
@@ -44,17 +85,21 @@ export default function Home() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="lg:w-1/2 flex flex-col gap-8 z-10"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 w-fit text-sm font-medium text-primary">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-600/10 border border-emerald-600/20 w-fit text-sm font-medium text-emerald-600">
             <SparkleIcon />
             <span>The future of organic farming is here</span>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-display font-bold text-foreground leading-[1.1] tracking-tight">
+          <h1
+            className={`${fd} text-5xl lg:text-7xl font-bold ${textFg} leading-[1.1] tracking-tight`}
+          >
             Fresh produce straight from{" "}
-            <span className="text-gradient">field to cart.</span>
+            <span className={gradientText}>field to cart.</span>
           </h1>
 
-          <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-lg">
+          <p
+            className={`text-lg lg:text-xl ${textMuted} leading-relaxed max-w-lg`}
+          >
             Connect directly with local organic growers. Put an AI agronomist in
             every farmer's pocket. Rent farm equipment as easily as ordering
             produce.
@@ -63,25 +108,27 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
             <Link
               to="/market-place"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-primary text-white font-medium shadow-[0_12px_24px_-8px_rgba(5,150,105,0.4)] hover:shadow-[0_16px_32px_-8px_rgba(5,150,105,0.6)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-lime-400 text-white font-medium shadow-[0_12px_24px_-8px_rgba(5,150,105,0.4)] hover:shadow-[0_16px_32px_-8px_rgba(5,150,105,0.6)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
             >
               Browse the marketplace
               <ArrowRight size={18} />
             </Link>
             <Link
               to="/register"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel text-foreground font-medium hover:bg-white/80 transition-colors flex items-center justify-center gap-2"
+              className={`w-full sm:w-auto px-8 py-4 rounded-xl ${glassPanel} ${textFg} font-medium hover:bg-white/80 transition-colors flex items-center justify-center gap-2`}
             >
               List your farm
             </Link>
           </div>
 
-          <div className="flex items-center gap-6 mt-6 pt-6 border-t border-border">
+          <div
+            className={`flex items-center gap-6 mt-6 pt-6 border-t ${borderColor}`}
+          >
             <div className="flex -space-x-3">
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className={`w-10 h-10 rounded-full border-2 border-background bg-muted flex items-center justify-center overflow-hidden`}
+                  className={`w-10 h-10 rounded-full border-2 ${darkMode ? "border-[#0b1a13]" : "border-white"} ${bgMuted} flex items-center justify-center overflow-hidden`}
                 >
                   <img
                     src="/farmer_portrait.jpg"
@@ -92,12 +139,12 @@ export default function Home() {
               ))}
             </div>
             <div className="flex flex-col">
-              <div className="flex items-center gap-1 text-accent">
+              <div className="flex items-center gap-1 text-amber-500">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <Star key={i} size={14} fill="currentColor" />
                 ))}
               </div>
-              <span className="text-sm font-medium text-foreground">
+              <span className={`text-sm font-medium ${textFg}`}>
                 Trusted by 2,000+ farmers
               </span>
             </div>
@@ -112,30 +159,30 @@ export default function Home() {
           className="lg:w-1/2 relative h-[500px] w-full"
         >
           {/* Main Background Image Card */}
-          <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl shadow-primary/10 border border-white/40">
+          <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl shadow-emerald-600/10 border border-white/40">
             <img
               src="/farm_hero.jpg"
               alt="Organic Farm"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent mix-blend-multiply" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0F2E22]/60 to-transparent mix-blend-multiply" />
           </div>
 
           {/* AI Insight Floating Card */}
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-8 -left-12 lg:-left-16 glass-card rounded-2xl p-4 w-64 shadow-xl z-20"
+            className={`absolute top-8 -left-12 lg:-left-16 ${glassCard} rounded-2xl p-4 w-64 shadow-xl z-20`}
           >
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <div className="p-2 rounded-lg bg-emerald-600/10 text-emerald-600">
                 <BrainCircuit size={20} />
               </div>
               <div>
-                <h4 className="font-display font-semibold text-sm text-foreground">
+                <h4 className={`${fd} font-semibold text-sm ${textFg}`}>
                   AI Insight
                 </h4>
-                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                <p className={`text-xs ${textMuted} mt-1 leading-relaxed`}>
                   Optimal harvest time for your heirloom tomatoes is in 3 days.
                   Soil moisture is at 42%.
                 </p>
@@ -152,7 +199,7 @@ export default function Home() {
               ease: "easeInOut",
               delay: 1,
             }}
-            className="absolute bottom-12 -left-8 glass-card rounded-2xl p-3 w-56 shadow-xl z-20 flex items-center gap-3"
+            className={`absolute bottom-12 -left-8 ${glassCard} rounded-2xl p-3 w-56 shadow-xl z-20 flex items-center gap-3`}
           >
             <img
               src="/produce_basket.jpg"
@@ -160,13 +207,13 @@ export default function Home() {
               className="w-14 h-14 rounded-xl object-cover"
             />
             <div>
-              <h4 className="font-display font-semibold text-sm text-foreground">
+              <h4 className={`${fd} font-semibold text-sm ${textFg}`}>
                 Organic Carrots
               </h4>
-              <div className="text-xs text-muted-foreground">Valley Farms</div>
-              <div className="text-primary font-semibold text-sm mt-0.5">
+              <div className={`text-xs ${textMuted}`}>Valley Farms</div>
+              <div className={`${textPrimary} font-semibold text-sm mt-0.5`}>
                 $4.50{" "}
-                <span className="text-[10px] text-muted-foreground font-normal">
+                <span className={`text-[10px] ${textMuted} font-normal`}>
                   / bunch
                 </span>
               </div>
@@ -182,7 +229,7 @@ export default function Home() {
               ease: "easeInOut",
               delay: 2,
             }}
-            className="absolute top-1/2 -translate-y-1/2 -right-8 lg:-right-12 glass-card rounded-2xl p-4 w-52 shadow-xl z-20"
+            className={`absolute top-1/2 -translate-y-1/2 -right-8 lg:-right-12 ${glassCard} rounded-2xl p-4 w-52 shadow-xl z-20`}
           >
             <img
               src="/tractor.jpg"
@@ -190,22 +237,24 @@ export default function Home() {
               className="w-full h-24 rounded-lg object-cover mb-3"
             />
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] font-bold tracking-wider uppercase text-accent bg-accent/10 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold tracking-wider uppercase text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">
                 Available
               </span>
-              <span className="text-xs font-semibold text-foreground">
+              <span className={`text-xs font-semibold ${textFg}`}>
                 $120/day
               </span>
             </div>
-            <h4 className="font-display font-semibold text-sm text-foreground">
+            <h4 className={`${fd} font-semibold text-sm ${textFg}`}>
               Compact Tractor
             </h4>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* STATS STRIP */}
-      <section className="border-y border-border bg-white/40 backdrop-blur-md">
+      {/* ── STATS STRIP ── */}
+      <section
+        className={`border-y ${borderColor} ${darkMode ? "bg-emerald-900/20 backdrop-blur-md" : "bg-white/40 backdrop-blur-md"}`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10">
             {[
@@ -218,10 +267,14 @@ export default function Home() {
                 key={i}
                 className="flex flex-col items-center justify-center text-center"
               >
-                <div className="text-3xl lg:text-4xl font-display font-bold text-foreground mb-2">
+                <div
+                  className={`${fd} text-3xl lg:text-4xl font-bold ${textFg} mb-2`}
+                >
                   {stat.value}
                 </div>
-                <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                <div
+                  className={`text-sm font-medium ${textMuted} uppercase tracking-wider`}
+                >
                   {stat.label}
                 </div>
               </div>
@@ -230,7 +283,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
+      {/* ── HOW IT WORKS ── */}
       <section className="py-24 lg:py-32 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -239,11 +292,13 @@ export default function Home() {
             whileInView="whileInView"
             className="text-center max-w-2xl mx-auto mb-16"
           >
-            <h2 className="text-3xl lg:text-5xl font-display font-bold text-foreground mb-6">
+            <h2
+              className={`${fd} text-3xl lg:text-5xl font-bold ${textFg} mb-6`}
+            >
               An ecosystem designed to{" "}
-              <span className="text-gradient">nurture growth.</span>
+              <span className={gradientText}>nurture growth.</span>
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className={`text-lg ${textMuted}`}>
               Whether you're tending the soil or stocking your pantry, we've
               built the tools to make it effortless.
             </p>
@@ -257,62 +312,64 @@ export default function Home() {
           >
             <motion.div
               variants={fadeIn}
-              className="glass-card rounded-3xl p-8 relative overflow-hidden group hover:-translate-y-1 transition-transform"
+              className={`${glassCard} rounded-3xl p-8 relative overflow-hidden group hover:-translate-y-1 transition-transform`}
             >
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-600/10 text-emerald-600 flex items-center justify-center mb-6">
                 <Sprout size={24} />
               </div>
-              <h3 className="text-xl font-display font-bold text-foreground mb-3">
+              <h3 className={`${fd} text-xl font-bold ${textFg} mb-3`}>
                 Direct Marketplace
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className={`${textMuted} leading-relaxed`}>
                 Cut out the middlemen. Buy hyper-local organic produce directly
                 from the farmers who grew it, ensuring peak freshness and fair
                 prices.
               </p>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[40px] group-hover:bg-primary/10 transition-colors" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600/5 rounded-full blur-[40px] group-hover:bg-emerald-600/10 transition-colors" />
             </motion.div>
 
             <motion.div
               variants={fadeIn}
-              className="glass-card rounded-3xl p-8 relative overflow-hidden group hover:-translate-y-1 transition-transform"
+              className={`${glassCard} rounded-3xl p-8 relative overflow-hidden group hover:-translate-y-1 transition-transform`}
             >
-              <div className="w-12 h-12 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-lime-500/10 text-lime-500 flex items-center justify-center mb-6">
                 <BrainCircuit size={24} />
               </div>
-              <h3 className="text-xl font-display font-bold text-foreground mb-3">
+              <h3 className={`${fd} text-xl font-bold ${textFg} mb-3`}>
                 AI Agronomist
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className={`${textMuted} leading-relaxed`}>
                 Smart sensors and machine learning combine to give farmers
                 real-time advice on watering, pest control, and harvest timing.
               </p>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-[40px] group-hover:bg-secondary/10 transition-colors" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-lime-500/5 rounded-full blur-[40px] group-hover:bg-lime-500/10 transition-colors" />
             </motion.div>
 
             <motion.div
               variants={fadeIn}
-              className="glass-card rounded-3xl p-8 relative overflow-hidden group hover:-translate-y-1 transition-transform"
+              className={`${glassCard} rounded-3xl p-8 relative overflow-hidden group hover:-translate-y-1 transition-transform`}
             >
-              <div className="w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-6">
                 <Tractor size={24} />
               </div>
-              <h3 className="text-xl font-display font-bold text-foreground mb-3">
+              <h3 className={`${fd} text-xl font-bold ${textFg} mb-3`}>
                 Equipment Sharing
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className={`${textMuted} leading-relaxed`}>
                 Why buy when you can borrow? Rent idle farm machinery from
                 neighbors, reducing capital costs and maximizing community
                 utility.
               </p>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-[40px] group-hover:bg-accent/10 transition-colors" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-[40px] group-hover:bg-amber-500/10 transition-colors" />
             </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* FEATURED PRODUCE & EQUIPMENT SPLIT */}
-      <section className="py-24 lg:py-32 bg-white/50 border-y border-border relative">
+      {/* ── FEATURED PRODUCE & EQUIPMENT ── */}
+      <section
+        className={`py-24 lg:py-32 border-y ${borderColor} relative ${darkMode ? "bg-emerald-900/10" : "bg-white/50"}`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Produce Row */}
           <div className="flex flex-col lg:flex-row items-center gap-16 mb-32">
@@ -322,15 +379,19 @@ export default function Home() {
               whileInView="whileInView"
               className="lg:w-1/2"
             >
-              <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-xl border border-border relative">
+              <div
+                className={`aspect-[4/3] rounded-3xl overflow-hidden shadow-xl border ${borderColor} relative`}
+              >
                 <img
                   src="/produce_basket.jpg"
                   alt="Fresh Produce"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute top-4 right-4 glass-panel px-4 py-2 rounded-full font-medium text-sm text-foreground flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-primary" /> Verified
-                  Organic
+                <div
+                  className={`absolute top-4 right-4 ${glassPanel} px-4 py-2 rounded-full font-medium text-sm ${textFg} flex items-center gap-2`}
+                >
+                  <CheckCircle2 size={16} className="text-emerald-600" />{" "}
+                  Verified Organic
                 </div>
               </div>
             </motion.div>
@@ -340,10 +401,12 @@ export default function Home() {
               whileInView="whileInView"
               className="lg:w-1/2"
             >
-              <h2 className="text-3xl lg:text-4xl font-display font-bold text-foreground mb-6">
+              <h2
+                className={`${fd} text-3xl lg:text-4xl font-bold ${textFg} mb-6`}
+              >
                 Taste the soil, not the supply chain.
               </h2>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+              <p className={`text-lg ${textMuted} mb-8 leading-relaxed`}>
                 Every listed item tells a story. See exactly when it was
                 planted, how it was nourished, and when it was picked. The
                 transparent supply chain ensures what lands on your plate is as
@@ -356,16 +419,16 @@ export default function Home() {
                   "Support local biodiversity and soil health",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <div className="mt-1 p-1 bg-primary/10 rounded text-primary">
+                    <div className="mt-1 p-1 bg-emerald-600/10 rounded text-emerald-600">
                       <CheckCircle2 size={14} />
                     </div>
-                    <span className="text-foreground font-medium">{item}</span>
+                    <span className={`${textFg} font-medium`}>{item}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 to="/market-place"
-                className="inline-flex items-center gap-2 text-primary font-semibold hover:text-emerald-700 transition-colors"
+                className={`inline-flex items-center gap-2 ${textPrimary} font-semibold hover:text-emerald-700 transition-colors`}
               >
                 Explore local produce <ArrowUpRight size={18} />
               </Link>
@@ -380,21 +443,27 @@ export default function Home() {
               whileInView="whileInView"
               className="lg:w-1/2"
             >
-              <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-xl border border-border relative">
+              <div
+                className={`aspect-[4/3] rounded-3xl overflow-hidden shadow-xl border ${borderColor} relative`}
+              >
                 <img
                   src="/tractor.jpg"
                   alt="Farm Equipment"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute bottom-4 left-4 glass-panel px-4 py-3 rounded-2xl flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+                <div
+                  className={`absolute bottom-4 left-4 ${glassPanel} px-4 py-3 rounded-2xl flex items-center gap-4`}
+                >
+                  <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500">
                     <Zap size={20} fill="currentColor" />
                   </div>
                   <div>
-                    <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                    <div
+                      className={`text-xs ${textMuted} font-medium uppercase tracking-wider`}
+                    >
                       Available Now
                     </div>
-                    <div className="font-display font-bold text-foreground">
+                    <div className={`${fd} font-bold ${textFg}`}>
                       Compact Tractor
                     </div>
                   </div>
@@ -407,35 +476,41 @@ export default function Home() {
               whileInView="whileInView"
               className="lg:w-1/2"
             >
-              <h2 className="text-3xl lg:text-4xl font-display font-bold text-foreground mb-6">
+              <h2
+                className={`${fd} text-3xl lg:text-4xl font-bold ${textFg} mb-6`}
+              >
                 Heavy machinery, light footprint.
               </h2>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+              <p className={`text-lg ${textMuted} mb-8 leading-relaxed`}>
                 Access the tools you need to scale your farm without the
                 crushing debt. Our peer-to-peer equipment rental network puts
                 millions of dollars of farming hardware at your fingertips.
               </p>
               <div className="grid grid-cols-2 gap-6 mb-8">
-                <div className="glass-card p-5 rounded-2xl">
-                  <div className="text-2xl font-display font-bold text-primary mb-1">
+                <div className={`${glassCard} p-5 rounded-2xl`}>
+                  <div
+                    className={`${fd} text-2xl font-bold ${textPrimary} mb-1`}
+                  >
                     -$45k
                   </div>
-                  <div className="text-sm font-medium text-muted-foreground">
+                  <div className={`text-sm font-medium ${textMuted}`}>
                     Avg. capital saved
                   </div>
                 </div>
-                <div className="glass-card p-5 rounded-2xl">
-                  <div className="text-2xl font-display font-bold text-secondary mb-1">
+                <div className={`${glassCard} p-5 rounded-2xl`}>
+                  <div
+                    className={`${fd} text-2xl font-bold ${textSecond} mb-1`}
+                  >
                     100%
                   </div>
-                  <div className="text-sm font-medium text-muted-foreground">
+                  <div className={`text-sm font-medium ${textMuted}`}>
                     Insured rentals
                   </div>
                 </div>
               </div>
               <Link
                 to="/market-place"
-                className="inline-flex items-center gap-2 text-primary font-semibold hover:text-emerald-700 transition-colors"
+                className={`inline-flex items-center gap-2 ${textPrimary} font-semibold hover:text-emerald-700 transition-colors`}
               >
                 Browse equipment rentals <ArrowUpRight size={18} />
               </Link>
@@ -444,10 +519,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AI AGRONOMIST */}
-      <section className="py-24 lg:py-32 relative overflow-hidden bg-foreground text-white">
-        {/* Dark theme background for this specific section */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/30 via-foreground to-foreground pointer-events-none" />
+      {/* ── AI AGRONOMIST ── (always dark section) */}
+      <section className="py-24 lg:py-32 relative overflow-hidden bg-[#0F2E22] text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-600/30 via-[#0F2E22] to-[#0F2E22] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -457,13 +531,15 @@ export default function Home() {
               whileInView="whileInView"
               className="lg:w-1/2"
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/10 border border-secondary/20 w-fit text-sm font-medium text-secondary mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-lime-500/10 border border-lime-500/20 w-fit text-sm font-medium text-lime-400 mb-6">
                 <BrainCircuit size={16} />
                 <span>AI Agronomist</span>
               </div>
-              <h2 className="text-3xl lg:text-5xl font-display font-bold text-white mb-6">
+              <h2
+                className={`${fd} text-3xl lg:text-5xl font-bold text-white mb-6`}
+              >
                 Your soil has a voice. <br />
-                <span className="text-secondary">We translate it.</span>
+                <span className="text-lime-400">We translate it.</span>
               </h2>
               <p className="text-lg text-white/70 mb-8 leading-relaxed">
                 Connect our low-cost soil sensors to the platform, and our AI
@@ -473,7 +549,7 @@ export default function Home() {
               </p>
 
               <div className="space-y-4">
-                <div className="glass-card !bg-white/5 !border-white/10 p-4 rounded-2xl flex items-start gap-4">
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-4 rounded-2xl flex items-start gap-4">
                   <Droplets size={24} className="text-blue-400 shrink-0 mt-1" />
                   <div>
                     <h4 className="font-semibold text-white">
@@ -485,8 +561,8 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-                <div className="glass-card !bg-white/5 !border-white/10 p-4 rounded-2xl flex items-start gap-4">
-                  <Leaf size={24} className="text-secondary shrink-0 mt-1" />
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-4 rounded-2xl flex items-start gap-4">
+                  <Leaf size={24} className="text-lime-400 shrink-0 mt-1" />
                   <div>
                     <h4 className="font-semibold text-white">
                       Disease Prediction
@@ -507,25 +583,24 @@ export default function Home() {
               className="lg:w-1/2"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-secondary/20 to-primary/20 rounded-3xl blur-2xl transform -rotate-6" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-lime-500/20 to-emerald-600/20 rounded-3xl blur-2xl transform -rotate-6" />
                 <img
                   src="/farmer_tech.jpg"
                   alt="Farmer using tech"
                   className="rounded-3xl relative z-10 border border-white/10 shadow-2xl"
                 />
-
-                {/* Floating UI Elements over image */}
-                <div className="absolute -bottom-6 -left-6 z-20 glass-card !bg-black/40 !backdrop-blur-xl !border-white/20 p-5 rounded-2xl w-64">
+                {/* Moisture card */}
+                <div className="absolute -bottom-6 -left-6 z-20 bg-black/40 backdrop-blur-xl border border-white/20 p-5 rounded-2xl w-64">
                   <div className="flex justify-between items-end mb-4">
                     <span className="text-sm font-medium text-white/80">
                       Moisture Level
                     </span>
-                    <span className="text-2xl font-display font-bold text-secondary">
+                    <span className={`${fd} text-2xl font-bold text-lime-400`}>
                       42%
                     </span>
                   </div>
                   <div className="w-full bg-white/10 rounded-full h-2">
-                    <div className="bg-secondary h-2 rounded-full w-[42%]" />
+                    <div className="bg-lime-400 h-2 rounded-full w-[42%]" />
                   </div>
                 </div>
               </div>
@@ -534,7 +609,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
+      {/* ── TESTIMONIALS ── */}
       <section className="py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -543,10 +618,12 @@ export default function Home() {
             whileInView="whileInView"
             className="text-center max-w-2xl mx-auto mb-16"
           >
-            <h2 className="text-3xl lg:text-4xl font-display font-bold text-foreground mb-6">
+            <h2
+              className={`${fd} text-3xl lg:text-4xl font-bold ${textFg} mb-6`}
+            >
               Rooted in community.
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className={`text-lg ${textMuted}`}>
               Hear from the farmers and buyers who are changing the local food
               system.
             </p>
@@ -557,15 +634,17 @@ export default function Home() {
               variants={fadeIn}
               initial="initial"
               whileInView="whileInView"
-              className="glass-card p-8 rounded-3xl relative"
+              className={`${glassCard} p-8 rounded-3xl relative`}
             >
-              <Quote className="absolute top-8 right-8 text-primary/10 w-16 h-16" />
-              <div className="flex items-center gap-1 text-accent mb-6">
+              <Quote className="absolute top-8 right-8 text-emerald-600/10 w-16 h-16" />
+              <div className="flex items-center gap-1 text-amber-500 mb-6">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <Star key={i} size={16} fill="currentColor" />
                 ))}
               </div>
-              <p className="text-lg text-foreground font-medium leading-relaxed mb-8 relative z-10">
+              <p
+                className={`text-lg ${textFg} font-medium leading-relaxed mb-8 relative z-10`}
+              >
                 "Before Organic Farm, I was losing 30% of my margin to
                 distributors. Now, I sell directly to local families, and the AI
                 agronomist helped me increase my yield by 15% this season."
@@ -577,10 +656,8 @@ export default function Home() {
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div>
-                  <div className="font-semibold text-foreground">
-                    Sarah Jenkins
-                  </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className={`font-semibold ${textFg}`}>Sarah Jenkins</div>
+                  <div className={`text-sm ${textMuted}`}>
                     Owner, Green Valley Farms
                   </div>
                 </div>
@@ -591,28 +668,28 @@ export default function Home() {
               variants={fadeIn}
               initial="initial"
               whileInView="whileInView"
-              className="glass-card p-8 rounded-3xl relative"
+              className={`${glassCard} p-8 rounded-3xl relative`}
             >
-              <Quote className="absolute top-8 right-8 text-secondary/10 w-16 h-16" />
-              <div className="flex items-center gap-1 text-accent mb-6">
+              <Quote className="absolute top-8 right-8 text-lime-500/10 w-16 h-16" />
+              <div className="flex items-center gap-1 text-amber-500 mb-6">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <Star key={i} size={16} fill="currentColor" />
                 ))}
               </div>
-              <p className="text-lg text-foreground font-medium leading-relaxed mb-8 relative z-10">
+              <p
+                className={`text-lg ${textFg} font-medium leading-relaxed mb-8 relative z-10`}
+              >
                 "Renting a tractor for just the three days I needed it saved me
                 taking out a massive loan. The platform is seamless, and knowing
                 I'm supporting another local farmer feels right."
               </p>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center font-display font-bold text-primary">
+                <div className="w-12 h-12 rounded-full bg-emerald-600/20 flex items-center justify-center font-bold text-emerald-600">
                   MR
                 </div>
                 <div>
-                  <div className="font-semibold text-foreground">
-                    Marcus Rivera
-                  </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className={`font-semibold ${textFg}`}>Marcus Rivera</div>
+                  <div className={`text-sm ${textMuted}`}>
                     First-year Grower
                   </div>
                 </div>
@@ -622,36 +699,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA SECTION */}
+      {/* ── CTA ── */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-primary/5" />
+        <div
+          className={`absolute inset-0 ${darkMode ? "bg-emerald-900/10" : "bg-emerald-600/5"}`}
+        />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h2 className="text-4xl lg:text-5xl font-display font-bold text-foreground mb-6">
+          <h2 className={`${fd} text-4xl lg:text-5xl font-bold ${textFg} mb-6`}>
             Ready to join the movement?
           </h2>
-          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+          <p className={`text-xl ${textMuted} mb-10 max-w-2xl mx-auto`}>
             Whether you want to source the freshest ingredients or scale your
             agricultural business, your plot in our ecosystem is waiting.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link
               to="/register"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-primary text-white font-medium shadow-[0_12px_24px_-8px_rgba(5,150,105,0.4)] hover:shadow-[0_16px_32px_-8px_rgba(5,150,105,0.6)] hover:-translate-y-1 transition-all"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-lime-400 text-white font-medium shadow-[0_12px_24px_-8px_rgba(5,150,105,0.4)] hover:shadow-[0_16px_32px_-8px_rgba(5,150,105,0.6)] hover:-translate-y-1 transition-all"
             >
               Create a free account
             </Link>
             <Link
               to="/about"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel text-foreground font-medium hover:bg-white/80 transition-colors"
+              className={`w-full sm:w-auto px-8 py-4 rounded-xl ${glassPanel} ${textFg} font-medium hover:bg-white/80 transition-colors`}
             >
               Learn more about us
             </Link>
           </div>
         </div>
       </section>
-
-      {/* FOOTER */}
-      
     </main>
   );
 }

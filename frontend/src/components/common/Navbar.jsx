@@ -52,48 +52,29 @@ const Navbar = () => {
 
   const notifBadgeLabel = unreadCount > 9 ? "9+" : unreadCount;
 
-  // ── Liquid glass active pill ─────────────────────────────────────────────
-  // Active: frosted glass surface with a top-edge specular highlight and
-  // a soft emerald glow underneath — no solid fill, all translucency.
+  // ── Nav underline classes ───────────────────────────────────────────────────
+  // Active state uses a bottom border (underline). The border is always
+  // reserved (border-b-2 border-transparent) so layout never shifts on toggle.
+  // Only color and border-color are transitioned — both are cheap/compositable.
   const navLinkClass = ({ isActive }) =>
     [
-      "font-['Inter'] relative px-5 py-3 rounded-full transition-all duration-200",
+      "font-['Inter'] px-3 pt-1.5 pb-1 border-b-2",
+      "transition-[color,border-color] duration-150",
       isActive
-        ? [
-            "font-semibold text-emerald-900",
-            // glass fill + blur
-            "bg-[rgba(255,255,255,0.32)] backdrop-blur-md",
-            // rim
-            "border border-white/50",
-            // top-edge specular highlight + soft drop glow
-            "shadow-[inset_0_1.5px_0_rgba(255,255,255,0.65),0_4px_20px_rgba(5,150,105,0.22)]",
-            // dark overrides
-            "dark:text-emerald-100",
-            "dark:bg-[rgba(255,255,255,0.07)]",
-            "dark:border-white/[0.12]",
-            "dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.11),0_4px_18px_rgba(0,0,0,0.35)]",
-          ].join(" ")
-        : "text-[#4B6357] hover:text-[#0F2E22] hover:bg-emerald-500/10 dark:text-emerald-100/70 dark:hover:text-emerald-200",
+        ? "font-semibold text-emerald-700 border-emerald-600 dark:text-emerald-300 dark:border-emerald-400"
+        : "text-[#4B6357] border-transparent hover:text-emerald-700 hover:border-emerald-300/60 dark:text-emerald-100/70 dark:hover:text-emerald-200 dark:hover:border-emerald-500/40",
     ].join(" ");
 
-  // Mobile variant — same glass logic, rectangular pill
+  // Mobile variant — left border works better in a vertical list
   const mobileNavLinkClass = ({ isActive }) =>
     [
-      "font-['Inter'] px-3 py-2 rounded-lg transition-all duration-200",
+      "font-['Inter'] px-4 py-2.5 border-l-2",
+      "transition-[color,border-color,background-color] duration-150",
       isActive
-        ? [
-            "font-semibold text-emerald-900",
-            "bg-[rgba(255,255,255,0.42)] backdrop-blur-md",
-            "border border-white/45",
-            "shadow-[inset_0_1px_0_rgba(255,255,255,0.60),0_2px_12px_rgba(5,150,105,0.18)]",
-            "dark:text-emerald-100",
-            "dark:bg-[rgba(255,255,255,0.08)]",
-            "dark:border-white/10",
-            "dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_2px_10px_rgba(0,0,0,0.28)]",
-          ].join(" ")
-        : "text-[#0F2E22] hover:text-emerald-600 dark:text-emerald-100 dark:hover:text-emerald-300",
+        ? "font-semibold text-emerald-700 border-emerald-600 bg-emerald-50 dark:text-emerald-300 dark:border-emerald-400 dark:bg-emerald-400/10"
+        : "text-[#0F2E22] border-transparent hover:text-emerald-600 hover:border-emerald-300 dark:text-emerald-100 dark:hover:text-emerald-300 dark:hover:border-emerald-600/40",
     ].join(" ");
-  // ─────────────────────────────────────────────────────────────────────────
+  // ───────────────────────────────────────────────────────────────────────────
 
   const themeToggleBtn = (
     <button
@@ -167,9 +148,6 @@ const Navbar = () => {
                   </>
                 )}
 
-                <NavLink to="/ai" className={navLinkClass}>
-                  Ai Assistant
-                </NavLink>
               </nav>
 
               {/* Desktop right actions */}
@@ -252,7 +230,7 @@ const Navbar = () => {
                         onClick={() => setProfileMenu(!profileMenu)}
                         className="flex items-center gap-3 rounded-full px-3 py-2 hover:bg-white/10 transition"
                       >
-                        <div className="w-10 h-10 rounded-full p-[2px] bg-gradient-to-br from-green-700 to-lime-500">
+                        <div className="w-10 h-10 rounded-full p-0.5 bg-linear-to-br from-green-700 to-lime-500">
                           <div className="w-full h-full rounded-full flex items-center justify-center font-bold uppercase text-sm text-white bg-gradient-to-br from-emerald-600 to-emerald-800">
                             {user?.name?.trim()?.charAt(0).toUpperCase()}
                           </div>
@@ -343,7 +321,7 @@ const Navbar = () => {
           {mobileMenu && (
             <div
               className="lg:hidden border-t border-emerald-600/10 dark:border-emerald-400/10
-                bg-white/95 backdrop-blur-xl dark:bg-[#07120d]/[0.97] transition-colors duration-300"
+                bg-white/95 backdrop-blur-xl dark:bg-[#07120d]/97 transition-colors duration-300"
             >
               <div className="p-5 flex flex-col gap-2">
                 <NavLink
@@ -363,14 +341,6 @@ const Navbar = () => {
                     Market Place
                   </NavLink>
                 )}
-
-                <NavLink
-                  to="/ai"
-                  className={mobileNavLinkClass}
-                  onClick={() => setMobileMenu(false)}
-                >
-                  Ai Assistant
-                </NavLink>
 
                 {!isAuthenticated && (
                   <>

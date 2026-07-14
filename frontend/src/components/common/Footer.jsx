@@ -1,4 +1,4 @@
-import { Leaf, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
+import { Leaf, Mail, Phone, MapPin, ArrowRight, ArrowUp } from "lucide-react";
 import {
   FaFacebook,
   FaInstagram,
@@ -7,252 +7,268 @@ import {
 } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-
-// Matches Navbar/Hero/MyProducts/Orders/AddProduct/Dashboard: emerald →
-// lime gradient accents, Space Grotesk display type. Footer stays dark,
-// now using a deep emerald base instead of the earlier forest/marigold one.
-const FontImport = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-    .fd-footer { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background: #0B2318; color: #B9CFC0; }
-    .fd-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
-
-    .fd-newsletter-section {
-      border-bottom: 1px solid rgba(132, 204, 22, 0.15);
-      transition: background 0.3s ease;
-    }
-    .fd-newsletter-section:hover { background: rgba(132, 204, 22, 0.04); }
-
-    .fd-newsletter-input {
-      background: #123A27;
-      border: 1px solid rgba(132, 204, 22, 0.2);
-      color: #F4F9F2;
-      transition: border-color 0.15s ease;
-    }
-    .fd-newsletter-input:focus { outline: none; border-color: #84CC16; }
-    .fd-newsletter-input::placeholder { color: #7FA08C; }
-
-    .fd-newsletter-btn {
-      background: linear-gradient(90deg, #059669, #84CC16);
-      color: #063527;
-      transition: filter 0.15s ease;
-    }
-    .fd-newsletter-btn:hover { filter: brightness(1.08); }
-
-    .fd-social-btn {
-      background: #123A27;
-      transition: background 0.15s ease, color 0.15s ease;
-    }
-    .fd-social-btn:hover { background: linear-gradient(135deg, #059669, #84CC16); color: #063527; }
-
-    .fd-heading { color: #F4F9F2; }
-
-    .fd-footer-link { transition: color 0.15s ease; }
-    .fd-footer-link:hover { color: #84CC16; }
-
-    .fd-contact-icon { color: #84CC16; }
-
-    .fd-footer-divider { border-top: 1px solid rgba(132, 204, 22, 0.15); }
-  `}</style>
-);
+import { useTheme } from "../../context/ThemeContext";
 
 const Footer = () => {
   const { isAuthenticated } = useAuth();
+  const { darkMode } = useTheme();
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+  // Light: muted emerald · Dark: muted sage
+  const linkCls =
+    "text-emerald-700/60 hover:text-emerald-600 dark:text-[#7FA08C] dark:hover:text-emerald-400 transition-colors duration-150 flex items-center gap-1.5 group";
+
+  const colHeader = (label) => (
+    <h3 className="font-['Space_Grotesk'] font-semibold text-base mb-6 flex items-center gap-2 text-emerald-950 dark:text-white">
+      <span className="block w-1 h-4 rounded-full bg-emerald-500" />
+      {label}
+    </h3>
+  );
+
   return (
-    <footer className="fd-footer">
-      <FontImport />
-      {/* Newsletter */}
+    <footer
+      className={`relative font-['Inter'] overflow-hidden
+        bg-emerald-50 text-emerald-800/80
+        dark:bg-[#071912] dark:text-[#B9CFC0]
+        ${darkMode ? "dark" : ""}`}
+    >
+      {/* ── Ambient background glows ── */}
+      <div className="pointer-events-none absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full
+        bg-emerald-300/20 blur-[100px]
+        dark:bg-emerald-700/[0.12]" />
+      <div className="pointer-events-none absolute top-1/2 right-[-10%] w-[400px] h-[400px] rounded-full
+        bg-emerald-200/25 blur-[120px]
+        dark:bg-emerald-500/[0.07]" />
+      <div className="pointer-events-none absolute bottom-0 left-1/3 w-[300px] h-[300px] rounded-full
+        bg-emerald-300/15 blur-[90px]
+        dark:bg-emerald-600/[0.08]" />
+
+      {/* ── Top gradient accent line ── */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" />
+
+      {/* ── Newsletter band ── */}
       {!isAuthenticated && (
-        <section className="fd-newsletter-section">
-          <div className="max-w-7xl mx-auto px-6 py-12">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-              <div>
-                <h2 className="fd-display fd-heading text-3xl font-semibold">
-                  Stay Updated 🌱
-                </h2>
+        <div className="relative px-6 py-14">
+          <div className="max-w-5xl mx-auto">
+            {/* Glass card */}
+            <div className="relative rounded-3xl overflow-hidden px-8 py-10 md:px-14
+              bg-white/80 border border-emerald-200/70 shadow-[0_8px_40px_rgba(5,150,105,0.08)]
+              dark:bg-[rgba(18,58,39,0.52)] dark:border-emerald-400/[0.14] dark:shadow-none
+              backdrop-blur-xl">
+              {/* inner glow */}
+              <div className="pointer-events-none absolute -top-10 -right-10 w-60 h-60 rounded-full
+                bg-emerald-200/30 blur-3xl
+                dark:bg-emerald-400/[0.06]" />
 
-                <p className="mt-2 max-w-xl" style={{ color: "#7FA08C" }}>
-                  Subscribe to receive updates about fresh organic products,
-                  farming tips and exclusive offers.
-                </p>
-              </div>
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-8 relative z-10">
+                <div className="max-w-md">
+                  {/* Badge */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wide mb-4
+                    bg-emerald-100 border border-emerald-300 text-emerald-700
+                    dark:bg-emerald-400/10 dark:border-emerald-400/20 dark:text-emerald-400">
+                    <Leaf size={12} />
+                    NEWSLETTER
+                  </div>
 
-              <div className="flex w-full lg:w-auto">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="fd-newsletter-input w-full lg:w-80 rounded-l-xl px-5 py-4"
-                />
+                  <h2 className="font-['Space_Grotesk'] text-2xl md:text-3xl font-bold leading-snug
+                    text-emerald-950 dark:text-white">
+                    Stay rooted with{" "}
+                    <span className="bg-gradient-to-r from-emerald-500 to-emerald-700 dark:from-emerald-300 dark:to-emerald-500 bg-clip-text text-transparent">
+                      fresh updates.
+                    </span>
+                  </h2>
 
-                <button className="fd-newsletter-btn px-6 rounded-r-xl flex items-center font-semibold">
-                  <ArrowRight />
-                </button>
+                  <p className="mt-2 text-sm leading-relaxed text-emerald-700/60 dark:text-[#7FA08C]">
+                    Organic tips, seasonal produce alerts, and exclusive offers
+                    — straight to your inbox.
+                  </p>
+                </div>
+
+                <div className="flex w-full lg:w-auto min-w-0 lg:min-w-[420px]
+                  shadow-[0_4px_20px_rgba(5,150,105,0.10)] dark:shadow-[0_8px_30px_rgba(5,150,105,0.15)]">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="flex-1 min-w-0 rounded-l-2xl px-5 py-4 text-sm
+                      border border-r-0
+                      bg-white border-emerald-200 text-emerald-950 placeholder:text-emerald-400
+                      dark:bg-[#0e2d1e] dark:border-emerald-400/20 dark:text-[#F4F9F2] dark:placeholder:text-[#4a7a60]
+                      focus:outline-none focus:border-emerald-500
+                      dark:focus:border-emerald-400
+                      transition-colors duration-150"
+                  />
+                  <button
+                    className="flex items-center gap-2 px-6 py-4 rounded-r-2xl font-semibold text-sm shrink-0 whitespace-nowrap
+                      text-white bg-emerald-600 hover:bg-emerald-700
+                      dark:text-[#063527] dark:bg-emerald-500 dark:hover:bg-emerald-400
+                      active:scale-[0.98] transition-all duration-150"
+                  >
+                    Subscribe
+                    <ArrowRight size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
       )}
 
-      {/* Main Footer */}
-
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      {/* ── Main columns ── */}
+      <div className="max-w-7xl mx-auto px-6 pt-4 pb-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+
           {/* Brand */}
+          <div className="lg:col-span-1">
+            <Link to="/" className="inline-flex items-center gap-2.5 group mb-5">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center
+                shadow-[0_4px_14px_rgba(5,150,105,0.25)] dark:shadow-[0_4px_14px_rgba(5,150,105,0.30)]">
+                <Leaf size={18} className="text-white dark:text-[#063527]" />
+              </div>
+              <span className="font-['Space_Grotesk'] text-xl font-bold
+                text-emerald-950 dark:text-white">
+                GreenHarvest
+              </span>
+            </Link>
 
-          <div>
-            <div className="fd-display fd-heading flex items-center gap-2 text-2xl font-semibold">
-              <Leaf style={{ color: "#84CC16" }} />
-              Organic Farm
-            </div>
-
-            <p className="mt-5 leading-7" style={{ color: "#7FA08C" }}>
-              Connecting farmers directly with buyers to provide fresh, organic
+            <p className="text-sm leading-7 max-w-xs text-emerald-700/60 dark:text-[#7FA08C]">
+              Connecting farmers directly with buyers to provide fresh, organic,
               and healthy products while ensuring fair prices for everyone.
             </p>
 
-            <div className="flex gap-4 mt-6">
-              <a href="#" className="fd-social-btn p-3 rounded-full">
-                <FaFacebook size={18} />
-              </a>
-
-              <a href="#" className="fd-social-btn p-3 rounded-full">
-                <FaInstagram size={18} />
-              </a>
-
-              <a href="#" className="fd-social-btn p-3 rounded-full">
-                <FaXTwitter size={18} />
-              </a>
-
-              <a href="#" className="fd-social-btn p-3 rounded-full">
-                <FaLinkedin size={18} />
-              </a>
+            {/* Social icons */}
+            <div className="flex gap-3 mt-7">
+              {[
+                { Icon: FaFacebook,  label: "Facebook" },
+                { Icon: FaInstagram, label: "Instagram" },
+                { Icon: FaXTwitter,  label: "X / Twitter" },
+                { Icon: FaLinkedin,  label: "LinkedIn" },
+              ].map(({ Icon, label }) => (
+                <a
+                  key={label}
+                  href="#"
+                  aria-label={label}
+                  className="w-9 h-9 rounded-full flex items-center justify-center border transition-all duration-200
+                    bg-emerald-100 border-emerald-200 text-emerald-600
+                    hover:bg-emerald-500 hover:text-white hover:border-transparent hover:shadow-[0_4px_12px_rgba(5,150,105,0.25)]
+                    dark:bg-[rgba(18,58,39,0.80)] dark:border-emerald-400/10 dark:text-[#7FA08C]
+                    dark:hover:bg-emerald-500 dark:hover:text-[#063527] dark:hover:border-transparent"
+                >
+                  <Icon size={15} />
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Quick Links */}
-
           <div>
-            <h3 className="fd-display fd-heading font-semibold text-xl mb-6">
-              Quick Links
-            </h3>
-
-            <ul className="space-y-4">
-              <li>
-                <Link to="/" className="fd-footer-link">
-                  Home
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/products" className="fd-footer-link">
-                  Products
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/about" className="fd-footer-link">
-                  About Us
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/contact" className="fd-footer-link">
-                  Contact
-                </Link>
-              </li>
+            {colHeader("Quick Links")}
+            <ul className="space-y-3.5">
+              {[
+                { to: "/",             label: "Home" },
+                { to: "/market-place", label: "Marketplace" },
+                { to: "/about",        label: "About Us" },
+                { to: "/contact",      label: "Contact" },
+              ].map(({ to, label }) => (
+                <li key={to}>
+                  <Link to={to} className={linkCls}>
+                    <span className="w-1 h-1 rounded-full bg-emerald-400/50 group-hover:bg-emerald-500 dark:group-hover:bg-emerald-400 transition-colors shrink-0" />
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Buyer */}
-
           <div>
-            <h3 className="fd-display fd-heading font-semibold text-xl mb-6">
-              Buyer
-            </h3>
-
-            <ul className="space-y-4">
-              <li>
-                <Link to="/products" className="fd-footer-link">
-                  Browse Products
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/orders" className="fd-footer-link">
-                  My Orders
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/cart" className="fd-footer-link">
-                  Shopping Cart
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/register" className="fd-footer-link">
-                  Become a Member
-                </Link>
-              </li>
+            {colHeader("For Buyers")}
+            <ul className="space-y-3.5">
+              {[
+                { to: "/market-place", label: "Browse Products" },
+                { to: "/orders",       label: "My Orders" },
+                { to: "/cart",         label: "Shopping Cart" },
+                { to: "/register",     label: "Become a Member" },
+              ].map(({ to, label }) => (
+                <li key={to}>
+                  <Link to={to} className={linkCls}>
+                    <span className="w-1 h-1 rounded-full bg-emerald-400/50 group-hover:bg-emerald-500 dark:group-hover:bg-emerald-400 transition-colors shrink-0" />
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact */}
-
           <div>
-            <h3 className="fd-display fd-heading font-semibold text-xl mb-6">
-              Contact
-            </h3>
-
+            {colHeader("Contact")}
             <div className="space-y-5">
-              <div className="flex gap-3">
-                <MapPin className="fd-contact-icon mt-1" />
-
-                <p>
-                  Indore, Madhya Pradesh
-                  <br />
-                  India
-                </p>
-              </div>
-
-              <div className="flex gap-3">
-                <Phone className="fd-contact-icon" />
-
-                <p>+91 XXXXX XXXXX</p>
-              </div>
-
-              <div className="flex gap-3">
-                <Mail className="fd-contact-icon" />
-
-                <p>support@organicfarm.com</p>
-              </div>
+              {[
+                {
+                  Icon: MapPin,
+                  content: (
+                    <>
+                      Indore, Madhya Pradesh
+                      <br />
+                      India
+                    </>
+                  ),
+                },
+                { Icon: Phone, content: "+91 XXXXX XXXXX" },
+                { Icon: Mail,  content: "support@greenharvest.com" },
+              ].map(({ Icon, content }, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-0.5 border
+                    bg-emerald-100 border-emerald-200 text-emerald-600
+                    dark:bg-[rgba(18,58,39,0.90)] dark:border-emerald-400/15 dark:text-emerald-400">
+                    <Icon size={14} />
+                  </div>
+                  <p className="text-sm leading-relaxed text-emerald-700/60 dark:text-[#7FA08C]">
+                    {content}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom */}
+      {/* ── Gradient divider ── */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-emerald-400/25 to-transparent" />
 
-      <div className="fd-footer-divider">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-center" style={{ color: "#7FA08C" }}>
-            © {new Date().getFullYear()} © 2026 Organic Farm. Empowering farmers. Delivering freshness.
-          </p>
+      {/* ── Bottom bar ── */}
+      <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p className="text-xs text-center text-emerald-600/50 dark:text-[#4a7a60]">
+          © {new Date().getFullYear()} GreenHarvest. Empowering farmers.
+          Delivering freshness.
+        </p>
 
-          <div className="flex gap-6">
-            <Link to="#" className="fd-footer-link">
-              Privacy Policy
+        <div className="flex items-center gap-6">
+          {["Privacy Policy", "Terms & Conditions", "Support"].map((label) => (
+            <Link
+              key={label}
+              to="#"
+              className="text-xs transition-colors duration-150
+                text-emerald-700/60 hover:text-emerald-600
+                dark:text-[#7FA08C] dark:hover:text-emerald-400"
+            >
+              {label}
             </Link>
+          ))}
 
-            <Link to="#" className="fd-footer-link">
-              Terms & Conditions
-            </Link>
-
-            <Link to="#" className="fd-footer-link">
-              Support
-            </Link>
-          </div>
+          {/* Back to top */}
+          <button
+            onClick={scrollToTop}
+            aria-label="Back to top"
+            className="ml-2 w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-200
+              bg-emerald-100 border-emerald-200 text-emerald-600
+              hover:bg-emerald-500 hover:text-white hover:border-transparent
+              dark:bg-[rgba(18,58,39,0.80)] dark:border-emerald-400/15 dark:text-[#7FA08C]
+              dark:hover:bg-emerald-500 dark:hover:text-[#063527] dark:hover:border-transparent"
+          >
+            <ArrowUp size={14} />
+          </button>
         </div>
       </div>
     </footer>
