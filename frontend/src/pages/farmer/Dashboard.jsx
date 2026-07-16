@@ -237,14 +237,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Add Product button */}
-          <button
-            className="px-6 py-3 rounded-xl flex items-center gap-2 font-semibold shrink-0 text-emerald-950 bg-gradient-to-r from-emerald-500 to-lime-400 shadow-lg shadow-emerald-500/40 hover:-translate-y-0.5 hover:shadow-emerald-500/55 active:translate-y-0 transition-all duration-150"
-            onClick={() => navigate("/farmer/products/add")}
-          >
-            <Plus size={20} />
-            Add Product
-          </button>
+          
         </div>
 
         {/* ── Stat Cards ── */}

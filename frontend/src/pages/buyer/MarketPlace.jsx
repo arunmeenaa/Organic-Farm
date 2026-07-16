@@ -8,13 +8,17 @@ import {
   Tractor,
   PackageSearch,
   Wrench,
+  ClipboardList,
+  Handshake,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { getProducts } from "../../services/product.service";
 import { getMachines } from "../../services/machine.service";
+import { getAllServices } from "../../services/service.service";
 import ProductCard from "../../components/product/ProductCard";
 import MachineCard from "../../components/machine/MachineCard";
+import ServiceCard from "../../pages/service/ServiceCard";
 import { useTheme } from "../../context/ThemeContext";
 import {
   Select,
@@ -43,10 +47,25 @@ const productCategories = [
   "Dairy",
   "Spices",
 ];
+const serviceCategories = [
+  "All",
+  "Harvesting",
+  "Land Preparation",
+  "Ploughing",
+  "Seeding",
+  "Transplanting",
+  "Irrigation",
+  "Spraying",
+  "Harvesting",
+  "Transportation",
+  "Threshing",
+  "Others",
+];
 
 /* ════════════════════════════════════════════════════════════════════════════
    MARKETPLACE — all state, hooks, and data logic unchanged.
    darkMode drives conditional Tailwind classes throughout.
+   Now has three tabs: Products, Machines, and Services.
    ════════════════════════════════════════════════════════════════════════════ */
 const Marketplace = () => {
   const { darkMode } = useTheme();
@@ -73,6 +92,12 @@ const Marketplace = () => {
   const [machineSearch, setMachineSearch] = useState("");
   const [machineCategory, setMachineCategory] = useState("All");
   const [rentalType, setRentalType] = useState("all");
+
+  // Services state
+  const [services, setServices] = useState([]);
+  const [serviceSearch, setServiceSearch] = useState("");
+  const [serviceCategory, setServiceCategory] = useState("All");
+  const [servicePriceType, setServicePriceType] = useState("all");
 
   // Debounce product search
   useEffect(() => {
@@ -102,9 +127,12 @@ const Marketplace = () => {
           totalPages: data.totalPages || 1,
           totalProducts: data.totalProducts || 0,
         });
-      } else {
+      } else if (activeTab === "machines") {
         const { data } = await getMachines();
         setMachines(data.machines || []);
+      } else {
+        const { data } = await getAllServices();
+        setServices(data.services || []);
       }
     } catch (err) {
       toast.error(
@@ -142,6 +170,26 @@ const Marketplace = () => {
     [machines, machineSearch, machineCategory, rentalType],
   );
 
+  // In-memory service filter (fetched once per tab activation, then
+  // narrowed client-side — same approach as the machines tab above).
+  const filteredServices = useMemo(
+    () =>
+      services.filter((s) => {
+        const matchSearch = s.title
+          ?.toLowerCase()
+          .includes(serviceSearch.toLowerCase());
+
+        const matchCategory =
+          serviceCategory === "All" || s.category === serviceCategory;
+
+        const matchPriceType =
+          servicePriceType === "all" || s.pricingType === servicePriceType;
+
+        return matchSearch && matchCategory && matchPriceType;
+      }),
+    [services, serviceSearch, serviceCategory, servicePriceType],
+  );
+
   /* ── Shared input className ── */
   const inputCls = [
     "w-full rounded-xl py-3 px-4 text-sm font-medium",
@@ -158,6 +206,21 @@ const Marketplace = () => {
       ? "bg-white/[0.06] border border-[rgba(52,211,153,0.15)] text-[#D1FAE5] focus:border-[#34D399] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.14)] [&>option]:bg-[#0B1A12] [&>option]:text-[#D1FAE5]"
       : "bg-white/[0.88] border border-[rgba(6,95,70,0.12)] text-[#064E3B] focus:border-[#059669] focus:shadow-[0_0_0_3px_rgba(5,150,105,0.14)]",
   ].join(" ");
+
+  const headerCopy = {
+    products: {
+      title: "Fresh Organic Marketplace",
+      subtitle: `Discover ${productPagination.totalProducts} completely natural organic crop batches direct from farms.`,
+    },
+    machines: {
+      title: "Agricultural Equipment Hub",
+      subtitle: `Explore ${filteredMachines.length} machinery listings ready for immediate operations deployment.`,
+    },
+    services: {
+      title: "Farm Services Directory",
+      subtitle: `Browse ${filteredServices.length} verified services from experienced local providers.`,
+    },
+  };
 
   return (
     <div className="font-sans min-h-screen relative overflow-hidden transition-[background] duration-400 pb-16">
@@ -182,14 +245,12 @@ const Marketplace = () => {
         <div
           className={[
             "flex flex-col md:flex-row md:items-end justify-between border-b pb-6 mb-8 gap-4",
-            // mkt-divider
             darkMode
               ? "border-[rgba(52,211,153,0.10)]"
               : "border-[rgba(6,95,70,0.10)]",
           ].join(" ")}
         >
           <div>
-            {/* mkt-display mkt-heading */}
             <h1
               className={[
                 "text-4xl font-extrabold tracking-tight bg-clip-text text-transparent",
@@ -199,11 +260,8 @@ const Marketplace = () => {
                   : "bg-gradient-to-r from-[#065F46] to-[#65A30D]",
               ].join(" ")}
             >
-              {activeTab === "products"
-                ? "Fresh Organic Marketplace"
-                : "Agricultural Equipment Hub"}
+              {headerCopy[activeTab].title}
             </h1>
-            {/* mkt-subtext */}
             <p
               className={[
                 "mt-2 text-sm font-medium",
@@ -212,9 +270,7 @@ const Marketplace = () => {
                   : "text-[rgba(6,95,70,0.55)]",
               ].join(" ")}
             >
-              {activeTab === "products"
-                ? `Discover ${productPagination.totalProducts} completely natural organic crop batches direct from farms.`
-                : `Explore ${filteredMachines.length} machinery listings ready for immediate operations deployment.`}
+              {headerCopy[activeTab].subtitle}
             </p>
           </div>
 
@@ -231,6 +287,7 @@ const Marketplace = () => {
               onClick={() => {
                 setActiveTab("products");
                 setMachineSearch("");
+                setServiceSearch("");
               }}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all text-xs tracking-wider uppercase ${
                 activeTab === "products"
@@ -246,6 +303,7 @@ const Marketplace = () => {
               onClick={() => {
                 setActiveTab("machines");
                 setProductSearch("");
+                setServiceSearch("");
               }}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all text-xs tracking-wider uppercase ${
                 activeTab === "machines"
@@ -256,6 +314,22 @@ const Marketplace = () => {
               }`}
             >
               <Tractor size={14} /> Farm Machinery
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("services");
+                setProductSearch("");
+                setMachineSearch("");
+              }}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all text-xs tracking-wider uppercase ${
+                activeTab === "services"
+                  ? "bg-gradient-to-r from-emerald-600 to-lime-500 text-white shadow-[0_8px_16px_-6px_rgba(5,150,105,0.50)]"
+                  : darkMode
+                    ? "text-[rgba(167,243,208,0.45)] hover:text-[rgba(167,243,208,0.85)]"
+                    : "text-[rgba(6,95,70,0.50)] hover:text-[rgba(6,95,70,0.85)]"
+              }`}
+            >
+              <ClipboardList size={14} /> Services
             </button>
           </div>
         </div>
@@ -271,7 +345,6 @@ const Marketplace = () => {
         >
           <div className="flex items-center gap-2 mb-4">
             <SlidersHorizontal size={18} className="text-amber-500" />
-            {/* mkt-filter-label */}
             <h2
               className={[
                 "font-bold text-sm uppercase tracking-wider",
@@ -286,7 +359,6 @@ const Marketplace = () => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Search */}
               <div className="relative">
-                {/* mkt-search-icon */}
                 <Search
                   size={16}
                   className={[
@@ -350,7 +422,7 @@ const Marketplace = () => {
                 className={inputCls}
               />
             </div>
-          ) : (
+          ) : activeTab === "machines" ? (
             <div className="grid sm:grid-cols-3 gap-4">
               {/* Search */}
               <div className="relative">
@@ -398,6 +470,56 @@ const Marketplace = () => {
                 </option>
               </select>
             </div>
+          ) : (
+            <div className="grid sm:grid-cols-3 gap-4">
+              {/* Search */}
+              <div className="relative">
+                <Search
+                  size={16}
+                  className={[
+                    "absolute left-4 top-1/2 -translate-y-1/2",
+                    darkMode
+                      ? "text-[rgba(52,211,153,0.40)]"
+                      : "text-[rgba(6,95,70,0.35)]",
+                  ].join(" ")}
+                />
+                <input
+                  type="text"
+                  placeholder="Search available services..."
+                  value={serviceSearch}
+                  onChange={(e) => setServiceSearch(e.target.value)}
+                  className={`${inputCls} pl-11`}
+                />
+              </div>
+
+              {/* Service category */}
+              <select
+                value={serviceCategory}
+                onChange={(e) => setServiceCategory(e.target.value)}
+                className={selectInputCls}
+              >
+                {serviceCategories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat === "All" ? "All Service Types" : cat}
+                  </option>
+                ))}
+              </select>
+
+              {/* Pricing model */}
+              <select
+                value={servicePriceType}
+                onChange={(e) => setServicePriceType(e.target.value)}
+                className={selectInputCls}
+              >
+                <option value="all">Any Pricing Model</option>
+                <option value="per_hour">Per Hour</option>
+                <option value="per_day">Per Day</option>
+                <option value="per_acre">Per Acre</option>
+                <option value="per_trip">Per Trip</option>
+                <option value="per_km">Per Kilometer</option>
+                <option value="fixed">Fixed Price</option>
+              </select>
+            </div>
           )}
         </div>
 
@@ -406,7 +528,6 @@ const Marketplace = () => {
           /* Skeleton */
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {[...Array(activeTab === "products" ? 8 : 6)].map((_, i) => (
-              /* mkt-skel */
               <div
                 key={i}
                 className={[
@@ -417,7 +538,6 @@ const Marketplace = () => {
                 ].join(" ")}
               >
                 <div>
-                  {/* mkt-skel-block */}
                   <div
                     className={[
                       "h-48 w-full rounded-lg",
@@ -456,7 +576,6 @@ const Marketplace = () => {
           </div>
         ) : activeTab === "products" ? (
           products.length === 0 ? (
-            /* Products empty — mkt-empty */
             <div
               className={[
                 "text-center py-20 max-w-xl mx-auto backdrop-blur-[16px] rounded-3xl border-[1.5px] border-dashed",
@@ -465,7 +584,6 @@ const Marketplace = () => {
                   : "bg-white/[0.72] border-[rgba(6,95,70,0.14)]",
               ].join(" ")}
             >
-              {/* mkt-empty-icon-green */}
               <div
                 className={[
                   "w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4",
@@ -476,7 +594,6 @@ const Marketplace = () => {
               >
                 <PackageSearch size={28} />
               </div>
-              {/* mkt-display mkt-empty-title */}
               <h2
                 className={[
                   "text-2xl font-bold font-['Space_Grotesk',ui-sans-serif,sans-serif]",
@@ -485,7 +602,6 @@ const Marketplace = () => {
               >
                 No Harvest Batches Found
               </h2>
-              {/* mkt-empty-sub */}
               <p
                 className={[
                   "mt-2 text-sm",
@@ -508,7 +624,6 @@ const Marketplace = () => {
 
               {/* Pagination */}
               <div className="flex justify-center items-center gap-4 mt-12">
-                {/* mkt-page-btn */}
                 <button
                   onClick={() => setProductPage((p) => p - 1)}
                   disabled={productPagination.currentPage === 1}
@@ -526,7 +641,6 @@ const Marketplace = () => {
                   <ChevronLeft size={16} /> Prev
                 </button>
 
-                {/* mkt-mono mkt-page-label */}
                 <span
                   className={[
                     "font-bold text-sm font-['IBM_Plex_Mono',ui-monospace,monospace]",
@@ -562,8 +676,55 @@ const Marketplace = () => {
               </div>
             </>
           )
-        ) : filteredMachines.length === 0 ? (
-          /* Machines empty — mkt-empty */
+        ) : activeTab === "machines" ? (
+          filteredMachines.length === 0 ? (
+            <div
+              className={[
+                "text-center py-20 max-w-xl mx-auto backdrop-blur-[16px] rounded-3xl border-[1.5px] border-dashed",
+                darkMode
+                  ? "bg-white/[0.04] border-[rgba(52,211,153,0.15)]"
+                  : "bg-white/[0.72] border-[rgba(6,95,70,0.14)]",
+              ].join(" ")}
+            >
+              <div
+                className={[
+                  "w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4",
+                  darkMode
+                    ? "bg-[rgba(245,158,11,0.10)] text-[#FCD34D]"
+                    : "bg-[rgba(245,158,11,0.10)] text-[#D97706]",
+                ].join(" ")}
+              >
+                <Wrench size={28} />
+              </div>
+              <h2
+                className={[
+                  "text-2xl font-bold font-['Space_Grotesk',ui-sans-serif,sans-serif]",
+                  darkMode ? "text-[#D1FAE5]" : "text-[#064E3B]",
+                ].join(" ")}
+              >
+                No Machinery Uncovered
+              </h2>
+              <p
+                className={[
+                  "mt-2 text-sm",
+                  darkMode
+                    ? "text-[rgba(167,243,208,0.50)]"
+                    : "text-[rgba(6,95,70,0.50)]",
+                ].join(" ")}
+              >
+                No rental machinery fits the current category or service
+                combination parameters.
+              </p>
+            </div>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredMachines.map((machine) => (
+                <MachineCard key={machine._id} machine={machine} />
+              ))}
+            </div>
+          )
+        ) : filteredServices.length === 0 ? (
+          /* Services empty */
           <div
             className={[
               "text-center py-20 max-w-xl mx-auto backdrop-blur-[16px] rounded-3xl border-[1.5px] border-dashed",
@@ -572,16 +733,15 @@ const Marketplace = () => {
                 : "bg-white/[0.72] border-[rgba(6,95,70,0.14)]",
             ].join(" ")}
           >
-            {/* mkt-empty-icon-amber */}
             <div
               className={[
                 "w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4",
                 darkMode
-                  ? "bg-[rgba(245,158,11,0.10)] text-[#FCD34D]"
-                  : "bg-[rgba(245,158,11,0.10)] text-[#D97706]",
+                  ? "bg-[rgba(52,211,153,0.10)] text-[#34D399]"
+                  : "bg-[rgba(5,150,105,0.10)] text-[#059669]",
               ].join(" ")}
             >
-              <Wrench size={28} />
+              <Handshake size={28} />
             </div>
             <h2
               className={[
@@ -589,7 +749,7 @@ const Marketplace = () => {
                 darkMode ? "text-[#D1FAE5]" : "text-[#064E3B]",
               ].join(" ")}
             >
-              No Machinery Uncovered
+              No Services Found
             </h2>
             <p
               className={[
@@ -599,15 +759,15 @@ const Marketplace = () => {
                   : "text-[rgba(6,95,70,0.50)]",
               ].join(" ")}
             >
-              No rental machinery fits the current category or service
-              combination parameters.
+              No listed services match the current category or pricing filters
+              yet.
             </p>
           </div>
         ) : (
-          /* Machine grid */
+          /* Services grid */
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredMachines.map((machine) => (
-              <MachineCard key={machine._id} machine={machine} />
+            {filteredServices.map((service) => (
+              <ServiceCard key={service._id} service={service} />
             ))}
           </div>
         )}

@@ -38,6 +38,8 @@ import MyInventory from "../pages/farmer/MyInventory";
 import AddMachine from "../pages/farmer/AddMachine";
 import EditMachine from "../pages/farmer/EditMachine";
 import MachineBookingDetails from "../pages/machine/MachineBookingDetails";
+import AddService from "../pages/service/AddService";
+import EditService from "../pages/service/EditService";
 
 const AppRoutes = () => {
   return (
@@ -76,16 +78,27 @@ const AppRoutes = () => {
 
           <Route element={<FarmerRoute />}>
             <Route path="/farmer/dashboard" element={<Dashboard />} />
+
+            {/* Products */}
             <Route path="/farmer/products/add" element={<AddProduct />} />
             <Route path="/farmer/products/edit/:id" element={<EditProduct />} />
+            <Route path="/farmer/inventory" element={<MyInventory />} />
+
+            {/* Orders */}
             <Route path="/farmer/orders" element={<FarmerOrders />} />
             <Route
               path="/farmer/orders/:id"
               element={<FarmerOrdersDetails />}
             />
-            <Route path="/farmer/inventory" element={<MyInventory />} />
+
+            {/* Machines */}
             <Route path="/farmer/machines/add" element={<AddMachine />} />
             <Route path="/farmer/machine/edit/:id" element={<EditMachine />} />
+
+            {/* Services */}
+
+            <Route path="/farmer/services/add" element={<AddService />} />
+            <Route path="/farmer/services/edit/:id" element={<EditService />} />
           </Route>
         </Route>
       </Route>

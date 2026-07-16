@@ -1,70 +1,102 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  Package,
-  Boxes,
-  IndianRupee,
-  FileText,
-  Upload,
-  X,
-  Save,
-  Loader2,
+  Package, Boxes, IndianRupee, FileText, Upload, X, Save, Loader2,
 } from "lucide-react";
 import toast from "react-hot-toast";
-
 import { getProductById, updateProduct } from "../../services/product.service";
 
+const display = { fontFamily: "'Space Grotesk', ui-sans-serif, sans-serif" };
+
 const categories = [
-  "Vegetables",
-  "Fruits",
-  "Grains",
-  "Pulses",
-  "Dairy",
-  "Spices",
-  "Herbs",
-  "Seeds",
+  "Vegetables", "Fruits", "Grains", "Pulses",
+  "Dairy", "Spices", "Herbs", "Seeds",
 ];
 
+// ── Shared primitives ─────────────────────────────────────────────────────────
+const Label = ({ children }) => (
+  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+    {children}
+  </label>
+);
+
+const InputWrap = ({ icon, children }) => (
+  <div className="flex items-center gap-3 px-4 rounded-xl bg-white/80 dark:bg-white/5 border border-emerald-100 dark:border-emerald-900/40 focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all">
+    <span className="text-slate-400 dark:text-slate-500 shrink-0">{icon}</span>
+    {children}
+  </div>
+);
+
+const inputCls = "w-full py-3 outline-none bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500";
+
+const Sel = ({ children, ...props }) => (
+  <select
+    {...props}
+    className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-white/5 border border-emerald-100 dark:border-emerald-900/40 text-slate-900 dark:text-white outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all text-sm"
+  >
+    {children}
+  </select>
+);
+
+const ImageGrid = ({ images, onRemove }) => (
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    {images.map((src, index) => (
+      <div key={index} className="relative group rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+        <img
+          src={typeof src === "string" ? src : URL.createObjectURL(src)}
+          alt=""
+          className="h-32 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+        <button
+          type="button"
+          onClick={() => onRemove(index)}
+          className="absolute top-1.5 right-1.5 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <X size={13} />
+        </button>
+      </div>
+    ))}
+  </div>
+);
+
+// ── Component ─────────────────────────────────────────────────────────────────
 const EditProduct = () => {
-  const { id } = useParams();
+  const { id }   = useParams();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]               = useState(true);
+  const [updating, setUpdating]             = useState(false);
   const [existingImages, setExistingImages] = useState([]);
-  const [newImages, setNewImages] = useState([]);
-  const [updating, setUpdating] = useState(false);
+  const [newImages, setNewImages]           = useState([]);
+
   const [formData, setFormData] = useState({
-    name: "",
-    category: "",
+    name:        "",
+    category:    "",
     description: "",
-    price: "",
-    quantity: "",
-    unit: "kg",
-    status: "active",
+    price:       "",
+    quantity:    "",
+    unit:        "kg",
+    status:      "active",
   });
 
-  useEffect(() => {
-    fetchProduct();
-  }, []);
+  // ── All handlers unchanged ────────────────────────────────────────────────
+  useEffect(() => { fetchProduct(); }, []);
 
   const fetchProduct = async () => {
     try {
-      const { data } = await getProductById(id);
-
-      const product = data.product;
-
+      const { data }  = await getProductById(id);
+      const product   = data.product;
       setFormData({
-        name: product.name,
-        category: product.category,
+        name:        product.name,
+        category:    product.category,
         description: product.description,
-        price: product.price,
-        quantity: product.quantity,
-        unit: product.unit,
-        status: product.status,
+        price:       product.price,
+        quantity:    product.quantity,
+        unit:        product.unit,
+        status:      product.status,
       });
-
       setExistingImages(product.images || []);
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch product");
     } finally {
       setLoading(false);
@@ -72,10 +104,7 @@ const EditProduct = () => {
   };
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleImages = (e) => {
@@ -92,30 +121,20 @@ const EditProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       setUpdating(true);
-
       const data = new FormData();
-
-      data.append("name", formData.name);
-      data.append("category", formData.category);
-      data.append("description", formData.description);
-      data.append("price", formData.price);
-      data.append("quantity", formData.quantity);
-      data.append("unit", formData.unit);
-      data.append("status", formData.status);
-
+      data.append("name",           formData.name);
+      data.append("category",       formData.category);
+      data.append("description",    formData.description);
+      data.append("price",          formData.price);
+      data.append("quantity",       formData.quantity);
+      data.append("unit",           formData.unit);
+      data.append("status",         formData.status);
       data.append("existingImages", JSON.stringify(existingImages));
-
-      newImages.forEach((image) => {
-        data.append("images", image);
-      });
-
+      newImages.forEach((image) => data.append("images", image));
       await updateProduct(id, data);
-
       toast.success("Product updated successfully");
-
       navigate("/farmer/inventory");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update product");
@@ -124,231 +143,202 @@ const EditProduct = () => {
     }
   };
 
-  // Shared input-wrapper styling (border, focus ring) so every icon+input
-  // pair below looks consistent — pure Tailwind, no custom class needed.
-  const inputWrap =
-    "flex border border-slate-200 rounded-xl px-4 transition-colors focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10";
-  const fieldInput = "w-full px-4 py-4 outline-none bg-transparent text-slate-800 placeholder:text-slate-400";
-  const label = "font-semibold block mb-2 text-slate-800";
-  const selectCls =
-    "w-full border border-slate-200 rounded-xl p-4 text-slate-800 outline-none transition-colors focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10";
-
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center gap-3 text-slate-500">
+      <div className="min-h-screen  flex flex-col items-center justify-center gap-3">
         <Loader2 size={32} className="animate-spin text-emerald-500" />
-        <p className="text-lg">Loading product...</p>
+        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Loading product...</p>
       </div>
     );
   }
 
   return (
-    // No background class here on purpose — the page background is already
-    // handled globally in index.css, so this just sits on top of it.
-    <div className="min-h-screen py-10">
-      <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl shadow-slate-900/5 border border-slate-100 overflow-hidden">
-        <div className="border-b border-slate-100 bg-gradient-to-r from-emerald-50 via-white to-lime-50 p-8">
-          <h1 className="text-4xl font-bold text-slate-900">Edit Product</h1>
-          <p className="text-slate-500 mt-2">
+    <div className="min-h-screen  py-10">
+      <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet"
+      />
+
+      <div className="max-w-3xl mx-auto px-6">
+
+        {/* ── Page Title ── */}
+        <div className="mb-8">
+          <h1
+            className="text-4xl font-bold bg-gradient-to-r from-emerald-900 to-lime-600 dark:from-emerald-400 dark:to-lime-400 bg-clip-text text-transparent"
+            style={display}
+          >
+            Edit Product
+          </h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Update your product information.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-8">
-          <div>
-            <label className={label}>Product Name</label>
+        <form onSubmit={handleSubmit} className="space-y-6">
 
-            <div className={inputWrap}>
-              <Package className="mt-4 text-slate-400" size={20} />
-
-              <input
-                className={fieldInput}
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className={label}>Category</label>
-
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className={selectCls}
-              >
-                {categories.map((cat) => (
-                  <option key={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
+          {/* ── Basic Info ── */}
+          <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6 space-y-5">
+            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300" style={display}>
+              Basic Information
+            </h2>
 
             <div>
-              <label className={label}>Unit</label>
-
-              <select
-                name="unit"
-                value={formData.unit}
-                onChange={handleChange}
-                className={selectCls}
-              >
-                <option value="kg">Kg</option>
-                <option value="gram">Gram</option>
-                <option value="piece">Piece</option>
-                <option value="litre">Litre</option>
-                <option value="bundle">Bundle</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className={label}>Price</label>
-
-              <div className={inputWrap}>
-                <IndianRupee className="mt-4 text-slate-400" size={20} />
-
+              <Label>Product Name</Label>
+              <InputWrap icon={<Package size={18} />}>
                 <input
-                  type="number"
-                  className={fieldInput}
-                  name="price"
-                  value={formData.price}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
+                  placeholder="e.g. Organic Tomato"
+                  className={inputCls}
                 />
+              </InputWrap>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Category</Label>
+                <Sel name="category" value={formData.category} onChange={handleChange}>
+                  {categories.map((cat) => <option key={cat}>{cat}</option>)}
+                </Sel>
+              </div>
+              <div>
+                <Label>Unit</Label>
+                <Sel name="unit" value={formData.unit} onChange={handleChange}>
+                  <option value="kg">Kg</option>
+                  <option value="gram">Gram</option>
+                  <option value="piece">Piece</option>
+                  <option value="litre">Litre</option>
+                  <option value="bundle">Bundle</option>
+                </Sel>
               </div>
             </div>
 
             <div>
-              <label className={label}>Quantity</label>
-
-              <div className={inputWrap}>
-                <Boxes className="mt-4 text-slate-400" size={20} />
-
-                <input
-                  type="number"
-                  className={fieldInput}
-                  name="quantity"
-                  value={formData.quantity}
+              <Label>Description</Label>
+              <InputWrap icon={<FileText size={18} />}>
+                <textarea
+                  rows={5}
+                  name="description"
+                  value={formData.description}
                   onChange={handleChange}
+                  placeholder="Describe your product..."
+                  className={`${inputCls} resize-none`}
                 />
+              </InputWrap>
+            </div>
+          </section>
+
+          {/* ── Pricing & Stock ── */}
+          <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6 space-y-5">
+            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300" style={display}>
+              Pricing & Stock
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Price (₹)</Label>
+                <InputWrap icon={<IndianRupee size={18} />}>
+                  <input
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleChange}
+                    placeholder="e.g. 50"
+                    className={inputCls}
+                  />
+                </InputWrap>
+              </div>
+              <div>
+                <Label>Quantity</Label>
+                <InputWrap icon={<Boxes size={18} />}>
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={formData.quantity}
+                    onChange={handleChange}
+                    placeholder="e.g. 100"
+                    className={inputCls}
+                  />
+                </InputWrap>
               </div>
             </div>
-          </div>
+          </section>
 
-          <div>
-            <label className={label}>Description</label>
-
-            <div className={inputWrap}>
-              <FileText className="mt-4 text-slate-400" size={20} />
-
-              <textarea
-                rows={5}
-                className={`${fieldInput} resize-none`}
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-              />
+          {/* ── Status ── */}
+          <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6">
+            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300 mb-4" style={display}>
+              Visibility Status
+            </h2>
+            <div className="flex gap-4">
+              {[
+                { value: "active",   label: "✅ Active"   },
+                { value: "inactive", label: "⏸ Inactive" },
+              ].map(({ value, label }) => (
+                <label
+                  key={value}
+                  className={`flex items-center gap-2 px-5 py-3 rounded-xl border cursor-pointer transition-all text-sm ${
+                    formData.status === value
+                      ? value === "active"
+                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-semibold"
+                        : "border-rose-400 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 font-semibold"
+                      : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-emerald-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="status"
+                    value={value}
+                    checked={formData.status === value}
+                    onChange={handleChange}
+                    className="sr-only"
+                  />
+                  {label}
+                </label>
+              ))}
             </div>
-          </div>
+          </section>
 
-          <div>
-            <label className={label}>Current Images</label>
+          {/* ── Current Images ── */}
+          {existingImages.length > 0 && (
+            <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300" style={display}>
+                Current Images
+              </h2>
+              <ImageGrid images={existingImages} onRemove={removeExistingImage} />
+            </section>
+          )}
 
-            {existingImages.length === 0 ? (
-              <p className="text-sm text-slate-400 italic">
-                No existing images.
-              </p>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {existingImages.map((image, index) => (
-                  <div
-                    key={index}
-                    className="relative rounded-xl overflow-hidden border border-slate-200 group"
-                  >
-                    <img
-                      src={image}
-                      alt=""
-                      className="h-36 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
+          {/* ── Upload New Images ── */}
+          <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300" style={display}>
+              Upload New Images <span className="text-xs font-normal text-slate-400">(optional)</span>
+            </h2>
 
-                    <button
-                      type="button"
-                      onClick={() => removeExistingImage(index)}
-                      className="absolute top-2 right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full p-1 transition-colors"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label className={label}>Upload New Images</label>
-
-            <label className="border-2 border-dashed border-slate-200 rounded-2xl h-44 flex flex-col justify-center items-center cursor-pointer text-slate-500 transition-colors hover:border-emerald-400 hover:bg-emerald-50/50">
-              <Upload size={40} className="text-emerald-500" />
-
-              <p className="mt-3 font-medium">Click to Upload</p>
-              <p className="text-sm text-slate-400">JPG, PNG, WEBP</p>
-
+            <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-emerald-200 dark:border-emerald-800/50 rounded-xl p-8 cursor-pointer hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all">
+              <Upload size={32} className="text-emerald-500" />
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Click to Upload</p>
+              <span className="text-xs text-slate-400 dark:text-slate-500">JPG, PNG, WEBP</span>
               <input type="file" multiple hidden onChange={handleImages} />
             </label>
 
             {newImages.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
-                {newImages.map((img, index) => (
-                  <div
-                    key={index}
-                    className="relative rounded-xl overflow-hidden border border-slate-200 group"
-                  >
-                    <img
-                      src={URL.createObjectURL(img)}
-                      alt=""
-                      className="h-36 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => removeNewImage(index)}
-                      className="absolute top-2 right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full p-1 transition-colors"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
+              <ImageGrid images={newImages} onRemove={removeNewImage} />
             )}
-          </div>
+          </section>
 
-          {/* Was `ap-btn-save`, a class that was never defined anywhere in
-              this file — the button had no background/text color and would
-              have rendered essentially invisible. Replaced with real
-              Tailwind utility classes. */}
+          {/* ── Submit ── */}
           <button
             type="submit"
             disabled={updating}
-            className={`px-8 py-3 rounded-xl flex items-center gap-2 font-semibold text-white
-              bg-gradient-to-r from-emerald-600 to-lime-500 shadow-lg shadow-emerald-600/20
-              transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-emerald-600/25
-              disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg`}
+            className="w-full py-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-emerald-600 to-lime-500 shadow-lg shadow-emerald-500/40 hover:-translate-y-0.5 hover:shadow-emerald-500/60 disabled:opacity-60 disabled:translate-y-0 transition-all duration-150 flex items-center justify-center gap-2"
           >
-            {updating ? (
-              <>
-                <Loader2 size={20} className="animate-spin" />
-                Updating...
-              </>
-            ) : (
-              <>
-                <Save size={20} />
-                Update Product
-              </>
-            )}
+            {updating
+              ? <><Loader2 size={18} className="animate-spin" />Updating...</>
+              : <><Save size={18} />Update Product</>
+            }
           </button>
+
         </form>
       </div>
     </div>

@@ -2,142 +2,64 @@ import { useState } from "react";
 import { createProduct } from "../../services/product.service";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
 import {
-  Package,
-  Upload,
-  IndianRupee,
-  Boxes,
-  FileText,
-  Loader2,
-  Save,
-  X,
+  Package, Upload, IndianRupee, Boxes, FileText, Loader2, Save, X,
 } from "lucide-react";
 
-// Matches Navbar/Hero/MyProducts/Orders: glassmorphism over an emerald →
-// lime gradient mesh, Space Grotesk display type.
-const FontImport = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-    .ap-root {
-      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-      background:
-        radial-gradient(ellipse 60% 50% at 10% 0%, rgba(5, 150, 105, 0.14), transparent),
-        radial-gradient(ellipse 55% 45% at 90% 20%, rgba(132, 204, 22, 0.14), transparent),
-        #F4F9F2;
-    }
-    .ap-display { font-family: 'Space Grotesk', ui-sans-serif, sans-serif; }
-    .ap-title-gradient {
-      background: linear-gradient(90deg, #065F46, #65A30D);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .ap-panel {
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-    }
-    .ap-panel-head { border-bottom: 1px solid rgba(5, 150, 105, 0.14); }
-
-    .ap-label { color: #0F2E22; }
-
-    .ap-input-wrap {
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid #DCEBDD;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-    .ap-input-wrap:focus-within {
-      border-color: #059669;
-      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
-    }
-    .ap-input-icon { color: #8FA895; }
-
-    .ap-select {
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid #DCEBDD;
-      color: #0F2E22;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-    .ap-select:focus {
-      outline: none;
-      border-color: #059669;
-      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
-    }
-
-    .ap-dropzone {
-      border: 2px dashed #B7D8BE;
-      transition: border-color 0.15s ease, background 0.15s ease;
-    }
-    .ap-dropzone:hover { border-color: #059669; background: rgba(5, 150, 105, 0.05); }
-
-    .ap-image-tile {
-      border: 1px solid rgba(255, 255, 255, 0.6);
-    }
-    .ap-remove-btn {
-      background: #E11D48;
-      color: white;
-    }
-
-    .ap-btn-cancel {
-      border: 1px solid #DCEBDD;
-      color: #4B6357;
-      transition: background 0.15s ease;
-    }
-    .ap-btn-cancel:hover { background: rgba(5, 150, 105, 0.06); }
-
-    .ap-btn-save {
-      background: linear-gradient(90deg, #059669, #84CC16);
-      color: #063527;
-      box-shadow: 0 10px 22px -10px rgba(5, 150, 105, 0.45);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .ap-btn-save:hover { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(5, 150, 105, 0.55); }
-    .ap-btn-save:active { transform: translateY(0); }
-  `}</style>
-);
+const display = { fontFamily: "'Space Grotesk', ui-sans-serif, sans-serif" };
 
 const categories = [
-  "Vegetables",
-  "Fruits",
-  "Grains",
-  "Seeds",
-  "Fertilizers",
-  "Equipment",
-  "Others",
-  "Pulses",
-  "Spices",
-  "Herbs",
-  "Dairy"
+  "Vegetables", "Fruits", "Grains", "Seeds", "Fertilizers",
+  "Equipment", "Others", "Pulses", "Spices", "Herbs", "Dairy",
 ];
 
+// ── Shared primitives (same as AddService) ────────────────────────────────────
+const Label = ({ children }) => (
+  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+    {children}
+  </label>
+);
+
+const InputWrap = ({ icon, children }) => (
+  <div className="flex items-center gap-3 px-4 rounded-xl bg-white/80 dark:bg-white/5 border border-emerald-100 dark:border-emerald-900/40 focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all">
+    <span className="text-slate-400 dark:text-slate-500 shrink-0">{icon}</span>
+    {children}
+  </div>
+);
+
+const inputCls = "w-full py-3 outline-none bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500";
+
+const Sel = ({ children, ...props }) => (
+  <select
+    {...props}
+    className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-white/5 border border-emerald-100 dark:border-emerald-900/40 text-slate-900 dark:text-white outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all text-sm"
+  >
+    {children}
+  </select>
+);
+
+// ── Component ─────────────────────────────────────────────────────────────────
 const AddProduct = () => {
   const navigate = useNavigate();
-  const [images, setImages] = useState([]);
+  const [images, setImages]   = useState([]);
   const [creating, setCreating] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    price: "",
-    quantity: "",
-    unit: "kg",
+    name:        "",
+    category:    "",
+    price:       "",
+    quantity:    "",
+    unit:        "kg",
     description: "",
-    status: "active",
+    status:      "active",
   });
 
+  // ── Handlers (unchanged) ──────────────────────────────────────────────────
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleImages = (e) => {
     const files = Array.from(e.target.files);
-
     setImages((prev) => [...prev, ...files]);
   };
 
@@ -147,28 +69,19 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       setCreating(true);
-
       const data = new FormData();
-
-      data.append("name", formData.name);
-      data.append("category", formData.category);
-      data.append("price", formData.price);
-      data.append("quantity", formData.quantity);
-      data.append("unit", formData.unit);
+      data.append("name",        formData.name);
+      data.append("category",    formData.category);
+      data.append("price",       formData.price);
+      data.append("quantity",    formData.quantity);
+      data.append("unit",        formData.unit);
       data.append("description", formData.description);
-      data.append("status", formData.status);
-
-      images.forEach((image) => {
-        data.append("images", image);
-      });
-
+      data.append("status",      formData.status);
+      images.forEach((image) => data.append("images", image));
       await createProduct(data);
-
       toast.success("Product added successfully");
-
       navigate("/farmer/inventory");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to add product");
@@ -178,250 +91,223 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="ap-root min-h-screen py-10">
-      <FontImport />
-      <div className="max-w-5xl mx-auto px-6">
-        <div className="ap-panel rounded-3xl shadow-sm">
-          {/* Header */}
+    <div className="min-h-screen  py-10">
+      <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet"
+      />
 
-          <div className="ap-panel-head p-8">
-            <h1 className="ap-display ap-title-gradient text-4xl font-bold">
-              Add New Product
-            </h1>
+      <div className="max-w-3xl mx-auto px-6">
 
-            <p className="mt-2" style={{ color: "#7A8D82" }}>
-              Add your fresh organic products to the marketplace.
-            </p>
-          </div>
+        {/* ── Page Title ── */}
+        <div className="mb-8">
+          <h1
+            className="text-4xl font-bold bg-gradient-to-r from-emerald-900 to-lime-600 dark:from-emerald-400 dark:to-lime-400 bg-clip-text text-transparent"
+            style={display}
+          >
+            Add New Product
+          </h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Add your fresh organic products to the marketplace.
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="p-8 space-y-8">
-            {/* Product Name */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* ── Product Name ── */}
+          <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6 space-y-5">
+            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300" style={display}>
+              Basic Information
+            </h2>
 
             <div>
-              <label className="ap-label font-semibold mb-2 block">
-                Product Name
-              </label>
-
-              <div className="ap-input-wrap flex items-center rounded-xl px-4">
-                <Package className="ap-input-icon" size={20} />
-
+              <Label>Product Name</Label>
+              <InputWrap icon={<Package size={18} />}>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Organic Tomato"
-                  className="w-full px-4 py-4 outline-none bg-transparent"
-                  style={{ color: "#0F2E22" }}
+                  className={inputCls}
                 />
-              </div>
+              </InputWrap>
             </div>
 
-            {/* Category & Unit */}
-
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* ── Category & Unit ── */}
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="ap-label font-semibold mb-2 block">
-                  Category
-                </label>
-
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="ap-select w-full rounded-xl px-4 py-4"
-                >
+                <Label>Category</Label>
+                <Sel name="category" value={formData.category} onChange={handleChange}>
                   <option value="">Select Category</option>
-
                   {categories.map((cat) => (
                     <option key={cat}>{cat}</option>
                   ))}
-                </select>
+                </Sel>
               </div>
-
               <div>
-                <label className="ap-label font-semibold mb-2 block">
-                  Unit
-                </label>
-
-                <select
-                  name="unit"
-                  value={formData.unit}
-                  onChange={handleChange}
-                  className="ap-select w-full rounded-xl px-4 py-4"
-                >
+                <Label>Unit</Label>
+                <Sel name="unit" value={formData.unit} onChange={handleChange}>
                   <option value="kg">Kg</option>
                   <option value="gram">Gram</option>
                   <option value="piece">Piece</option>
                   <option value="litre">Litre</option>
                   <option value="dozen">Dozen</option>
                   <option value="bundle">Bundle</option>
-                </select>
+                </Sel>
               </div>
             </div>
+          </section>
 
-            {/* Price & Quantity */}
-
-            <div className="grid md:grid-cols-2 gap-6">
+          {/* ── Price & Quantity ── */}
+          <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6 space-y-5">
+            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300" style={display}>
+              Pricing & Stock
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="ap-label font-semibold mb-2 block">
-                  Price
-                </label>
-
-                <div className="ap-input-wrap flex items-center rounded-xl px-4">
-                  <IndianRupee size={20} className="ap-input-icon" />
-
+                <Label>Price (₹)</Label>
+                <InputWrap icon={<IndianRupee size={18} />}>
                   <input
                     type="number"
                     name="price"
                     value={formData.price}
                     onChange={handleChange}
                     placeholder="50"
-                    className="w-full px-4 py-4 outline-none bg-transparent"
-                    style={{ color: "#0F2E22" }}
+                    className={inputCls}
                   />
-                </div>
+                </InputWrap>
               </div>
-
               <div>
-                <label className="ap-label font-semibold mb-2 block">
-                  Available Quantity
-                </label>
-
-                <div className="ap-input-wrap flex items-center rounded-xl px-4">
-                  <Boxes size={20} className="ap-input-icon" />
-
+                <Label>Available Quantity</Label>
+                <InputWrap icon={<Boxes size={18} />}>
                   <input
                     type="number"
                     name="quantity"
                     value={formData.quantity}
                     onChange={handleChange}
                     placeholder="100"
-                    className="w-full px-4 py-4 outline-none bg-transparent"
-                    style={{ color: "#0F2E22" }}
+                    className={inputCls}
                   />
-                </div>
+                </InputWrap>
               </div>
             </div>
+          </section>
 
-            {/* Description */}
-
+          {/* ── Description ── */}
+          <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6 space-y-5">
+            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300" style={display}>
+              Description
+            </h2>
             <div>
-              <label className="ap-label font-semibold mb-2 block">
-                Description
-              </label>
-
-              <div className="ap-input-wrap flex rounded-xl px-4">
-                <FileText className="ap-input-icon mt-4" size={20} />
-
+              <Label>Product Description</Label>
+              <div className="flex gap-3 px-4 rounded-xl bg-white/80 dark:bg-white/5 border border-emerald-100 dark:border-emerald-900/40 focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all">
+                <FileText size={18} className="text-slate-400 dark:text-slate-500 mt-3.5 shrink-0" />
                 <textarea
                   rows={5}
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   placeholder="Describe your organic product..."
-                  className="w-full px-4 py-4 outline-none resize-none bg-transparent"
-                  style={{ color: "#0F2E22" }}
+                  className="w-full py-3 outline-none resize-none bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
             </div>
+          </section>
 
-            {/* Status */}
-
-            <div>
-              <label className="ap-label font-semibold mb-2 block">
-                Status
-              </label>
-
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="ap-select w-full rounded-xl px-4 py-4"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
+          {/* ── Status ── */}
+          <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6">
+            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300 mb-4" style={display}>
+              Visibility Status
+            </h2>
+            <div className="flex gap-4">
+              {[
+                { value: "active",   label: "✅ Active",   active: formData.status === "active"   },
+                { value: "inactive", label: "⏸ Inactive", active: formData.status === "inactive" },
+              ].map(({ value, label, active }) => (
+                <label
+                  key={value}
+                  className={`flex items-center gap-2 px-5 py-3 rounded-xl border cursor-pointer transition-all text-sm ${
+                    active
+                      ? value === "active"
+                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-semibold"
+                        : "border-rose-400 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 font-semibold"
+                      : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-emerald-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="status"
+                    value={value}
+                    checked={formData.status === value}
+                    onChange={handleChange}
+                    className="sr-only"
+                  />
+                  {label}
+                </label>
+              ))}
             </div>
+          </section>
 
-            {/* Images */}
+          {/* ── Images ── */}
+          <section className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300" style={display}>
+              Product Images
+            </h2>
+            <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-emerald-200 dark:border-emerald-800/50 rounded-xl p-8 cursor-pointer hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all">
+              <Upload size={36} className="text-emerald-500" />
+              <p className="mt-1 font-medium text-sm text-slate-700 dark:text-slate-300">
+                Click to upload images
+              </p>
+              <span className="text-xs text-slate-400 dark:text-slate-500">JPG, PNG, WEBP</span>
+              <input type="file" multiple hidden onChange={handleImages} />
+            </label>
 
-            <div>
-              <label className="ap-label font-semibold mb-3 block">
-                Product Images
-              </label>
-
-              <label className="ap-dropzone rounded-2xl h-48 flex flex-col justify-center items-center cursor-pointer">
-                <Upload style={{ color: "#059669" }} size={45} />
-
-                <p className="mt-4 font-medium" style={{ color: "#0F2E22" }}>
-                  Click to upload images
-                </p>
-
-                <span className="text-sm" style={{ color: "#7A8D82" }}>
-                  JPG, PNG, WEBP
-                </span>
-
-                <input type="file" multiple hidden onChange={handleImages} />
-              </label>
-
-              {images.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-6">
-                  {images.map((img, index) => (
-                    <div
-                      key={index}
-                      className="ap-image-tile relative rounded-xl overflow-hidden"
+            {images.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                {images.map((img, index) => (
+                  <div key={index} className="relative group rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                    <img
+                      src={URL.createObjectURL(img)}
+                      alt=""
+                      className="h-32 w-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-2 right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <img
-                        src={URL.createObjectURL(img)}
-                        alt=""
-                        className="h-40 w-full object-cover"
-                      />
+                      <X size={13} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
 
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="ap-remove-btn absolute top-2 right-2 rounded-full p-1"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
+          {/* ── Buttons ── */}
+          <div className="flex justify-end gap-3">
+            <button
+              type="reset"
+              disabled={creating}
+              className="px-8 py-3 rounded-xl font-medium text-sm border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={creating}
+              className="px-8 py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-emerald-600 to-lime-500 shadow-lg shadow-emerald-500/40 hover:-translate-y-0.5 hover:shadow-emerald-500/60 disabled:opacity-60 disabled:translate-y-0 transition-all duration-150 flex items-center gap-2"
+            >
+              {creating ? (
+                <><Loader2 size={18} className="animate-spin" />Adding Product...</>
+              ) : (
+                <><Save size={18} />Add Product</>
               )}
-            </div>
+            </button>
+          </div>
 
-            {/* Buttons */}
-
-            <div className="flex justify-end gap-4">
-              <button
-                type="reset"
-                disabled={creating}
-                className="ap-btn-cancel px-8 py-3 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="submit"
-                disabled={creating}
-                className="ap-btn-save px-8 py-3 rounded-xl flex items-center gap-2 font-semibold disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {creating ? (
-                  <>
-                    <Loader2 size={20} className="animate-spin" />
-                    Adding Product...
-                  </>
-                ) : (
-                  <>
-                    <Save size={20} />
-                    Add Product
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
+        </form>
       </div>
     </div>
   );
