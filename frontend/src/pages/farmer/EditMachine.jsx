@@ -175,7 +175,7 @@ const EditMachine = () => {
 
       toast.success("Machine updated successfully");
 
-      navigate("/farmer/machines");
+      navigate("/farmer/inventory");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update Machine");
     }

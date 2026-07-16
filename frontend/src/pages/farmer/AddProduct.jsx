@@ -9,6 +9,7 @@ import {
   IndianRupee,
   Boxes,
   FileText,
+  Loader2,
   Save,
   X,
 } from "lucide-react";
@@ -103,17 +104,20 @@ const categories = [
   "Vegetables",
   "Fruits",
   "Grains",
+  "Seeds",
+  "Fertilizers",
+  "Equipment",
+  "Others",
   "Pulses",
-  "Dairy",
   "Spices",
   "Herbs",
-  "Seeds",
+  "Dairy"
 ];
 
 const AddProduct = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
-
+  const [creating, setCreating] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -145,6 +149,8 @@ const AddProduct = () => {
     e.preventDefault();
 
     try {
+      setCreating(true);
+
       const data = new FormData();
 
       data.append("name", formData.name);
@@ -163,11 +169,11 @@ const AddProduct = () => {
 
       toast.success("Product added successfully");
 
-      navigate("/farmer/products");
+      navigate("/farmer/inventory");
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Failed to add product"
-      );
+      toast.error(err.response?.data?.message || "Failed to add product");
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -249,6 +255,7 @@ const AddProduct = () => {
                   <option value="piece">Piece</option>
                   <option value="litre">Litre</option>
                   <option value="dozen">Dozen</option>
+                  <option value="bundle">Bundle</option>
                 </select>
               </div>
             </div>
@@ -387,16 +394,30 @@ const AddProduct = () => {
             {/* Buttons */}
 
             <div className="flex justify-end gap-4">
-              <button type="reset" className="ap-btn-cancel px-8 py-3 rounded-xl font-medium">
+              <button
+                type="reset"
+                disabled={creating}
+                className="ap-btn-cancel px-8 py-3 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="ap-btn-save px-8 py-3 rounded-xl flex items-center gap-2 font-semibold"
+                disabled={creating}
+                className="ap-btn-save px-8 py-3 rounded-xl flex items-center gap-2 font-semibold disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <Save size={20} />
-                Save Product
+                {creating ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    Adding Product...
+                  </>
+                ) : (
+                  <>
+                    <Save size={20} />
+                    Add Product
+                  </>
+                )}
               </button>
             </div>
           </form>

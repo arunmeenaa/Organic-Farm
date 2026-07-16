@@ -35,7 +35,6 @@ async function createProduct(req, res) {
       const url = await uploadImage(file);
       imageUrls.push(url);
     }
-
     const product = await productModel.create({
       name,
       description,
@@ -192,29 +191,29 @@ async function getMyProducts(req, res) {
 }
 
 async function updateProduct(req, res) {
+  console.log("UPDATE CONTROLLER RUNNING");
+  console.log("req.files =", req.files);
+  console.log("req.body =", req.body);
   const { id } = req.params;
+
   try {
     const product = await productModel.findById(id);
+
     if (!product) {
       return res.status(404).json({
         message: "Product is no longer available",
       });
     }
+
     if (product.farmer.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         message: "You don't have permission to update this product",
       });
     }
-    const {
-      name,
-      description,
-      images,
-      price,
-      quantity,
-      category,
-      unit,
-      status,
-    } = req.body;
+
+    const { name, description, price, quantity, category, unit, status } =
+      req.body;
+
     if (price !== undefined && price < 0) {
       return res.status(400).json({
         message: "Price must be greater than 0",
@@ -226,22 +225,44 @@ async function updateProduct(req, res) {
         message: "Quantity must be greater than 0",
       });
     }
+
     if (name !== undefined) product.name = name;
     if (description !== undefined) product.description = description;
-    if (images !== undefined) product.images = images;
     if (price !== undefined) product.price = price;
     if (quantity !== undefined) product.quantity = quantity;
     if (category !== undefined) product.category = category;
     if (unit !== undefined) product.unit = unit;
     if (status !== undefined) product.status = status;
 
+    // Update images only if new files were uploaded
+    let imageUrls = [];
+console.log("req.files:", req.files);
+console.log("existingImages:", req.body.existingImages);
+    if (req.body.existingImages) {
+      imageUrls = JSON.parse(req.body.existingImages);
+    }
+
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const url = await uploadImage(file);
+        imageUrls.push(url);
+      }
+    }
+
+    product.images = imageUrls;
+
+    
     await product.save();
-    res.status(200).json({
-      message: "Product updated Succesfully",
+    
+
+    return res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
       product,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
       message: error.message,
     });
   }

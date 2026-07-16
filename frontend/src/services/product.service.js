@@ -18,7 +18,11 @@ export const createProduct = (formData) => {
   });
 };
 export const updateProduct = (id, data) => {
-  return api.patch(`/product/${id}`, data);
+  return api.patch(`/product/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const changeProductStatus = (id, data) => {

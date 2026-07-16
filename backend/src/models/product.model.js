@@ -48,12 +48,16 @@ const productSchema = new mongoose.Schema(
         "Fertilizers",
         "Equipment",
         "Others",
+        "Pulses",
+        "Spices",
+        "Herbs",
+        "Dairy"
       ],
     },
 
     unit: {
       type: String,
-      enum: ["kg", "gram", "quintal", "piece", "dozen", "liter"],
+      enum: ["kg", "gram", "quintal", "piece", "dozen", "litre","bundle"],
       default: "kg",
     },
 
