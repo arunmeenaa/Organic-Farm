@@ -54,10 +54,10 @@ const CardStyles = () => (
     /* DARK */
     .pc-dark .fd-product-name { color: #D1FAE5; }
 
-    /* ── Farmer text — LIGHT ── */
-    .fd-farmer-text { color: #7A8D82; }
+    /* ── seller text — LIGHT ── */
+    .fd-seller-text { color: #7A8D82; }
     /* DARK */
-    .pc-dark .fd-farmer-text { color: rgba(167, 243, 208, 0.55); }
+    .pc-dark .fd-seller-text { color: rgba(167, 243, 208, 0.55); }
 
     /* ── Price — LIGHT ── */
     .fd-price { color: #065F46; }
@@ -110,8 +110,8 @@ const ProductCard = ({ product }) => {
           {product.name}
         </h2>
 
-        <p className="fd-farmer-text mt-2 text-sm">
-          Farmer: {product.farmer?.name}
+        <p className="fd-seller-text mt-2 text-sm">
+          seller: {product.seller?.name}
         </p>
 
         <div className="flex justify-between items-center mt-5">

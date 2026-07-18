@@ -37,7 +37,7 @@ async function createReview(req, res) {
       });
     }
 
-    if (product.farmer.toString() === req.user._id.toString()) {
+    if (product.seller.toString() === req.user._id.toString()) {
       return res.status(400).json({
         success: false,
         message: "You cannot review your own product",

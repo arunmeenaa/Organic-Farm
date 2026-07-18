@@ -111,7 +111,7 @@ const isOwner =
             <div className="space-y-4 mt-8">
               <div className="flex items-center gap-3">
                 <User size={18} />
-                <span>{machine.owner?.name || "Farmer"}</span>
+                <span>{machine.owner?.name || "seller"}</span>
               </div>
 
               <div className="flex items-center gap-3">
@@ -139,7 +139,7 @@ const isOwner =
             <div className="mt-10">
               {isOwner ? (
                 <Link 
-                  to={`/farmer/machine/edit/${machine._id}`}
+                  to={`/seller/machine/edit/${machine._id}`}
                   className="block text-center bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl text-lg font-semibold"
                 >
                   Edit Machine

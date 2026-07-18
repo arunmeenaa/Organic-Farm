@@ -33,7 +33,7 @@ const Navbar = () => {
     ? "/"
     : user?.role === "buyer"
       ? "/buyer/dashboard"
-      : "/farmer/dashboard";
+      : "/seller/dashboard";
 
   const handleLogout = () => {
     logout();
@@ -137,12 +137,12 @@ const Navbar = () => {
                   </NavLink>
                 )}
 
-                {isAuthenticated && user?.role === "farmer" && (
+                {isAuthenticated && user?.role === "seller" && (
                   <>
-                    <NavLink to="/farmer/inventory" className={navLinkClass}>
+                    <NavLink to="/seller/inventory" className={navLinkClass}>
                       My Inventory
                     </NavLink>
-                    <NavLink to="/farmer/orders" className={navLinkClass}>
+                    <NavLink to="/seller/orders" className={navLinkClass}>
                       Orders
                     </NavLink>
                   </>
@@ -407,24 +407,24 @@ const Navbar = () => {
                   </>
                 )}
 
-                {isAuthenticated && user?.role === "farmer" && (
+                {isAuthenticated && user?.role === "seller" && (
                   <>
                     <NavLink
-                      to="/farmer/dashboard"
+                      to="/seller/dashboard"
                       className={mobileNavLinkClass}
                       onClick={() => setMobileMenu(false)}
                     >
                       Dashboard
                     </NavLink>
                     <NavLink
-                      to="/farmer/inventory"
+                      to="/seller/inventory"
                       className={mobileNavLinkClass}
                       onClick={() => setMobileMenu(false)}
                     >
                       My Inventory
                     </NavLink>
                     <NavLink
-                      to="/farmer/orders"
+                      to="/seller/orders"
                       className={mobileNavLinkClass}
                       onClick={() => setMobileMenu(false)}
                     >

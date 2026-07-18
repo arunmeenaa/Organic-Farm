@@ -40,8 +40,8 @@ const Login = () => {
 
     if (user?.role === "buyer") {
       navigate("/buyer/dashboard", { replace: true });
-    } else if (user?.role === "farmer") {
-      navigate("/farmer/dashboard", { replace: true });
+    } else if (user?.role === "seller") {
+      navigate("/seller/dashboard", { replace: true });
     }
   }, [isAuthenticated, user, navigate]);
 
@@ -113,14 +113,14 @@ const Login = () => {
           </h2>
 
           <p className="mt-6 text-lg text-emerald-900/60 dark:text-emerald-100/70 leading-8 max-w-xl">
-            Buy fresh organic products directly from trusted farmers or manage
+            Buy fresh organic products directly from trusted sellers or manage
             your farm business from one modern platform.
           </p>
 
           {/* Stat cards */}
           <div className="grid grid-cols-3 gap-6 mt-14">
             {[
-              { Icon: Sprout, value: "500+", label: "Farmers" },
+              { Icon: Sprout, value: "500+", label: "sellers" },
               { Icon: ShoppingBasket, value: "1500+", label: "Products" },
               { Icon: Users, value: "20K+", label: "Buyers" },
             ].map(({ Icon, value, label }) => (

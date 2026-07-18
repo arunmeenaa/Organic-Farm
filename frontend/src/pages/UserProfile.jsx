@@ -17,15 +17,15 @@ import { getProfile, updateProfile } from "../services/user.service";
 
 // ── Role config ───────────────────────────────────────────────────────────────
 const ROLE_CONFIG = {
-  farmer: {
+  seller: {
     titleCls:
       "font-['Space_Grotesk'] bg-gradient-to-r from-[#065F46] to-[#65A30D] bg-clip-text text-transparent",
     avatarCls: "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white",
     iconCls: "bg-[rgba(5,150,105,0.12)] text-emerald-600",
     chipCls: "bg-[rgba(5,150,105,0.12)] text-emerald-700",
-    chipLabel: "Organic Farmer",
+    chipLabel: "Seller",
     ChipIcon: Sprout,
-    pageTitle: "Farmer Profile",
+    pageTitle: "seller Profile",
     bioPlaceholder: "Tell buyers about your farm, crops, and practices...",
     bioLabel: "About Your Farm",
   },
@@ -47,7 +47,7 @@ const ROLE_CONFIG = {
 const Profile = () => {
   const { user, setUser, updateUser } = useAuth();
   const { darkMode } = useTheme();
-  const role = user?.role === "farmer" ? "farmer" : "buyer";
+  const role = user?.role === "seller" ? "seller" : "buyer";
   const cfg = ROLE_CONFIG[role];
 
   const [loading, setLoading] = useState(true);

@@ -53,7 +53,7 @@ const Contact = () => {
           </h1>
 
           <p className="mt-5 text-lg text-green-100 max-w-2xl mx-auto">
-            We'd love to hear from you. Whether you're a farmer, buyer,
+            We'd love to hear from you. Whether you're a seller, buyer,
             or simply have a question, our team is here to help.
           </p>
 

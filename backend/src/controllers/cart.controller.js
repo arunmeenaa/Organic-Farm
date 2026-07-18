@@ -36,7 +36,7 @@ async function addToCart(req, res) {
       });
     }
 
-    if (dbProduct.farmer.toString() === req.user._id.toString()) {
+    if (dbProduct.seller.toString() === req.user._id.toString()) {
       return res.status(400).json({
         success: false,
         message: "You cannot add your own product to the cart",
@@ -92,7 +92,7 @@ async function addToCart(req, res) {
 
     const populatedCart = await cart.populate({
       path: "items.product",
-      select: "name price images quantity farmer",
+      select: "name price images quantity seller",
     });
 
     return res.status(200).json({
@@ -118,9 +118,9 @@ async function getCart(req, res) {
       })
       .populate({
         path: "items.product",
-        select: "name price images quantity status farmer",
+        select: "name price images quantity status seller",
         populate: {
-          path: "farmer",
+          path: "seller",
           select: "name location profileImage",
         },
       });
@@ -220,9 +220,9 @@ async function updateCartItem(req, res) {
 
     const populatedCart = await cart.populate({
       path: "items.product",
-      select: "name price images quantity farmer",
+      select: "name price images quantity seller",
       populate: {
-        path: "farmer",
+        path: "seller",
         select: "name location profileImage",
       },
     });
@@ -297,9 +297,9 @@ async function removeCartItem(req, res) {
 
     const populatedCart = await cart.populate({
       path: "items.product",
-      select: "name price images quantity farmer",
+      select: "name price images quantity seller",
       populate: {
-        path: "farmer",
+        path: "seller",
         select: "name location profileImage",
       },
     });

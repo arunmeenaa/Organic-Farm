@@ -1,7 +1,7 @@
 import api from "../api/axios";
 
-export const getFarmerDashboard = () => {
-  return api.get("/dashboard/farmer");
+export const getSellerDashboard = () => {
+  return api.get("/dashboard/seller");
 };
 
 export const getBuyerDashboard = () => {

@@ -8,7 +8,7 @@ const validate = require("../middleware/validateId.middleware");
 const {
   createBooking,
   getBuyerBookings,
-  getFarmerBookings,
+  getsellerBookings,
   getBookingById,
   acceptBooking,
   rejectBooking,
@@ -39,18 +39,18 @@ router.patch(
   cancelBooking
 );
 
-// Farmer
+// seller
 router.get(
-  "/farmer",
+  "/seller",
   auth,
-  authorize("farmer"),
-  getFarmerBookings
+  authorize("seller"),
+  getsellerBookings
 );
 
 router.patch(
   "/:id/accept",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   validate("MachineBooking"),
   acceptBooking
 );
@@ -58,7 +58,7 @@ router.patch(
 router.patch(
   "/:id/reject",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   validate("MachineBooking"),
   rejectBooking
 );
@@ -66,7 +66,7 @@ router.patch(
 router.patch(
   "/:id/complete",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   validate("MachineBooking"),
   completeBooking
 );

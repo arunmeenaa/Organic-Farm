@@ -7,8 +7,8 @@ import {
   XCircle,
 } from "lucide-react";
 
-// Matches Navbar/Hero/MyProducts/Orders/AddProduct/FarmerOrderCard/
-// FarmerOrderDetails: glassmorphism, emerald → lime gradient, Space Grotesk.
+// Matches Navbar/Hero/MyProducts/Orders/AddProduct/sellerOrderCard/
+// sellerOrderDetails: glassmorphism, emerald → lime gradient, Space Grotesk.
 const FontImport = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');

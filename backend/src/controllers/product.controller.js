@@ -43,7 +43,7 @@ async function createProduct(req, res) {
       quantity,
       category,
       unit,
-      farmer: req.user._id,
+      seller: req.user._id,
     });
 
     return res.status(201).json({
@@ -124,7 +124,7 @@ async function getAllProducts(req, res) {
 
     const products = await productModel
       .find(filter)
-      .populate("farmer", "name location profileImage")
+      .populate("seller", "name location profileImage")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limitNumber)
@@ -150,7 +150,7 @@ async function getProductById(req, res) {
   try {
     const product = await productModel
       .findOne({ _id: id, status: "active" })
-      .populate("farmer", "name location profileImage")
+      .populate("seller", "name location profileImage")
       .lean();
 
     if (!product) {
@@ -172,7 +172,7 @@ async function getProductById(req, res) {
 async function getMyProducts(req, res) {
   try {
     const products = await productModel
-      .find({ farmer: req.user._id })
+      .find({ seller: req.user._id })
       .sort({ createdAt: -1 })
       .lean();
 
@@ -205,7 +205,7 @@ async function updateProduct(req, res) {
       });
     }
 
-    if (product.farmer.toString() !== req.user._id.toString()) {
+    if (product.seller.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         message: "You don't have permission to update this product",
       });
@@ -277,7 +277,7 @@ async function changeProductStatus(req, res) {
         message: "Product is no longer available",
       });
     }
-    if (product.farmer.toString() !== req.user._id.toString()) {
+    if (product.seller.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         message: "You don't have permission to update status of product",
       });

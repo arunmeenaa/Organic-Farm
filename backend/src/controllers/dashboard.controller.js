@@ -1,12 +1,12 @@
 const productModel = require("../models/product.model");
 const orderModel = require("../models/order.model");
 const { getCurrentWeather } = require("../services/weather.service");
-const { generateFarmerAdvice } = require("../services/ai.service");
+const { generatesellerAdvice } = require("../services/ai.service");
 
-async function getFarmerDashboard(req, res) {
+async function getSellerDashboard(req, res) {
   try {
     const products = await productModel
-      .find({ farmer: req.user._id })
+      .find({ seller: req.user._id })
       .sort({ createdAt: -1 });
 
     const totalProducts = products.length;
@@ -17,7 +17,7 @@ async function getFarmerDashboard(req, res) {
     const recentProducts = products.slice(0, 5);
 
     const orders = await orderModel
-      .find({ farmer: req.user._id })
+      .find({ seller: req.user._id })
       .populate("buyer", "name email")
       .sort({ createdAt: -1 });
 
@@ -25,7 +25,7 @@ async function getFarmerDashboard(req, res) {
     const revenueResult = await orderModel.aggregate([
       {
         $match: {
-          farmer: req.user._id,
+          seller: req.user._id,
           orderStatus: "delivered",
         },
       },
@@ -69,7 +69,7 @@ async function getWeatherAdvice(req, res) {
     let advice = [];
 
     try {
-      const aiAdvice = await generateFarmerAdvice(req.user, weather);
+      const aiAdvice = await generatesellerAdvice(req.user, weather);
       advice = aiAdvice.advice;
     } catch (err) {
       console.error("Gemini Error:", err.message);
@@ -99,7 +99,7 @@ async function getBuyerDashboard(req, res) {
   try {
     const orders = await orderModel
       .find({ buyer: req.user._id })
-      .populate("farmer", "name email phone")
+      .populate("seller", "name email phone")
       .populate("products.product", "name images category")
       .sort({ createdAt: -1 })
       .lean();
@@ -122,7 +122,7 @@ async function getBuyerDashboard(req, res) {
 }
 
 module.exports = {
-  getFarmerDashboard,
+  getSellerDashboard,
   getBuyerDashboard,
   getWeatherAdvice,
 };

@@ -191,7 +191,7 @@ const AddService = () => {
       form.images.forEach((f) => fd.append("images", f));
       await createService(fd);
       toast.success("Service created successfully!");
-      navigate("/farmer/inventory");
+      navigate("/seller/inventory");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to create service");
     } finally {
@@ -215,7 +215,7 @@ const AddService = () => {
             Add New Service
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            List your agricultural service and reach farmers nearby.
+            List your agricultural service and reach sellers nearby.
           </p>
         </div>
 

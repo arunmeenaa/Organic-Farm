@@ -17,7 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { getFarmerDashboard } from "../../services/dashboard.service";
+import { getSellerDashboard } from "../../services/dashboard.service";
 import { getWeatherAdvice } from "../../services/ai.service";
 import toast from "react-hot-toast";
 
@@ -85,7 +85,7 @@ const AdviceSkeleton = () => (
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  // ── Stage 1: farmer data (stats / products / orders) ──
+  // ── Stage 1: seller data (stats / products / orders) ──
   const [stats, setStats]                 = useState(null);
   const [recentProducts, setRecentProducts] = useState([]);
   const [recentOrders, setRecentOrders]   = useState([]);
@@ -98,7 +98,7 @@ const Dashboard = () => {
 
   const fetchDashboard = async () => {
     try {
-      const { data } = await getFarmerDashboard();
+      const { data } = await getSellerDashboard();
       setStats(data.stats);
       setRecentProducts(data.recentProducts);
       setRecentOrders(data.recentOrders);
@@ -182,7 +182,7 @@ const Dashboard = () => {
               className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-900 to-lime-600 dark:from-emerald-400 dark:to-lime-400 bg-clip-text text-transparent"
               style={display}
             >
-              Farmer Dashboard
+              seller Dashboard
             </h1>
 
             <p className="mt-2 text-emerald-900/60 dark:text-emerald-300/70">
@@ -271,7 +271,7 @@ const Dashboard = () => {
                 Recent Products
               </h2>
               <button
-                onClick={() => navigate("/farmer/products")}
+                onClick={() => navigate("/seller/products")}
                 className="text-sm font-medium flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline"
               >
                 View all <ArrowUpRight size={14} />
@@ -337,7 +337,7 @@ const Dashboard = () => {
                 Recent Orders
               </h2>
               <button
-                onClick={() => navigate("/farmer/orders")}
+                onClick={() => navigate("/seller/orders")}
                 className="text-sm font-medium flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline"
               >
                 View all <ArrowUpRight size={14} />
@@ -421,7 +421,7 @@ const Dashboard = () => {
             <button
               className="rounded-xl p-6 flex items-center justify-center gap-2 font-semibold text-white transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-900/30"
               style={{ background: "linear-gradient(135deg, #059669, #047857)" }}
-              onClick={() => navigate("/farmer/products/add")}
+              onClick={() => navigate("/seller/products/add")}
             >
               <Plus size={20} />
               Add Product
@@ -429,7 +429,7 @@ const Dashboard = () => {
             <button
               className="rounded-xl p-6 flex items-center justify-center gap-2 font-semibold transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-lime-900/20"
               style={{ background: "linear-gradient(135deg, #84CC16, #65A30D)", color: "#063527" }}
-              onClick={() => navigate("/farmer/products")}
+              onClick={() => navigate("/seller/products")}
             >
               <Eye size={20} />
               View Products
@@ -437,7 +437,7 @@ const Dashboard = () => {
             <button
               className="rounded-xl p-6 flex items-center justify-center gap-2 font-semibold text-white transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-900/30"
               style={{ background: "linear-gradient(135deg, #F59E0B, #D97706)" }}
-              onClick={() => navigate("/farmer/orders")}
+              onClick={() => navigate("/seller/orders")}
             >
               <Clock size={20} />
               Manage Orders

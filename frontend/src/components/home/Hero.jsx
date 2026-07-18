@@ -101,7 +101,7 @@ export default function Home() {
             className={`text-lg lg:text-xl ${textMuted} leading-relaxed max-w-lg`}
           >
             Connect directly with local organic growers. Put an AI agronomist in
-            every farmer's pocket. Rent farm equipment as easily as ordering
+            every seller's pocket. Rent farm equipment as easily as ordering
             produce.
           </p>
 
@@ -131,8 +131,8 @@ export default function Home() {
                   className={`w-10 h-10 rounded-full border-2 ${darkMode ? "border-[#0b1a13]" : "border-white"} ${bgMuted} flex items-center justify-center overflow-hidden`}
                 >
                   <img
-                    src="/farmer_portrait.jpg"
-                    alt="Farmer"
+                    src="/seller_portrait.jpg"
+                    alt="seller"
                     className="w-full h-full object-cover opacity-90"
                   />
                 </div>
@@ -145,7 +145,7 @@ export default function Home() {
                 ))}
               </div>
               <span className={`text-sm font-medium ${textFg}`}>
-                Trusted by 2,000+ farmers
+                Trusted by 2,000+ sellers
               </span>
             </div>
           </div>
@@ -322,7 +322,7 @@ export default function Home() {
               </h3>
               <p className={`${textMuted} leading-relaxed`}>
                 Cut out the middlemen. Buy hyper-local organic produce directly
-                from the farmers who grew it, ensuring peak freshness and fair
+                from the sellers who grew it, ensuring peak freshness and fair
                 prices.
               </p>
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600/5 rounded-full blur-[40px] group-hover:bg-emerald-600/10 transition-colors" />
@@ -339,7 +339,7 @@ export default function Home() {
                 AI Agronomist
               </h3>
               <p className={`${textMuted} leading-relaxed`}>
-                Smart sensors and machine learning combine to give farmers
+                Smart sensors and machine learning combine to give sellers
                 real-time advice on watering, pest control, and harvest timing.
               </p>
               <div className="absolute top-0 right-0 w-32 h-32 bg-lime-500/5 rounded-full blur-[40px] group-hover:bg-lime-500/10 transition-colors" />
@@ -585,8 +585,8 @@ export default function Home() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-tr from-lime-500/20 to-emerald-600/20 rounded-3xl blur-2xl transform -rotate-6" />
                 <img
-                  src="/farmer_tech.jpg"
-                  alt="Farmer using tech"
+                  src="/seller_tech.jpg"
+                  alt="seller using tech"
                   className="rounded-3xl relative z-10 border border-white/10 shadow-2xl"
                 />
                 {/* Moisture card */}
@@ -624,7 +624,7 @@ export default function Home() {
               Rooted in community.
             </h2>
             <p className={`text-lg ${textMuted}`}>
-              Hear from the farmers and buyers who are changing the local food
+              Hear from the sellers and buyers who are changing the local food
               system.
             </p>
           </motion.div>
@@ -651,7 +651,7 @@ export default function Home() {
               </p>
               <div className="flex items-center gap-4">
                 <img
-                  src="/farmer_portrait.jpg"
+                  src="/seller_portrait.jpg"
                   alt="Sarah Jenkins"
                   className="w-12 h-12 rounded-full object-cover"
                 />
@@ -681,7 +681,7 @@ export default function Home() {
               >
                 "Renting a tractor for just the three days I needed it saved me
                 taking out a massive loan. The platform is seamless, and knowing
-                I'm supporting another local farmer feels right."
+                I'm supporting another local seller feels right."
               </p>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-emerald-600/20 flex items-center justify-center font-bold text-emerald-600">

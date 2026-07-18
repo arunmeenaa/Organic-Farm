@@ -466,7 +466,7 @@ export default function MachineBookingDetails() {
                   </button>
                 )}
 
-              {/* Farmer Actions */}
+              {/* seller Actions */}
 
               {isOwner &&
                 booking.bookingStatus === "pending" && (

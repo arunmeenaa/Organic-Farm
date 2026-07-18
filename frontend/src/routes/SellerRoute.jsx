@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const FarmerRoute = () => {
+const sellerRoute = () => {
     const { user } = useAuth();
 
-    return user?.role === "farmer"
+    return user?.role === "seller"
         ? <Outlet />
         : <Navigate to="/" replace />;
 };
 
-export default FarmerRoute;
+export default sellerRoute;

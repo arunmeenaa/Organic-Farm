@@ -5,7 +5,7 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-async function generateFarmerAdvice(user, weather) {
+async function generatesellerAdvice(user, weather) {
   const cacheKey = [
     user.location,
     weather.temperature,
@@ -116,5 +116,5 @@ Do not promote the marketplace unless asked , and also do not give any type of a
 
 module.exports = {
   chatWithAI,
-  generateFarmerAdvice,
+  generatesellerAdvice,
 };

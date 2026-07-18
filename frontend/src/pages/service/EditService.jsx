@@ -216,7 +216,7 @@ const EditService = () => {
       newImages.forEach((f) => fd.append("images", f));
       await updateService(id, fd);
       toast.success("Service updated!");
-      navigate("/farmer/inventory");
+      navigate("/seller/inventory");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update service");
     } finally {

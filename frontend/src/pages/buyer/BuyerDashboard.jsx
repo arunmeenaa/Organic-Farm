@@ -180,8 +180,8 @@ const BuyerDashboard = () => {
                       Order #{order.orderNumber}
                     </p>
                     <p className={`text-sm mt-1 ${textMuted}`}>
-                      🌾 Farmer:{" "}
-                      <span className="font-medium">{order.farmer?.name}</span>
+                      🌾 seller:{" "}
+                      <span className="font-medium">{order.seller?.name}</span>
                     </p>
                   </div>
 

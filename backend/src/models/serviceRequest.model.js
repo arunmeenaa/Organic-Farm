@@ -2,32 +2,30 @@ const mongoose = require("mongoose");
 
 const serviceRequestSchema = new mongoose.Schema(
   {
-    service: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Service",
-      required: true,
-    },
-
-    farmer: {
+    seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    provider: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    title: {
+      type: String,
       required: true,
+      trim: true,
     },
 
-    crop: {
+    category: {
       type: String,
       required: true,
     },
 
-    area: {
-      type: Number,
+    description: {
+      type: String,
       required: true,
+    },
+
+    landArea: {
+      type: Number,
     },
 
     unit: {
@@ -36,22 +34,46 @@ const serviceRequestSchema = new mongoose.Schema(
       default: "acre",
     },
 
-    preferredDate: {
+    budget: {
+      type: Number,
+      required: true,
+    },
+
+    pricingType: {
+      type: String,
+      enum: [
+        "per_acre",
+        "per_hectare",
+        "per_day",
+        "per_hour",
+        "per_trip",
+        "per_km",
+        "fixed",
+      ],
+      default: "per_acre",
+    },
+
+    requiredDate: {
       type: Date,
       required: true,
     },
 
-    note: String,
+    location: {
+      village: String,
+      district: String,
+      state: String,
+      pincode: String,
+    },
 
     status: {
       type: String,
       enum: [
-        "pending",
+        "open",
         "accepted",
-        "rejected",
-        "cancelled"
+        "completed",
+        "cancelled",
       ],
-      default: "pending",
+      default: "open",
     },
   },
   {

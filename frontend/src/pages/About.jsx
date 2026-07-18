@@ -18,7 +18,7 @@ const features = [
     icon: <ShoppingBasket size={24} className="text-emerald-700 dark:text-emerald-400" />,
     title: "Direct-to-Buyer Marketplace",
     description:
-      "Bypass middlemen entirely. Farmers list crops directly, ensuring maximum earnings for growers and fresh yields for buyers.",
+      "Bypass middlemen entirely. sellers list crops directly, ensuring maximum earnings for growers and fresh yields for buyers.",
   },
   {
     icon: <Bot size={24} className="text-emerald-700 dark:text-emerald-400" />,
@@ -115,7 +115,7 @@ const About = () => {
                 A healthier soil, a fairer economy.
               </h2>
               <p className="text-stone-600 dark:text-emerald-100/70 leading-relaxed mb-8">
-                Traditional agricultural supply chains are broken. Farmers shoulder the heaviest
+                Traditional agricultural supply chains are broken. sellers shoulder the heaviest
                 risks but take home nominal margins. We are re-engineering this relationship from
                 the ground up.
               </p>

@@ -18,14 +18,14 @@ const {
 
 router.get("/", getAllMachines);
 
-router.get("/my", auth, authorize("farmer"), getMyMachines);
+router.get("/my", auth, authorize("seller"), getMyMachines);
 
 router.get("/:id", validate("Machine"), getMachineById);
 
 router.post(
   "/",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   upload.array("images", 5),
   createMachine,
 );
@@ -33,7 +33,7 @@ router.post(
 router.put(
   "/:id",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   upload.array("images", 5),
   updateMachine,
 );
@@ -41,7 +41,7 @@ router.put(
 router.patch(
   "/:id/availability",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   validate("Machine"),
   updateAvailability,
 );
@@ -49,7 +49,7 @@ router.patch(
 router.delete(
   "/:id",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   validate("Machine"),
   deleteMachine,
 );

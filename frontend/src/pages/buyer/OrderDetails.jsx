@@ -145,9 +145,9 @@ const OrderDetails = () => {
                 className={`flex items-center gap-2 mb-3 font-semibold ${textPrimary}`}
               >
                 <User size={18} />
-                <h3>Farmer</h3>
+                <h3>seller</h3>
               </div>
-              <p className={textSub}>{order.farmerName}</p>
+              <p className={textSub}>{order.sellerName}</p>
             </div>
 
             <div>

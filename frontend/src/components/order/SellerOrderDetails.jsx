@@ -6,7 +6,7 @@ import UpdateStatusModal from "./UpdateStatusModal";
 import { notify } from "../../utils/toast";
 import { getOrderById, updateOrderStatus } from "../../services/order.service";
 
-// Matches Navbar/Hero/MyProducts/Orders/AddProduct/FarmerOrderCard:
+// Matches Navbar/Hero/MyProducts/Orders/AddProduct/sellerOrderCard:
 // glassmorphism over an emerald → lime gradient mesh, Space Grotesk display type.
 const FontImport = () => (
   <style>{`
@@ -41,7 +41,7 @@ const FontImport = () => (
   `}</style>
 );
 
-const FarmerOrderDetails = () => {
+const sellerOrderDetails = () => {
   const [showModal, setShowModal] = useState(false);
 
   const { id } = useParams();
@@ -159,4 +159,4 @@ const FarmerOrderDetails = () => {
   );
 };
 
-export default FarmerOrderDetails;
+export default sellerOrderDetails;

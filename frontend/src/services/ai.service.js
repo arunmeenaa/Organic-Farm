@@ -7,5 +7,5 @@ export const sendMessage = (message) => {
 };
 
 export const getWeatherAdvice = () => {
-  return api.get("/dashboard/farmer/weather-advice");
+  return api.get("/dashboard/seller/weather-advice");
 };

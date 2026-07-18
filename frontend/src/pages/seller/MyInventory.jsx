@@ -81,6 +81,8 @@ const Inventory = () => {
         getMyMachines(),
         getMyServices(),
       ]);
+      console.log("Products:", productRes.data);
+
       setProducts(productRes?.data?.products || []);
       setMachines(machineRes?.data?.machines  || []);
       setServices(serviceRes?.data?.services  || []);
@@ -148,16 +150,16 @@ const Inventory = () => {
 
   // ── Add button label & link per tab ──────────────────────────────────────
   const addConfig = {
-    products: { label: "Add Product", to: "/farmer/products/add" },
-    machines: { label: "Add Machine", to: "/farmer/machines/add" },
-    services: { label: "Add Service", to: "/farmer/services/add" },
+    products: { label: "Add Product", to: "/seller/products/add" },
+    machines: { label: "Add Machine", to: "/seller/machines/add" },
+    services: { label: "Add Service", to: "/seller/services/add" },
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-emerald-50 dark:bg-gray-950">
+      <div className="min-h-screen flex justify-center items-center ">
         <p className="text-emerald-700 dark:text-emerald-400 font-semibold text-lg tracking-wide animate-pulse">
-          Optimizing Farmer Hub Ecosystem...
+          Optimizing seller Hub Ecosystem...
         </p>
       </div>
     );
@@ -179,7 +181,7 @@ const Inventory = () => {
               className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-900 to-lime-600 dark:from-emerald-400 dark:to-lime-400 bg-clip-text text-transparent"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              Farmer Inventory Hub
+              seller Inventory Hub
             </h1>
             <p className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">
               Manage your commercial harvest goods, rental equipment and services concurrently.
@@ -235,7 +237,7 @@ const Inventory = () => {
               icon={<Package size={64} className="mx-auto text-slate-300 dark:text-slate-600" />}
               title="No Fresh Crops Listed"
               desc="Kickstart your regional sales by cataloging your primary organic produce output."
-              link="/farmer/products/add"
+              link="/seller/products/add"
               linkLabel="Add First Product"
             />
           ) : (
@@ -272,7 +274,7 @@ const Inventory = () => {
                   </div>
                   <div className="p-6 pt-0 flex items-center gap-3">
                     <Link
-                      to={`/farmer/products/edit/${product._id}`}
+                      to={`/seller/products/edit/${product._id}`}
                       className="flex-1 rounded-xl py-3 flex justify-center items-center gap-1.5 font-bold text-xs tracking-wide uppercase border border-emerald-500/25 dark:border-emerald-700/40 text-emerald-800 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-all"
                     >
                       <Pencil size={13} /> Edit
@@ -300,7 +302,7 @@ const Inventory = () => {
               icon={<Tractor size={64} className="mx-auto text-slate-300 dark:text-slate-600" />}
               title="No Fleet Equipment Listed"
               desc="Generate passive revenue streams by leasing out idle tractors or harvesting rigs."
-              link="/farmer/machines/add"
+              link="/seller/machines/add"
               linkLabel="List Your Machinery"
             />
           ) : (
@@ -337,7 +339,7 @@ const Inventory = () => {
                   </div>
                   <div className="p-6 pt-0 flex gap-3">
                     <Link
-                      to={`/farmer/machine/edit/${machine._id}`}
+                      to={`/seller/machine/edit/${machine._id}`}
                       className="flex-1 rounded-xl py-3 flex justify-center items-center gap-1.5 font-bold text-xs tracking-wide uppercase border border-emerald-500/25 dark:border-emerald-700/40 text-emerald-800 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-all"
                     >
                       <Pencil size={13} /> Edit
@@ -362,7 +364,7 @@ const Inventory = () => {
               icon={<Wrench size={64} className="mx-auto text-slate-300 dark:text-slate-600" />}
               title="No Services Listed Yet"
               desc="Start offering agricultural services — harvesting, spraying, seeding and more."
-              link="/farmer/services/add"
+              link="/seller/services/add"
               linkLabel="Add First Service"
             />
           ) : (
@@ -454,7 +456,7 @@ const Inventory = () => {
                   {/* Card Footer */}
                   <div className="p-6 pt-0 flex items-center gap-3">
                     <Link
-                      to={`/farmer/services/edit/${service._id}`}
+                      to={`/seller/services/edit/${service._id}`}
                       className="flex-1 rounded-xl py-3 flex justify-center items-center gap-1.5 font-bold text-xs tracking-wide uppercase border border-violet-500/25 dark:border-violet-700/40 text-violet-800 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-all"
                     >
                       <Pencil size={13} /> Edit

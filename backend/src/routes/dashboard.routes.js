@@ -2,15 +2,15 @@ const express = require("express");
 const auth = require("../middleware/auth.middleware");
 const authorize = require("../middleware/role.middleware");
 const {
-  getFarmerDashboard,
+  getSellerDashboard,
   getBuyerDashboard,
   getWeatherAdvice
 } = require("../controllers/dashboard.controller");
 
 const router = express.Router();
 
-router.get("/farmer", auth, authorize("farmer"), getFarmerDashboard);
+router.get("/seller", auth, authorize("seller"), getSellerDashboard);
 
 router.get("/buyer", auth, authorize("buyer"), getBuyerDashboard);
-router.get("/farmer/weather-advice", auth, getWeatherAdvice);
+router.get("/seller/weather-advice", auth, getWeatherAdvice);
 module.exports = router;

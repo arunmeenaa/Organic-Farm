@@ -153,7 +153,7 @@ exports.getBuyerBookings = async (req, res) => {
     });
   }
 };
-exports.getFarmerBookings = async (req, res) => {
+exports.getsellerBookings = async (req, res) => {
   try {
     const bookings = await MachineBooking.find({
       owner: req.user._id,

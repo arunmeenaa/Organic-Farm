@@ -255,7 +255,7 @@ const BuyerOrder = () => {
                       Seller
                     </div>
                     <div className={`${tHead} text-lg font-semibold`}>
-                      {order.farmerName || "Organic Partner"}
+                      {order.sellerName || "Organic Partner"}
                     </div>
                   </div>
 

@@ -39,7 +39,7 @@ const FontImport = () => (
   `}</style>
 );
 
-const FarmerOrderCard = ({ order }) => {
+const sellerOrderCard = ({ order }) => {
   return (
     <div className="foc-card rounded-2xl p-6">
       <FontImport />
@@ -85,7 +85,7 @@ const FarmerOrderCard = ({ order }) => {
         </div>
 
         <Link
-          to={`/farmer/orders/${order._id}`}
+          to={`/seller/orders/${order._id}`}
           className="foc-view-btn px-5 py-2 rounded-lg font-semibold"
         >
           View Details
@@ -95,4 +95,4 @@ const FarmerOrderCard = ({ order }) => {
   );
 };
 
-export default FarmerOrderCard;
+export default sellerOrderCard;

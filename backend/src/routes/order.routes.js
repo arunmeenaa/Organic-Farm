@@ -9,7 +9,7 @@ const {
   placeOrder,
   getMyOrders,
   getOrderById,
-  getFarmerOrders,
+  getsellerOrders,
   updateOrderStatus,
   cancelOrder,
 } = require("../controllers/order.controller");
@@ -18,12 +18,12 @@ router.post("/", auth, authorize("buyer"), placeOrder);
 
 router.get("/", auth, authorize("buyer"), getMyOrders);
 
-router.get("/farmer", auth, authorize("farmer"), getFarmerOrders);
+router.get("/seller", auth, authorize("seller"), getsellerOrders);
 
 router.get(
   "/:id",
   auth,
-  authorize("buyer", "farmer"),
+  authorize("buyer", "seller"),
   validateId("Order"),
   getOrderById
 );
@@ -31,7 +31,7 @@ router.get(
 router.put(
   "/:id/status",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   validateId("Order"),
   updateOrderStatus
 );

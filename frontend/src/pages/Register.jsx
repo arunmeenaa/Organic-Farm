@@ -64,7 +64,7 @@ const Register = () => {
     }
   };
 
-  const isFarmer = formData.role === "farmer";
+  const isseller = formData.role === "seller";
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[#F0F7F2] dark:bg-[#0A130E] transition-colors duration-300 selection:bg-emerald-200/60 dark:selection:bg-emerald-800/60">
@@ -100,7 +100,7 @@ const Register = () => {
           </h2>
 
           <p className="mt-6 text-lg text-emerald-900/55 dark:text-emerald-100/60 leading-8 max-w-md">
-            Connect farmers directly with buyers. Buy fresh organic products or
+            Connect sellers directly with buyers. Buy fresh organic products or
             grow your farming business by reaching thousands of customers.
           </p>
 
@@ -118,7 +118,7 @@ const Register = () => {
                 icon: <Tractor size={22} />,
                 bg:   "bg-lime-500/10 dark:bg-lime-500/20",
                 fg:   "text-lime-700 dark:text-lime-400",
-                title:"Direct Farmer Marketplace",
+                title:"Direct seller Marketplace",
                 sub:  "Fair prices with no middlemen.",
               },
               {
@@ -218,7 +218,7 @@ const Register = () => {
                       className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl transition-all duration-300 ease-out
                         bg-gradient-to-r from-emerald-600 to-lime-500 dark:from-emerald-600 dark:to-lime-600
                         shadow-[0_6px_18px_-6px_rgba(5,150,105,0.55)] dark:shadow-[0_6px_18px_-6px_rgba(0,0,0,0.4)]
-                        ${isFarmer ? "left-[calc(50%+4px)]" : "left-1"}`}
+                        ${isseller ? "left-[calc(50%+4px)]" : "left-1"}`}
                     />
 
                     {/* Buyer option */}
@@ -226,31 +226,31 @@ const Register = () => {
                       type="button"
                       onClick={() => setFormData({ ...formData, role: "buyer" })}
                       className={`relative flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold z-10 transition-colors duration-300 ${
-                        !isFarmer ? "text-white" : "text-emerald-900/60 dark:text-emerald-100/50 hover:text-emerald-800 dark:hover:text-emerald-100"
+                        !isseller ? "text-white" : "text-emerald-900/60 dark:text-emerald-100/50 hover:text-emerald-800 dark:hover:text-emerald-100"
                       }`}
                     >
                       <ShoppingBag size={17} />
                       Buyer
                     </button>
 
-                    {/* Farmer option */}
+                    {/* seller option */}
                     <button
                       type="button"
-                      onClick={() => setFormData({ ...formData, role: "farmer" })}
+                      onClick={() => setFormData({ ...formData, role: "seller" })}
                       className={`relative flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold z-10 transition-colors duration-300 ${
-                        isFarmer ? "text-white" : "text-emerald-900/60 dark:text-emerald-100/50 hover:text-emerald-800 dark:hover:text-emerald-100"
+                        isseller ? "text-white" : "text-emerald-900/60 dark:text-emerald-100/50 hover:text-emerald-800 dark:hover:text-emerald-100"
                       }`}
                     >
                       <Tractor size={17} />
-                      Farmer
+                      seller
                     </button>
                   </div>
 
                   {/* Role description under toggle */}
                   <p className="mt-2.5 text-center text-xs text-emerald-900/45 dark:text-emerald-100/40 min-h-[1.2em] transition-all">
-                    {isFarmer
+                    {isseller
                       ? "List your produce and reach thousands of organic buyers."
-                      : "Discover and buy fresh produce directly from farmers."}
+                      : "Discover and buy fresh produce directly from sellers."}
                   </p>
                 </div>
 

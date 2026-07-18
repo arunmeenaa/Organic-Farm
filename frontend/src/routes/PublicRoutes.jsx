@@ -8,8 +8,8 @@ const PublicRoute = () => {
     return <Outlet />;
   }
 
-  if (user?.role === "farmer") {
-    return <Navigate to="/farmer/dashboard" replace />;
+  if (user?.role === "seller") {
+    return <Navigate to="/seller/dashboard" replace />;
   }
 
   if (user?.role === "buyer") {

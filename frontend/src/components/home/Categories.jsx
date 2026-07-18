@@ -259,7 +259,7 @@ const Categories = () => {
             Browse <span className="fd-cat-title-grad">categories</span>
           </h2>
           <p className="mt-3" style={{ color: "#3d5a45" }}>
-            Fresh products from trusted farmers
+            Fresh products from trusted sellers
           </p>
         </div>
 

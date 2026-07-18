@@ -157,7 +157,7 @@ const EditMachine = () => {
       newImages.forEach((image) => data.append("images", image));
       await updateMachine(id, data);
       toast.success("Machine updated successfully");
-      navigate("/farmer/inventory");
+      navigate("/seller/inventory");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update Machine");
     }

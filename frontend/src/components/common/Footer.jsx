@@ -132,7 +132,7 @@ const Footer = () => {
             </Link>
 
             <p className="text-sm leading-7 max-w-xs text-emerald-700/60 dark:text-[#7FA08C]">
-              Connecting farmers directly with buyers to provide fresh, organic,
+              Connecting sellers directly with buyers to provide fresh, organic,
               and healthy products while ensuring fair prices for everyone.
             </p>
 
@@ -240,7 +240,7 @@ const Footer = () => {
       {/* ── Bottom bar ── */}
       <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-xs text-center text-emerald-600/50 dark:text-[#4a7a60]">
-          © {new Date().getFullYear()} GreenHarvest. Empowering farmers.
+          © {new Date().getFullYear()} GreenHarvest. Empowering sellers.
           Delivering freshness.
         </p>
 

@@ -27,16 +27,16 @@ import BuyerOrderDetails from "../pages/buyer/OrderDetails";
 import OrderSuccess from "../components/order/OrderSuccess";
 import BookMachine from "../pages/machine/BookMachine";
 
-import FarmerRoute from "./FarmerRoute";
-import Dashboard from "../pages/farmer/Dashboard";
-import EditProduct from "../pages/farmer/EditProduct";
-import AddProduct from "../pages/farmer/AddProduct";
+import SellerRoute from "./SellerRoute";
+import Dashboard from "../pages/seller/Dashboard";
+import EditProduct from "../pages/seller/EditProduct";
+import AddProduct from "../pages/seller/AddProduct";
 
-import FarmerOrders from "../pages/farmer/Order";
-import FarmerOrdersDetails from "../components/order/FarmerOrderDetails";
-import MyInventory from "../pages/farmer/MyInventory";
-import AddMachine from "../pages/farmer/AddMachine";
-import EditMachine from "../pages/farmer/EditMachine";
+import SellerOrders from "../pages/seller/Order";
+import SellerOrdersDetails from "../components/order/SellerOrderDetails";
+import MyInventory from "../pages/seller/MyInventory";
+import AddMachine from "../pages/seller/AddMachine";
+import EditMachine from "../pages/seller/EditMachine";
 import MachineBookingDetails from "../pages/machine/MachineBookingDetails";
 import AddService from "../pages/service/AddService";
 import EditService from "../pages/service/EditService";
@@ -76,29 +76,29 @@ const AppRoutes = () => {
             <Route path="/machines/book/:id" element={<BookMachine />} />
           </Route>
 
-          <Route element={<FarmerRoute />}>
-            <Route path="/farmer/dashboard" element={<Dashboard />} />
+          <Route element={<SellerRoute />}>
+            <Route path="/seller/dashboard" element={<Dashboard />} />
 
             {/* Products */}
-            <Route path="/farmer/products/add" element={<AddProduct />} />
-            <Route path="/farmer/products/edit/:id" element={<EditProduct />} />
-            <Route path="/farmer/inventory" element={<MyInventory />} />
+            <Route path="/seller/products/add" element={<AddProduct />} />
+            <Route path="/seller/products/edit/:id" element={<EditProduct />} />
+            <Route path="/seller/inventory" element={<MyInventory />} />
 
             {/* Orders */}
-            <Route path="/farmer/orders" element={<FarmerOrders />} />
+            <Route path="/seller/orders" element={<SellerOrders />} />
             <Route
-              path="/farmer/orders/:id"
-              element={<FarmerOrdersDetails />}
+              path="/seller/orders/:id"
+              element={<SellerOrdersDetails />}
             />
 
             {/* Machines */}
-            <Route path="/farmer/machines/add" element={<AddMachine />} />
-            <Route path="/farmer/machine/edit/:id" element={<EditMachine />} />
+            <Route path="/seller/machines/add" element={<AddMachine />} />
+            <Route path="/seller/machine/edit/:id" element={<EditMachine />} />
 
             {/* Services */}
 
-            <Route path="/farmer/services/add" element={<AddService />} />
-            <Route path="/farmer/services/edit/:id" element={<EditService />} />
+            <Route path="/seller/services/add" element={<AddService />} />
+            <Route path="/seller/services/edit/:id" element={<EditService />} />
           </Route>
         </Route>
       </Route>

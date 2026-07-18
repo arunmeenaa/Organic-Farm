@@ -119,7 +119,7 @@ const Cart = () => {
                   </h2>
 
                   <p className={`mt-2 ${textMuted}`}>
-                    Farmer: {item.product.farmer?.name}
+                    seller: {item.product.seller?.name}
                   </p>
 
                   <p

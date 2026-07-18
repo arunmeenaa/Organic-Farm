@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, Package, Calendar, User, IndianRupee, Clock, Settings } from "lucide-react";
 import toast from "react-hot-toast";
-import { getFarmerOrders } from "../../services/order.service";
-import { getFarmerBookings } from "../../services/machineBooking.service";
+import { getsellerOrders } from "../../services/order.service";
+import { getsellerBookings } from "../../services/machineBooking.service";
 
 const display = { fontFamily: "'Space Grotesk', ui-sans-serif, sans-serif" };
 const mono    = { fontFamily: "'IBM Plex Mono', ui-monospace, monospace" };
@@ -43,8 +43,8 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       const [orderRes, bookingRes] = await Promise.all([
-        getFarmerOrders(),
-        getFarmerBookings(),
+        getsellerOrders(),
+        getsellerBookings(),
       ]);
       setOrders(orderRes?.data?.orders || []);
       setMachineBookings(bookingRes?.data?.bookings || []);
@@ -125,7 +125,7 @@ const Orders = () => {
             className="text-4xl font-bold tracking-tight bg-gradient-to-r from-emerald-900 to-lime-600 dark:from-emerald-400 dark:to-lime-400 bg-clip-text text-transparent"
             style={display}
           >
-            {orderType === "product" ? "Farmer Incoming Orders" : "Machine Rentals & Bookings"}
+            {orderType === "product" ? "seller Incoming Orders" : "Machine Rentals & Bookings"}
           </h1>
           <p className="mt-2 text-sm font-medium text-slate-500 dark:text-slate-400">
             {orderType === "product"
@@ -248,7 +248,7 @@ const Orders = () => {
                         {order.totalPrice}
                       </div>
                       <Link
-                        to={`/farmer/orders/${order._id}`}
+                        to={`/seller/orders/${order._id}`}
                         className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-lime-400 shadow-sm hover:-translate-y-0.5 transition-all duration-150"
                       >
                         View Order

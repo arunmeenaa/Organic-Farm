@@ -35,7 +35,7 @@ const userModel = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: { values: ["buyer", "farmer"] },
+      enum: { values: ["buyer", "seller"] },
       required: true,
     },
     bio: {

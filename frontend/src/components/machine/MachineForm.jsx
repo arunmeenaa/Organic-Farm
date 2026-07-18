@@ -179,7 +179,7 @@ const MachineForm = ({ mode }) => {
         await updateMachine(id, data);
         notify.success("Machine Updated Successfully");
       }
-      navigate("/farmer/inventory");
+      navigate("/seller/inventory");
     } catch (err) {
       notify.error(err.response?.data?.message);
     } finally {

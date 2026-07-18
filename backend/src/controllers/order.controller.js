@@ -32,8 +32,8 @@ async function placeOrder(req, res) {
       });
     }
 
-    let farmerId = null;
-    let farmerName = "";
+    let sellerId = null;
+    let sellerName = "";
     let totalPrice = 0;
 
     const orderProducts = [];
@@ -55,14 +55,14 @@ async function placeOrder(req, res) {
         );
       }
 
-      if (!farmerId) {
-        farmerId = dbProduct.farmer.toString();
+      if (!sellerId) {
+        sellerId = dbProduct.seller.toString();
 
-        const farmer = await userModel.findById(farmerId);
+        const seller = await userModel.findById(sellerId);
 
-        farmerName = farmer.name;
-      } else if (farmerId !== dbProduct.farmer.toString()) {
-        throw new Error("Cart contains products from multiple farmers.");
+        sellerName = seller.name;
+      } else if (sellerId !== dbProduct.seller.toString()) {
+        throw new Error("Cart contains products from multiple sellers.");
       }
 
       const itemTotal = dbProduct.price * item.quantity;
@@ -90,8 +90,8 @@ async function placeOrder(req, res) {
     const order = await orderModel.create([
       {
         buyer: req.user._id,
-        farmer: farmerId,
-        farmerName,
+        seller: sellerId,
+        sellerName,
         orderNumber: `OF${Date.now()}`,
         products: orderProducts,
         totalPrice,
@@ -101,7 +101,7 @@ async function placeOrder(req, res) {
     ]);
 
     await createNotification({
-      receiver: farmerId,
+      receiver: sellerId,
       sender: req.user._id,
       title: "New Order",
       message: `${fullName} placed an order for ${orderProducts[0].productName}.`,
@@ -130,7 +130,7 @@ async function getMyOrders(req, res) {
   try {
     const orders = await orderModel
       .find({ buyer: req.user._id })
-      .populate("farmer", "name email phone")
+      .populate("seller", "name email phone")
       .populate("products.product", "name images category")
       .sort({ createdAt: -1 })
       .lean();
@@ -155,7 +155,7 @@ async function getOrderById(req, res) {
     const order = await orderModel
       .findById(id)
       .populate("buyer", "name email phone")
-      .populate("farmer", "name email phone")
+      .populate("seller", "name email phone")
       .populate("products.product", "name images category")
       .lean();
 
@@ -168,7 +168,7 @@ async function getOrderById(req, res) {
 
     if (
       order.buyer._id.toString() !== req.user._id.toString() &&
-      order.farmer._id.toString() !== req.user._id.toString()
+      order.seller._id.toString() !== req.user._id.toString()
     ) {
       return res.status(403).json({
         success: false,
@@ -190,11 +190,11 @@ async function getOrderById(req, res) {
   }
 }
 
-async function getFarmerOrders(req, res) {
-  const farmerId = req.user._id;
+async function getsellerOrders(req, res) {
+  const sellerId = req.user._id;
   try {
     const orders = await orderModel
-      .find({ farmer: farmerId })
+      .find({ seller: sellerId })
       .populate("buyer", "name email phone")
       .populate("products.product", "name images category")
       .sort({ createdAt: -1 })
@@ -202,13 +202,13 @@ async function getFarmerOrders(req, res) {
     return res.status(200).json({
       success: true,
       count: orders.length,
-      message: "Farmer orders retrieved successfully",
+      message: "seller orders retrieved successfully",
       orders,
     });
   } catch (err) {
     return res.status(500).json({
       success: false,
-      message: "Failed to retrieve farmer orders",
+      message: "Failed to retrieve seller orders",
       error: err.message,
     });
   }
@@ -225,7 +225,7 @@ async function updateOrderStatus(req, res) {
         message: "Order not found",
       });
     }
-    if (order.farmer.toString() !== req.user._id.toString()) {
+    if (order.seller.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
         message: "You don't have permission to update this order's status",
@@ -367,7 +367,7 @@ module.exports = {
   placeOrder,
   getMyOrders,
   getOrderById,
-  getFarmerOrders,
+  getsellerOrders,
   updateOrderStatus,
   cancelOrder,
   updatePaymentStatus,

@@ -61,7 +61,7 @@ const productSchema = new mongoose.Schema(
       default: "kg",
     },
 
-    farmer: {
+    seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

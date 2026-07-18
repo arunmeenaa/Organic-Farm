@@ -29,7 +29,7 @@ router.get("/:id", getServiceById);
 router.post(
   "/",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   upload.array("images", 5),
   createService,
 );
@@ -37,11 +37,11 @@ router.post(
 router.patch(
   "/:id",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   upload.array("images", 5),
   updateService,
 );
 
-router.delete("/:id", auth, authorize("farmer"), deleteService);
+router.delete("/:id", auth, authorize("seller"), deleteService);
 
 module.exports = router;

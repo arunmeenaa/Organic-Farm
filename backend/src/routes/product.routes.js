@@ -17,18 +17,18 @@ const router = express.Router();
 router.post(
   "/",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   upload.array("images", 5),
   createProduct,
 );
 router.get("/", getAllProducts);
-router.get("/me", auth, authorize("farmer"), getMyProducts);
+router.get("/me", auth, authorize("seller"), getMyProducts);
 router.get("/:id", validateId("product"), getProductById);
 
 router.patch(
   "/:id",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   upload.array("images", 5),
   validateId("product"),
   updateProduct,
@@ -37,7 +37,7 @@ router.patch(
 router.patch(
   "/:id/status",
   auth,
-  authorize("farmer"),
+  authorize("seller"),
   validateId("product"),
   changeProductStatus,
 );

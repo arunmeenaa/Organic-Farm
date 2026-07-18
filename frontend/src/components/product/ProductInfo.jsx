@@ -82,12 +82,12 @@ const ProductInfo = ({ product, quantity, setQuantity }) => {
       <div className="fd-meta-row mt-6 space-y-2">
         <div className="flex items-center gap-2">
           <User size={18} />
-          {product.farmer?.name}
+          {product.seller?.name}
         </div>
 
         <div className="flex items-center gap-2">
           <MapPin size={18} />
-          {product.farmer?.location}
+          {product.seller?.location}
         </div>
       </div>
 

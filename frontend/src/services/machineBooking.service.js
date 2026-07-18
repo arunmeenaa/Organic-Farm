@@ -6,8 +6,8 @@ export const createBooking = (data) =>
 export const getBuyerBookings = () =>
   api.get("/machine-bookings/my");
 
-export const getFarmerBookings = () =>
-  api.get("/machine-bookings/farmer");
+export const getsellerBookings = () =>
+  api.get("/machine-bookings/seller");
 
 export const getBooking = (id) =>
   api.get(`/machine-bookings/${id}`);

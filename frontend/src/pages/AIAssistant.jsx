@@ -115,7 +115,7 @@ const AIAssistant = () => {
     : "bg-stone-300 cursor-not-allowed";
   // ─────────────────────────────────────────────────────────────────────────
 
-  const farmerSuggestions = [
+  const sellerSuggestions = [
     "🌾 Best crop for this season",
     "🐛 Yellow spots on tomato leaves",
     "🌦️ Today's farming tips",
@@ -134,7 +134,7 @@ const AIAssistant = () => {
   ];
 
   const suggestions =
-    user?.role === "farmer" ? farmerSuggestions : buyerSuggestions;
+    user?.role === "seller" ? sellerSuggestions : buyerSuggestions;
 
   // Always keep scroll pinned to the bottom
   useEffect(() => {
