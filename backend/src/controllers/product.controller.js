@@ -191,9 +191,7 @@ async function getMyProducts(req, res) {
 }
 
 async function updateProduct(req, res) {
-  console.log("UPDATE CONTROLLER RUNNING");
-  console.log("req.files =", req.files);
-  console.log("req.body =", req.body);
+  
   const { id } = req.params;
 
   try {
@@ -236,8 +234,7 @@ async function updateProduct(req, res) {
 
     // Update images only if new files were uploaded
     let imageUrls = [];
-console.log("req.files:", req.files);
-console.log("existingImages:", req.body.existingImages);
+
     if (req.body.existingImages) {
       imageUrls = JSON.parse(req.body.existingImages);
     }

@@ -52,10 +52,6 @@ const Navbar = () => {
 
   const notifBadgeLabel = unreadCount > 9 ? "9+" : unreadCount;
 
-  // ── Nav underline classes ───────────────────────────────────────────────────
-  // Active state uses a bottom border (underline). The border is always
-  // reserved (border-b-2 border-transparent) so layout never shifts on toggle.
-  // Only color and border-color are transitioned — both are cheap/compositable.
   const navLinkClass = ({ isActive }) =>
     [
       "font-['Inter'] px-3 pt-1.5 pb-1 border-b-2",
@@ -147,7 +143,6 @@ const Navbar = () => {
                     </NavLink>
                   </>
                 )}
-
               </nav>
 
               {/* Desktop right actions */}
@@ -181,9 +176,9 @@ const Navbar = () => {
                     <div className="relative">
                       <button
                         onClick={(e) => {
-  e.stopPropagation();
-  setNotificationMenu((prev) => !prev);
-}}
+                          e.stopPropagation();
+                          setNotificationMenu((prev) => !prev);
+                        }}
                         aria-label="Notifications"
                         className="relative text-[#0F2E22] hover:text-emerald-600 dark:text-emerald-100/75 dark:hover:text-emerald-300 transition-colors"
                       >
@@ -235,7 +230,16 @@ const Navbar = () => {
                       >
                         <div className="w-10 h-10 rounded-full p-0.5 bg-linear-to-br from-green-700 to-lime-500">
                           <div className="w-full h-full rounded-full flex items-center justify-center font-bold uppercase text-sm text-white bg-gradient-to-br from-emerald-600 to-emerald-800">
-                            {user?.name?.trim()?.charAt(0).toUpperCase()}
+                            <img
+                              src={
+                                user?.profileImage ||
+                                `https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(
+                                  user?.name || "User",
+                                )}`
+                              }
+                              alt={user?.name || "User"}
+                              className="w-10 h-10 rounded-full object-cover border-2 border-emerald-500/20"
+                            />
                           </div>
                         </div>
                         <div className="text-left">
@@ -292,9 +296,9 @@ const Navbar = () => {
                   <div className="relative">
                     <button
                       onClick={(e) => {
-  e.stopPropagation();
-  setNotificationMenu((prev) => !prev);
-}}
+                        e.stopPropagation();
+                        setNotificationMenu((prev) => !prev);
+                      }}
                       aria-label="Notifications"
                       className="relative text-[#0F2E22] dark:text-emerald-100/75"
                     >

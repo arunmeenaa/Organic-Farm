@@ -38,8 +38,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const addItem = async (product, quantity) => {
-    console.log(product);
-  console.log(typeof product);
+    
     try {
       const { data } = await addToCart({
         product,

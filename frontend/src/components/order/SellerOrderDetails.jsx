@@ -70,7 +70,7 @@ const sellerOrderDetails = () => {
     packed: "Mark as Shipped",
     shipped: "Mark as Delivered",
   };
-  console.log("Current order state:", order);
+ 
   if (!order) {
     return (
       <div className="fod-root min-h-screen flex items-center justify-center">
@@ -89,7 +89,7 @@ const sellerOrderDetails = () => {
 
       fetchOrder();
     } catch (err) {
-      console.log(err.response);
+     
       notify.error(err.response?.data?.message || "Failed to update order");
     }
   };

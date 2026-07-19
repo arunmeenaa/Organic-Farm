@@ -15,10 +15,14 @@ import {
   Wind,
   MapPin,
   Sparkles,
+  Bell,
+  ClipboardList,
+  CheckCircle2,
 } from "lucide-react";
 
 import { getSellerDashboard } from "../../services/dashboard.service";
 import { getWeatherAdvice } from "../../services/ai.service";
+import { getOpenServiceRequests } from "../../services/serviceRequest.service";
 import toast from "react-hot-toast";
 
 // ── Skeleton shimmer (minimal — only the keyframe, no layout classes) ─────────
@@ -60,7 +64,7 @@ const FontLink = () => (
 );
 
 const display = { fontFamily: "'Space Grotesk', ui-sans-serif, sans-serif" };
-const mono    = { fontFamily: "'IBM Plex Mono', ui-monospace, monospace" };
+const mono = { fontFamily: "'IBM Plex Mono', ui-monospace, monospace" };
 
 // ── Weather Skeleton ──────────────────────────────────────────────────────────
 const WeatherSkeleton = () => (
@@ -86,14 +90,15 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   // ── Stage 1: seller data (stats / products / orders) ──
-  const [stats, setStats]                 = useState(null);
+  const [stats, setStats] = useState(null);
   const [recentProducts, setRecentProducts] = useState([]);
-  const [recentOrders, setRecentOrders]   = useState([]);
-  const [loading, setLoading]             = useState(true);
-
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [nearbyRequestCount, setNearbyRequestCount] = useState(0);
+  const [newRequests, setNewRequests] = useState(0);
   // ── Stage 2: external API data (weather / advice) ──────
-  const [weather, setWeather]             = useState(null);
-  const [advice, setAdvice]               = useState([]);
+  const [weather, setWeather] = useState(null);
+  const [advice, setAdvice] = useState([]);
   const [weatherLoading, setWeatherLoading] = useState(true);
 
   const fetchDashboard = async () => {
@@ -122,10 +127,21 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    fetchDashboard().then(() => fetchWeatherAdvice());
-  }, []);
+  const fetchNearbyRequestCount = async () => {
+  try {
+    const { data } = await getOpenServiceRequests();
 
+    setNewRequests(data.requests?.length || 0);
+  } catch (err) {
+    console.error(err);
+  }
+};
+  useEffect(() => {
+    fetchDashboard().then(() => {
+      fetchNearbyRequestCount();
+      fetchWeatherAdvice();
+    });
+  }, []);
   const todayLabel = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
@@ -133,10 +149,34 @@ const Dashboard = () => {
   });
 
   const statCards = [
-    { key: "totalProducts",  label: "Total Products",  value: stats?.totalProducts ?? 0,        icon: Package,     accent: "text-emerald-600 dark:text-emerald-400" },
-    { key: "activeProducts", label: "Active Products", value: stats?.activeProducts ?? 0,        icon: CheckCircle, accent: "text-lime-600 dark:text-lime-400" },
-    { key: "totalOrders",    label: "Orders",          value: stats?.totalOrders ?? 0,           icon: ShoppingBag, accent: "text-amber-700 dark:text-amber-500" },
-    { key: "revenue",        label: "Revenue",         value: `₹${stats?.revenue ?? 0}`,         icon: IndianRupee, accent: "text-teal-700 dark:text-teal-400" },
+    {
+      key: "totalProducts",
+      label: "Total Products",
+      value: stats?.totalProducts ?? 0,
+      icon: Package,
+      accent: "text-emerald-600 dark:text-emerald-400",
+    },
+    {
+      key: "activeProducts",
+      label: "Active Products",
+      value: stats?.activeProducts ?? 0,
+      icon: CheckCircle,
+      accent: "text-lime-600 dark:text-lime-400",
+    },
+    {
+      key: "totalOrders",
+      label: "Orders",
+      value: stats?.totalOrders ?? 0,
+      icon: ShoppingBag,
+      accent: "text-amber-700 dark:text-amber-500",
+    },
+    {
+      key: "revenue",
+      label: "Revenue",
+      value: `₹${stats?.revenue ?? 0}`,
+      icon: IndianRupee,
+      accent: "text-teal-700 dark:text-teal-400",
+    },
   ];
 
   // ── Full-page skeleton ────────────────────────────────────────────────────
@@ -149,7 +189,9 @@ const Dashboard = () => {
           <div className="fd-skel h-10 w-72 mb-3" />
           <div className="fd-skel h-5 w-48 mb-10" />
           <div className="grid md:grid-cols-4 gap-6 mb-10">
-            {[0, 1, 2, 3].map((i) => <div key={i} className="fd-skel h-32" />)}
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="fd-skel h-32" />
+            ))}
           </div>
           <div className="grid lg:grid-cols-2 gap-8">
             <div className="fd-skel h-80" />
@@ -166,11 +208,9 @@ const Dashboard = () => {
       <ShimmerStyle />
 
       <div className="max-w-7xl mx-auto px-6 py-10">
-
         {/* ── Masthead ── */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10 pb-6 border-b border-emerald-500/20 dark:border-emerald-700/25">
           <div className="flex-1">
-
             {/* Date label */}
             <div className="flex items-center gap-2 mb-2 text-xs uppercase tracking-[0.2em] font-semibold text-amber-700 dark:text-amber-500">
               <Sprout size={14} />
@@ -179,10 +219,10 @@ const Dashboard = () => {
 
             {/* Title */}
             <h1
-              className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-900 to-lime-600 dark:from-emerald-400 dark:to-lime-400 bg-clip-text text-transparent"
+              className="text-4xl md:text-5xl font-bold bg-linear-to-r from-emerald-900 to-lime-600 dark:from-emerald-400 dark:to-lime-400 bg-clip-text text-transparent"
               style={display}
             >
-              seller Dashboard
+              Seller Dashboard
             </h1>
 
             <p className="mt-2 text-emerald-900/60 dark:text-emerald-300/70">
@@ -195,10 +235,15 @@ const Dashboard = () => {
                 <WeatherSkeleton />
               ) : weather ? (
                 <div className="inline-flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5 rounded-2xl bg-white/55 dark:bg-white/5 backdrop-blur-md border border-emerald-500/16 dark:border-emerald-700/30">
-
                   <div className="flex items-center gap-2">
-                    <Thermometer size={15} className="text-emerald-600 dark:text-emerald-400" />
-                    <span className="font-semibold text-sm text-emerald-950 dark:text-white" style={mono}>
+                    <Thermometer
+                      size={15}
+                      className="text-emerald-600 dark:text-emerald-400"
+                    />
+                    <span
+                      className="font-semibold text-sm text-emerald-950 dark:text-white"
+                      style={mono}
+                    >
                       {weather.temperature}°C
                     </span>
                     <span className="text-sm capitalize text-emerald-800/70 dark:text-emerald-300/70">
@@ -209,7 +254,10 @@ const Dashboard = () => {
                   <span className="text-emerald-500/30">|</span>
 
                   <div className="flex items-center gap-1.5">
-                    <Droplets size={14} className="text-teal-700 dark:text-teal-400" />
+                    <Droplets
+                      size={14}
+                      className="text-teal-700 dark:text-teal-400"
+                    />
                     <span className="text-sm text-emerald-800/70 dark:text-emerald-300/70">
                       {weather.humidity}% humidity
                     </span>
@@ -218,7 +266,10 @@ const Dashboard = () => {
                   <span className="text-emerald-500/30">|</span>
 
                   <div className="flex items-center gap-1.5">
-                    <Wind size={14} className="text-lime-600 dark:text-lime-400" />
+                    <Wind
+                      size={14}
+                      className="text-lime-600 dark:text-lime-400"
+                    />
                     <span className="text-sm text-emerald-800/70 dark:text-emerald-300/70">
                       {weather.windSpeed} m/s
                     </span>
@@ -227,7 +278,10 @@ const Dashboard = () => {
                   <span className="text-emerald-500/30">|</span>
 
                   <div className="flex items-center gap-1.5">
-                    <MapPin size={14} className="text-amber-700 dark:text-amber-500" />
+                    <MapPin
+                      size={14}
+                      className="text-amber-700 dark:text-amber-500"
+                    />
                     <span className="text-sm font-medium text-emerald-800/70 dark:text-emerald-300/70">
                       {weather.city}
                     </span>
@@ -236,8 +290,47 @@ const Dashboard = () => {
               ) : null}
             </div>
           </div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/seller/buyer-requests")}
+              className="relative flex items-center gap-4 px-5 py-3 rounded-2xl
+      bg-gradient-to-r from-emerald-600 to-lime-500
+      text-white shadow-lg hover:-translate-y-0.5
+      hover:shadow-emerald-500/30 transition-all duration-300"
+            >
+              <ClipboardList size={22} className="shrink-0" />
 
-          
+              <div className="text-left">
+                <p className="font-semibold text-sm">Service Requests</p>
+
+                {newRequests > 0 ? (
+                  <p className="text-xs text-white/85">
+                    {newRequests} New{" "}
+                    {newRequests === 1 ? "Request" : "Requests"} Nearby
+                  </p>
+                ) : (
+                  <div className="flex items-center gap-1 text-xs text-green-100">
+                    <CheckCircle2 size={13} />
+                    <span>No New Requests</span>
+                  </div>
+                )}
+              </div>
+
+              {newRequests > 0 && (
+                <span
+                  className="absolute -top-2 -right-2
+          min-w-[24px] h-6 px-2
+          rounded-full bg-red-500
+          border-2 border-white
+          text-white text-xs font-bold
+          flex items-center justify-center
+          animate-pulse"
+                >
+                  {newRequests > 99 ? "99+" : newRequests}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* ── Stat Cards ── */}
@@ -263,11 +356,13 @@ const Dashboard = () => {
 
         {/* ── Products + Orders ── */}
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
-
           {/* Products Panel */}
           <div className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl">
             <div className="flex items-center justify-between p-6 border-b border-emerald-500/14 dark:border-emerald-700/20">
-              <h2 className="text-2xl font-semibold text-emerald-950 dark:text-white" style={display}>
+              <h2
+                className="text-2xl font-semibold text-emerald-950 dark:text-white"
+                style={display}
+              >
                 Recent Products
               </h2>
               <button
@@ -297,7 +392,10 @@ const Dashboard = () => {
                           <h3 className="font-semibold text-emerald-950 dark:text-white">
                             {product.name}
                           </h3>
-                          <p className="text-sm text-slate-500 dark:text-slate-400" style={mono}>
+                          <p
+                            className="text-sm text-slate-500 dark:text-slate-400"
+                            style={mono}
+                          >
                             ₹{product.price}/{product.unit}
                           </p>
                         </div>
@@ -333,7 +431,10 @@ const Dashboard = () => {
           {/* Orders Panel */}
           <div className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl">
             <div className="flex items-center justify-between p-6 border-b border-emerald-500/14 dark:border-emerald-700/20">
-              <h2 className="text-2xl font-semibold text-emerald-950 dark:text-white" style={display}>
+              <h2
+                className="text-2xl font-semibold text-emerald-950 dark:text-white"
+                style={display}
+              >
                 Recent Orders
               </h2>
               <button
@@ -359,14 +460,18 @@ const Dashboard = () => {
                     <div>
                       <h3 className="font-semibold text-emerald-950 dark:text-white">
                         {order.products[0].productName}
-                        {order.products.length > 1 && ` +${order.products.length - 1} more`}
+                        {order.products.length > 1 &&
+                          ` +${order.products.length - 1} more`}
                       </h3>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
                         Buyer: {order.buyer?.name}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-emerald-950 dark:text-white" style={mono}>
+                      <p
+                        className="font-semibold text-emerald-950 dark:text-white"
+                        style={mono}
+                      >
                         ₹{order.totalPrice}
                       </p>
                       <span className="text-xs font-medium px-2 py-1 rounded-full inline-block mt-1 bg-amber-500/14 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400">
@@ -383,8 +488,14 @@ const Dashboard = () => {
         {/* ── AI Recommendations ── */}
         <div className="bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl mb-8">
           <div className="flex items-center gap-2 p-6 border-b border-emerald-500/14 dark:border-emerald-700/20">
-            <Sparkles size={18} className="text-amber-700 dark:text-amber-500" />
-            <h2 className="text-2xl font-semibold text-emerald-950 dark:text-white" style={display}>
+            <Sparkles
+              size={18}
+              className="text-amber-700 dark:text-amber-500"
+            />
+            <h2
+              className="text-2xl font-semibold text-emerald-950 dark:text-white"
+              style={display}
+            >
               AI Recommendations
             </h2>
           </div>
@@ -398,7 +509,10 @@ const Dashboard = () => {
                   key={index}
                   className="flex items-start gap-3 p-3 rounded-xl bg-emerald-500/5 dark:bg-emerald-500/8"
                 >
-                  <CheckCircle size={16} className="mt-0.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <CheckCircle
+                    size={16}
+                    className="mt-0.5 shrink-0 text-emerald-600 dark:text-emerald-400"
+                  />
                   <span className="text-sm text-emerald-900 dark:text-emerald-200">
                     {item}
                   </span>
@@ -414,13 +528,18 @@ const Dashboard = () => {
 
         {/* ── Quick Actions ── */}
         <div>
-          <h2 className="text-2xl font-semibold mb-5 text-emerald-950 dark:text-white" style={display}>
+          <h2
+            className="text-2xl font-semibold mb-5 text-emerald-950 dark:text-white"
+            style={display}
+          >
             Quick Actions
           </h2>
           <div className="grid sm:grid-cols-3 gap-5">
             <button
               className="rounded-xl p-6 flex items-center justify-center gap-2 font-semibold text-white transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-900/30"
-              style={{ background: "linear-gradient(135deg, #059669, #047857)" }}
+              style={{
+                background: "linear-gradient(135deg, #059669, #047857)",
+              }}
               onClick={() => navigate("/seller/products/add")}
             >
               <Plus size={20} />
@@ -428,7 +547,10 @@ const Dashboard = () => {
             </button>
             <button
               className="rounded-xl p-6 flex items-center justify-center gap-2 font-semibold transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-lime-900/20"
-              style={{ background: "linear-gradient(135deg, #84CC16, #65A30D)", color: "#063527" }}
+              style={{
+                background: "linear-gradient(135deg, #84CC16, #65A30D)",
+                color: "#063527",
+              }}
               onClick={() => navigate("/seller/products")}
             >
               <Eye size={20} />
@@ -436,7 +558,9 @@ const Dashboard = () => {
             </button>
             <button
               className="rounded-xl p-6 flex items-center justify-center gap-2 font-semibold text-white transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-900/30"
-              style={{ background: "linear-gradient(135deg, #F59E0B, #D97706)" }}
+              style={{
+                background: "linear-gradient(135deg, #F59E0B, #D97706)",
+              }}
               onClick={() => navigate("/seller/orders")}
             >
               <Clock size={20} />
@@ -444,7 +568,6 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

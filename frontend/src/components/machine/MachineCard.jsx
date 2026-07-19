@@ -54,7 +54,7 @@ const FontImport = () => (
 );
 
 const MachineCard = ({ machine }) => {
-  console.log(machine);
+  
   return (
     <div className="fd-card fd-machine-card rounded-2xl overflow-hidden">
 

@@ -50,6 +50,7 @@ const Profile = () => {
   const role = user?.role === "seller" ? "seller" : "buyer";
   const cfg = ROLE_CONFIG[role];
 
+  const [profileFile, setProfileFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -102,25 +103,51 @@ const Profile = () => {
     setFormData(savedData);
     setEditing(false);
   };
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setSaving(true);
-      const { data } = await updateProfile(formData);
-      updateUser(data.user);
-      notify.success(data.message);
-      const updated = { ...formData, ...data.user };
-      setFormData(updated);
-      setSavedData(updated);
-      if (setUser) setUser(data.user);
-      setEditing(false);
-    } catch (err) {
-      notify.error(err.response?.data?.message || "Failed to update profile");
-    } finally {
-      setSaving(false);
-    }
+    if (!file) return;
+
+    setProfileFile(file);
+
+    setFormData((prev) => ({
+      ...prev,
+      profileImage: URL.createObjectURL(file),
+    }));
   };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    setSaving(true);
+
+    const form = new FormData();
+
+    form.append("name", formData.name);
+    form.append("phone", formData.phone);
+    form.append("location", formData.location);
+    form.append("bio", formData.bio);
+
+    if (profileFile) {
+      form.append("profileImage", profileFile);
+    }
+
+
+    const { data } = await updateProfile(form);
+
+    updateUser(data.user);
+
+    notify.success(data.message);
+
+    setEditing(false);
+  } catch (err) {
+    notify.error(
+      err.response?.data?.message || "Failed to update profile"
+    );
+  } finally {
+    setSaving(false);
+  }
+};
 
   // ── Style tokens ────────────────────────────────────────────────────────────
   const glassCls = darkMode
@@ -175,7 +202,9 @@ const Profile = () => {
         <div className="max-w-5xl mx-auto px-6">
           <div className={`${skelCls} h-10 w-56 mb-8`} />
           <div className="grid lg:grid-cols-3 gap-8">
-            <div className={`${glassCls} rounded-3xl p-8 flex flex-col items-center gap-4`}>
+            <div
+              className={`${glassCls} rounded-3xl p-8 flex flex-col items-center gap-4`}
+            >
               <div className={`${skelCls} w-24 h-24 rounded-full`} />
               <div className={`${skelCls} h-5 w-32`} />
               <div className={`${skelCls} h-4 w-20`} />
@@ -185,7 +214,9 @@ const Profile = () => {
                 ))}
               </div>
             </div>
-            <div className={`${glassCls} lg:col-span-2 rounded-3xl p-8 space-y-5`}>
+            <div
+              className={`${glassCls} lg:col-span-2 rounded-3xl p-8 space-y-5`}
+            >
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className={`${skelCls} h-12`} />
               ))}
@@ -249,13 +280,20 @@ const Profile = () => {
 
               {/* Change photo — only when editing */}
               {editing && (
-                <label className="mt-3 cursor-pointer text-xs font-semibold text-emerald-700 hover:text-emerald-800 transition-colors">
+                <label className="mt-3 cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition">
                   Change Photo
-                  <input type="file" className="hidden" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoChange}
+                  />
                 </label>
               )}
 
-              <h2 className={`font-['Space_Grotesk'] mt-5 text-2xl font-semibold ${nameCls}`}>
+              <h2
+                className={`font-['Space_Grotesk'] mt-5 text-2xl font-semibold ${nameCls}`}
+              >
                 {formData.name || "—"}
               </h2>
 
@@ -302,19 +340,13 @@ const Profile = () => {
           <div className={`${glassCls} lg:col-span-2 rounded-3xl p-8`}>
             {/* Form header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className={`font-['Space_Grotesk'] text-2xl font-semibold ${nameCls}`}>
+              <h2
+                className={`font-['Space_Grotesk'] text-2xl font-semibold ${nameCls}`}
+              >
                 {editing ? "Edit Profile" : "Profile Details"}
               </h2>
 
-              {!editing && (
-                <button
-                  onClick={handleEdit}
-                  className={`${editBtnCls} p-2 rounded-lg`}
-                  title="Edit profile"
-                >
-                  <Pencil size={16} />
-                </button>
-              )}
+              
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">

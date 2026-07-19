@@ -112,11 +112,11 @@ const BuyerDashboard = () => {
 
           {/* fd-btn-primary */}
           <Link
-            to="/market-place"
+            to="/buyer/my-services"
             className={`${btnPrimary} px-6 py-3 rounded-xl flex items-center gap-2`}
           >
             <Search size={20} />
-            Browse Products
+            Services
           </Link>
         </div>
 

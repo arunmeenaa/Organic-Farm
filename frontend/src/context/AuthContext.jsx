@@ -31,7 +31,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async function login(data) {
     try {
-      console.log("Login data:", data);
       const response = await loginUser(data);
       const token = response.data.token;
       localStorage.setItem("token", token);

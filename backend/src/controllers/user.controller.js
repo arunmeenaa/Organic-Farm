@@ -1,5 +1,6 @@
 const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
+const { uploadImage } = require("../utils/imagekit");
 
 async function getProfile(req, res) {
   try {
@@ -18,7 +19,7 @@ async function getProfile(req, res) {
 }
 async function updateProfile(req, res) {
   try {
-    const { name, phone, location, bio, profileImage } = req.body;
+    const { name, phone, location, bio } = req.body;
 
     const user = await userModel.findById(req.user._id);
 
@@ -33,11 +34,17 @@ async function updateProfile(req, res) {
     if (phone) user.phone = phone.trim();
     if (location) user.location = location.trim();
     if (bio !== undefined) user.bio = bio;
-    if (profileImage) user.profileImage = profileImage;
+
+    if (req.file) {
+      const imageUrl = await uploadImage(req.file);
+      user.profileImage = imageUrl;
+    }
 
     await user.save();
 
-    const updatedUser = await userModel.findById(user._id).select("-password");
+    const updatedUser = await userModel
+      .findById(user._id)
+      .select("-password");
 
     res.status(200).json({
       success: true,

@@ -7,7 +7,7 @@ const { createNotification } = require("../services/notification.service");
 
 async function placeOrder(req, res) {
   const { deliveryAddress, paymentMethod } = req.body;
-  console.log(req.body);
+  
 
   try {
     const { fullName, phone, addressLine, city, state, pincode } =

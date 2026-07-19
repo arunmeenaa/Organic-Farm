@@ -41,11 +41,6 @@ const ProductReviews = ({
   ) => {
     try {
       setLoading(true);
-console.log({
-  productId,
-  orderId,
-  ...reviewData,
-});
       await createReview({
         productId,
         orderId,

@@ -40,7 +40,7 @@ const Checkout = () => {
         paymentMethod: formData.paymentMethod,
       });
 
-      console.log(data);
+     
       toast.success("Order placed successfully");
       navigate("/order-success", { state: { order: data.order } });
     } catch (err) {

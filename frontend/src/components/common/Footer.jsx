@@ -28,7 +28,7 @@ const Footer = () => {
 
   return (
     <footer
-      className={`relative font-['Inter'] overflow-hidden
+      className={` relative font-['Inter'] overflow-hidden
         bg-emerald-50 text-emerald-800/80
         dark:bg-[#071912] dark:text-[#B9CFC0]
         ${darkMode ? "dark" : ""}`}
