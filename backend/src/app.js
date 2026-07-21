@@ -12,8 +12,9 @@ const machineBookingRoutes = require("./routes/machineBooking.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const aiRoutes = require("./routes/ai.routes");
 const userRoutes = require("./routes/user.routes");
-
 const serviceRequestRoutes = require("./routes/serviceRequest.routes");
+const counterRoutes = require("./routes/counter.routes")
+const serviceOrders = require("./routes/serviceOrder.routes")
 
 const app = express();
 app.use(express.json());
@@ -31,7 +32,8 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/users", userRoutes);
-
 app.use("/api/service-requests", serviceRequestRoutes);
+app.use("/api/counter-offers",counterRoutes)
+app.use("/api/service-orders",serviceOrders)
 
 module.exports = app;

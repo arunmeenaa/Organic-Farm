@@ -8,10 +8,10 @@ import {
   Clock,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-
+import { useAuth } from "../../context/AuthContext";
 const BuyerRequestCard = ({ req }) => {
   const { darkMode } = useTheme();
-
+  const { user } = useAuth();
   const requiredDate = req.requiredDate
     ? new Date(req.requiredDate).toLocaleDateString("en-IN", {
         day: "numeric",
@@ -26,6 +26,11 @@ const BuyerRequestCard = ({ req }) => {
         month: "short",
       })
     : "";
+
+  const myQuotation = req.responses?.find((r) => r.seller?._id === user?._id);
+  const hasBuyerCounter = myQuotation?.counterStatus === "pending";
+  const quotationAccepted = myQuotation?.status === "accepted";
+  const quotationRejected = myQuotation?.status === "rejected";
 
   const statusColor = {
     open: "bg-blue-500/15 text-blue-600 dark:text-blue-300",
@@ -42,7 +47,7 @@ const BuyerRequestCard = ({ req }) => {
         "backdrop-blur-xl border hover:-translate-y-1 hover:shadow-xl",
         darkMode
           ? "bg-white/5 border-white/10 hover:shadow-emerald-900/30"
-          : "bg-white/70 border-white/60 hover:shadow-emerald-500/15",
+          : "bg-white/20 border-white/60 hover:shadow-emerald-500/15",
       ].join(" ")}
     >
       {/* Header */}
@@ -112,16 +117,82 @@ const BuyerRequestCard = ({ req }) => {
               </div>
             </div>
           </div>
-
+          
           {/* Status */}
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${
-              statusColor[req.status] || statusColor.open
-            }`}
-          >
-            {req.status.replace("_", " ")}
-          </span>
+          <div className="flex flex-col items-end gap-2">
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${
+                statusColor[req.status] || statusColor.open
+              }`}
+            >
+              {req.status.replace("_", " ")}
+            </span>
+
+            {hasBuyerCounter && (
+              <span className="rounded-full bg-red-500 text-white text-[10px] px-2 py-1 animate-pulse">
+                NEW
+              </span>
+            )}
+          </div>
         </div>
+        {myQuotation && (
+            <div
+              className={`mt-4 rounded-2xl border p-4 ${
+                quotationAccepted
+                  ? "border-green-500/20 bg-green-500/10"
+                  : quotationRejected
+                    ? "border-red-500/20 bg-red-500/10"
+                    : hasBuyerCounter
+                      ? "border-amber-500/20 bg-amber-500/10"
+                      : "border-blue-500/20 bg-blue-500/10"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-semibold">Your Quotation</p>
+
+                  <p className="text-sm opacity-70">
+                    ₹{myQuotation.finalPrice || myQuotation.quotedPrice}
+                  </p>
+                </div>
+
+                {quotationAccepted ? (
+                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                    Accepted
+                  </span>
+                ) : quotationRejected ? (
+                  <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                    Rejected
+                  </span>
+                ) : hasBuyerCounter ? (
+                  <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 animate-pulse">
+                    Counter Offer
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                    Waiting
+                  </span>
+                )}
+              </div>
+
+              {hasBuyerCounter && (
+                <div className="mt-3">
+                  <p className="text-sm">
+                    Buyer Offer:
+                    <span className="ml-2 font-bold text-emerald-600">
+                      ₹{myQuotation.buyerOffer}
+                    </span>
+                  </p>
+
+                  {myQuotation.buyerMessage && (
+                    <p className="mt-2 text-sm italic">
+                      "{myQuotation.buyerMessage}"
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
       </div>
 
       {/* Body */}

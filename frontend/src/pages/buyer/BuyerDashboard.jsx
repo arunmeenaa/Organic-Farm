@@ -19,13 +19,17 @@ const BuyerDashboard = () => {
   const [recentOrders, setRecentOrders] = useState([]);
   const { user, loading } = useAuth();
   const { darkMode } = useTheme();
-
+  const [quotationStats, setQuotationStats] = useState({
+    total: 0,
+    new: 0,
+  });
   useEffect(() => {
     async function fetchDashboard() {
       try {
         const { data } = await getBuyerDashboard();
         setStats(data.stats);
         setRecentOrders(data.recentOrders);
+        setQuotationStats(data.quotationStats);
       } catch (err) {
         console.error(err);
       }
@@ -37,8 +41,6 @@ const BuyerDashboard = () => {
     return <div>Loading...</div>;
   }
 
-  /* ── Shared token shortcuts ── */
-  // fd-root text primaries
   const textPrimary = darkMode ? "text-[#D1FAE5]" : "text-[#0F2E22]";
   const textMuted = darkMode
     ? "text-[rgba(167,243,208,0.55)]"
@@ -113,10 +115,25 @@ const BuyerDashboard = () => {
           {/* fd-btn-primary */}
           <Link
             to="/buyer/my-services"
-            className={`${btnPrimary} px-6 py-3 rounded-xl flex items-center gap-2`}
+            className={`${btnPrimary} relative rounded-2xl px-6 py-4 flex items-center gap-4`}
           >
-            <Search size={20} />
-            Services
+            <Search size={22} />
+
+            <div className="text-left">
+              <p className="font-bold">Services</p>
+
+              <p className="text-xs opacity-90">
+                {quotationStats?.new > 0
+                  ? `${quotationStats?.new} New Quotations`
+                  : "No New Quotations"}
+              </p>
+            </div>
+
+            {quotationStats?.new > 0 && (
+              <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center animate-pulse">
+                {quotationStats?.new}
+              </span>
+            )}
           </Link>
         </div>
 

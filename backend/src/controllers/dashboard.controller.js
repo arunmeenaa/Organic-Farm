@@ -1,7 +1,8 @@
 const productModel = require("../models/product.model");
 const orderModel = require("../models/order.model");
+const ServiceRequest = require("../models/serviceRequest.model");
 const { getCurrentWeather } = require("../services/weather.service");
-const { generatesellerAdvice } = require("../services/ai.service");
+const { generateSellerAdvice } = require("../services/ai.service");
 
 async function getSellerDashboard(req, res) {
   try {
@@ -67,20 +68,20 @@ async function getWeatherAdvice(req, res) {
     const weather = await getCurrentWeather(req.user.location);
 
     let advice = [];
-
+    
     try {
-      const aiAdvice = await generatesellerAdvice(req.user, weather);
+      const aiAdvice = await generateSellerAdvice(req.user, weather);
       advice = aiAdvice.advice;
     } catch (err) {
       console.error("Gemini Error:", err.message);
-
+      
       advice = [
         "AI recommendations are temporarily unavailable.",
         "Monitor soil moisture before irrigation.",
         "Check your crops regularly for pests and diseases.",
       ];
     }
-
+    
     return res.status(200).json({
       success: true,
       weather,
@@ -95,25 +96,50 @@ async function getWeatherAdvice(req, res) {
   }
 }
 
+
 async function getBuyerDashboard(req, res) {
   try {
     const orders = await orderModel
-      .find({ buyer: req.user._id })
-      .populate("seller", "name email phone")
-      .populate("products.product", "name images category")
-      .sort({ createdAt: -1 })
-      .lean();
-
+    .find({ buyer: req.user._id })
+    .populate("seller", "name email phone")
+    .populate("products.product", "name images category")
+    .sort({ createdAt: -1 })
+    .lean();
+    
+    
+    const serviceRequests = await ServiceRequest.find({
+      buyer: req.user._id,
+    }).lean();
+    
+    const totalRequests = serviceRequests.length;
+    
+    const totalQuotations = serviceRequests.reduce(
+      (sum, request) => sum + (request.responses?.length || 0),
+      0
+    );
+    
+    // Count quotations the buyer hasn't viewed yet
+    const newQuotations = serviceRequests.reduce((sum, request) => {
+      const unseen =
+      request.responses?.filter((r) => !r.isViewedByBuyer).length || 0;
+      return sum + unseen;
+    }, 0);
+    
     return res.status(200).json({
       success: true,
+      
       stats: {
         totalOrders: orders.length,
+        totalRequests,
+        totalQuotations,
+        newQuotations,
       },
+      
       recentOrders: orders.slice(0, 3),
     });
   } catch (err) {
     console.error("Buyer Dashboard Error:", err);
-
+    
     return res.status(500).json({
       success: false,
       message: err.message,

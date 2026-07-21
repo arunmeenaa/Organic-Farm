@@ -1,11 +1,9 @@
 const ServiceRequest = require("../models/serviceRequest.model");
-const { uploadImage } = require("../utils/imagekit");
 const User = require("../models/user.model");
+const { uploadImage } = require("../utils/imageKit");
 
 const createServiceRequest = async (req, res) => {
   try {
-    
-
     const {
       title,
       category,
@@ -104,15 +102,20 @@ const getMyServiceRequests = async (req, res) => {
     const requests = await ServiceRequest.find({
       buyer: req.user._id,
     })
-      .populate("responses.seller", "name profileImage")
+      .populate("buyer", "name profileImage")
       .populate("acceptedSeller", "name profileImage phone")
-      .sort({
-        createdAt: -1,
-      });
+      .populate("responses.seller", "name profileImage phone")
+      .sort({ createdAt: -1 });
 
-    res.status(200).json({ success: true, requests });
+    return res.status(200).json({
+      success: true,
+      requests,
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
@@ -143,7 +146,7 @@ const submitQuotation = async (req, res) => {
       });
     }
 
-    // Prevent duplicate quotations
+    
     const alreadyResponded = request.responses.find(
       (response) =>
         response.seller.toString() === req.user._id.toString() &&
@@ -280,7 +283,13 @@ const getServiceRequestById = async (req, res) => {
         message: "Request not found",
       });
     }
+    if (request.buyer._id.toString() === req.user._id.toString()) {
+      request.responses.forEach((response) => {
+        response.isViewedByBuyer = true;
+      });
 
+      await request.save();
+    }
     return res.status(200).json({
       success: true,
       request,
@@ -293,6 +302,25 @@ const getServiceRequestById = async (req, res) => {
   }
 };
 
+const getSellerRequests = async (req, res) => {
+  try {
+    const requests = await ServiceRequest.find({})
+      .populate("buyer", "name profileImage isVerified")
+      .populate("acceptedSeller", "name profileImage")
+      .populate("responses.seller", "name profileImage")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      requests,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
 module.exports = {
   createServiceRequest,
   getOpenServiceRequests,
@@ -301,4 +329,5 @@ module.exports = {
   cancelServiceRequest,
   deleteServiceRequest,
   getServiceRequestById,
+  getSellerRequests,
 };

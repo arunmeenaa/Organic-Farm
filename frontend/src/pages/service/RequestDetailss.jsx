@@ -24,10 +24,6 @@ import {
   MessageSquare,
   Sparkles,
 } from "lucide-react";
-import {
-  acceptCounterOffer,
-  rejectCounterOffer,
-} from "../../services/counterOffer.service";
 
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -150,52 +146,24 @@ export default function RequestDetails() {
       setSubmitting(false);
     }
   };
-  const handleAcceptCounter = async () => {
-    try {
-      await acceptCounterOffer(request._id, myQuotation._id);
 
-      toast.success("Counter offer accepted.");
-
-      fetchRequest();
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Failed to accept counter offer.",
-      );
-    }
-  };
-
-  const handleRejectCounter = async () => {
-    try {
-      await rejectCounterOffer(request._id, myQuotation._id);
-
-      toast.success("Counter offer rejected.");
-
-      fetchRequest();
-    } catch (err) {
-      console.log(err);
-      console.log("Message:", err.message);
-      console.log("Response:", err.response);
-      console.log("Request:", err.request);
-
-      toast.error(err.message);
-    }
-  };
   /* ── Design tokens ── */
+  const pageBg = darkMode
+    ? "bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.08),_transparent_50%),radial-gradient(ellipse_at_bottom_right,_rgba(59,130,246,0.06),_transparent_50%)] bg-slate-950"
+    : "bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.08),_transparent_60%),radial-gradient(ellipse_at_bottom_left,_rgba(132,204,22,0.06),_transparent_60%)] bg-[#f7f9f6]";
 
   const card = [
     "rounded-2xl border p-6 transition-all duration-300",
     darkMode
-      ? "bg-white/2 border-white/[0.06] shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_20px_40px_-24px_rgba(0,0,0,0.6)] backdrop-blur-xl"
-      : "bg-white/30 border-slate-200/70 shadow-[0_1px_0_0_rgba(255,255,255,0.8)_inset,0_10px_30px_-18px_rgba(15,23,42,0.15)] backdrop-blur-xl",
+      ? "bg-slate-900/60 border-white/[0.06] shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_20px_40px_-24px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+      : "bg-white/80 border-slate-200/70 shadow-[0_1px_0_0_rgba(255,255,255,0.8)_inset,0_10px_30px_-18px_rgba(15,23,42,0.15)] backdrop-blur-xl",
   ].join(" ");
 
   const heading = darkMode ? "text-white" : "text-slate-900";
   const bodyText = darkMode ? "text-slate-300" : "text-slate-600";
   const mutedText = darkMode ? "text-slate-500" : "text-slate-500";
   const labelText = darkMode ? "text-slate-200" : "text-slate-700";
-  const subtleDivider = darkMode
-    ? "divide-white/[0.06]"
-    : "divide-slate-200/70";
+  const subtleDivider = darkMode ? "divide-white/[0.06]" : "divide-slate-200/70";
 
   const softChip = darkMode
     ? "bg-white/[0.04] ring-1 ring-white/[0.06]"
@@ -211,14 +179,11 @@ export default function RequestDetails() {
   /* ── Loading ── */
   if (loading) {
     return (
-      <div className={` min-h-screen flex items-center justify-center`}>
+      <div className={`${pageBg} min-h-screen flex items-center justify-center`}>
         <div className={`flex flex-col items-center gap-4 ${heading}`}>
           <div className="relative">
             <div className="absolute inset-0 blur-2xl bg-emerald-500/30 rounded-full" />
-            <Loader2
-              size={32}
-              className="relative animate-spin text-emerald-500"
-            />
+            <Loader2 size={32} className="relative animate-spin text-emerald-500" />
           </div>
           <p className={`text-sm font-medium ${mutedText}`}>Loading request…</p>
         </div>
@@ -229,7 +194,7 @@ export default function RequestDetails() {
   /* ── Not found ── */
   if (!request) {
     return (
-      <div className={` min-h-screen flex items-center justify-center px-6`}>
+      <div className={`${pageBg} min-h-screen flex items-center justify-center px-6`}>
         <div className="flex flex-col items-center text-center gap-4 max-w-md">
           <div className={`p-5 rounded-2xl ${softChip}`}>
             <FileQuestion size={32} className={mutedText} />
@@ -266,7 +231,7 @@ export default function RequestDetails() {
     "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1600";
 
   return (
-    <div className={` min-h-screen`}>
+    <div className={`${pageBg} min-h-screen`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Back */}
         <button
@@ -277,9 +242,7 @@ export default function RequestDetails() {
               : "text-slate-500 hover:text-emerald-600"
           }`}
         >
-          <span
-            className={`p-1.5 rounded-lg transition-all group-hover:-translate-x-0.5 ${softChip}`}
-          >
+          <span className={`p-1.5 rounded-lg transition-all group-hover:-translate-x-0.5 ${softChip}`}>
             <ArrowLeft size={14} />
           </span>
           Back to requests
@@ -310,9 +273,7 @@ export default function RequestDetails() {
                   <span
                     className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold capitalize backdrop-blur-md bg-white/90 text-slate-800 shadow-lg`}
                   >
-                    <span
-                      className={`h-1.5 w-1.5 rounded-full ${status.dot} animate-pulse`}
-                    />
+                    <span className={`h-1.5 w-1.5 rounded-full ${status.dot} animate-pulse`} />
                     {request.status?.replace("_", " ") ?? "unknown"}
                   </span>
                 </div>
@@ -329,13 +290,11 @@ export default function RequestDetails() {
                   <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-4 text-sm text-white/80">
                     <span className="inline-flex items-center gap-1.5">
                       <Clock size={14} />
-                      Posted{" "}
-                      {new Date(request.createdAt).toLocaleDateString("en-IN")}
+                      Posted {new Date(request.createdAt).toLocaleDateString("en-IN")}
                     </span>
                     <span className="inline-flex items-center gap-1.5">
                       <MapPin size={14} />
-                      {request.location?.district || "—"},{" "}
-                      {request.location?.state || "—"}
+                      {request.location?.district || "—"}, {request.location?.state || "—"}
                     </span>
                     <span className="inline-flex items-center gap-1.5">
                       <Users size={14} />
@@ -361,11 +320,7 @@ export default function RequestDetails() {
                           : "opacity-70 hover:opacity-100"
                       }`}
                     >
-                      <img
-                        src={image}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
+                      <img src={image} alt="" className="h-full w-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -378,9 +333,7 @@ export default function RequestDetails() {
                 <div className={`p-2 rounded-lg ${softChip}`}>
                   <MessageSquare size={16} className="text-emerald-500" />
                 </div>
-                <h2 className={`text-lg font-semibold ${heading}`}>
-                  Description
-                </h2>
+                <h2 className={`text-lg font-semibold ${heading}`}>Description</h2>
               </div>
               <p className={`leading-relaxed whitespace-pre-line ${bodyText}`}>
                 {request.description}
@@ -393,9 +346,7 @@ export default function RequestDetails() {
                 <div className={`p-2 rounded-lg ${softChip}`}>
                   <Ruler size={16} className="text-emerald-500" />
                 </div>
-                <h2 className={`text-lg font-semibold ${heading}`}>
-                  Field Details
-                </h2>
+                <h2 className={`text-lg font-semibold ${heading}`}>Field Details</h2>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-3">
@@ -412,9 +363,7 @@ export default function RequestDetails() {
                   icon={<CalendarDays size={18} />}
                   iconTint="text-blue-500 bg-blue-500/10"
                   label="Required Date"
-                  value={new Date(request.requiredDate).toLocaleDateString(
-                    "en-IN",
-                  )}
+                  value={new Date(request.requiredDate).toLocaleDateString("en-IN")}
                   darkMode={darkMode}
                   heading={heading}
                   mutedText={mutedText}
@@ -465,9 +414,7 @@ export default function RequestDetails() {
                   <div className={`p-2 rounded-lg ${softChip}`}>
                     <UserRound size={16} className="text-emerald-500" />
                   </div>
-                  <h2 className={`text-lg font-semibold ${heading}`}>
-                    Buyer Information
-                  </h2>
+                  <h2 className={`text-lg font-semibold ${heading}`}>Buyer Information</h2>
                 </div>
 
                 {request.buyer?.isVerified && (
@@ -539,11 +486,7 @@ export default function RequestDetails() {
                     <InfoRow
                       icon={<Activity size={15} className="text-purple-500" />}
                       label="Account Status"
-                      value={
-                        <span className="text-emerald-500 font-semibold">
-                          Active Buyer
-                        </span>
-                      }
+                      value={<span className="text-emerald-500 font-semibold">Active Buyer</span>}
                       darkMode={darkMode}
                       heading={heading}
                       mutedText={mutedText}
@@ -561,19 +504,11 @@ export default function RequestDetails() {
                 <div className={`p-2 rounded-lg ${softChip}`}>
                   <Sparkles size={16} className="text-emerald-500" />
                 </div>
-                <h2 className={`text-lg font-semibold ${heading}`}>
-                  Request Summary
-                </h2>
+                <h2 className={`text-lg font-semibold ${heading}`}>Request Summary</h2>
               </div>
 
               <div className={`space-y-3.5 divide-y ${subtleDivider}`}>
-                <SummaryRow
-                  label="Category"
-                  value={request.category}
-                  first
-                  heading={heading}
-                  mutedText={mutedText}
-                />
+                <SummaryRow label="Category" value={request.category} first heading={heading} mutedText={mutedText} />
                 <SummaryRow
                   label="Area"
                   value={`${areaValue ?? "—"} ${areaUnitValue ?? ""}`.trim()}
@@ -585,21 +520,15 @@ export default function RequestDetails() {
                   heading={heading}
                   mutedText={mutedText}
                   value={
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${statusPill}`}
-                    >
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full ${status.dot}`}
-                      />
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${statusPill}`}>
+                      <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
                       {request.status?.replace("_", " ") ?? "unknown"}
                     </span>
                   }
                 />
                 <SummaryRow
                   label="Required"
-                  value={new Date(request.requiredDate).toLocaleDateString(
-                    "en-IN",
-                  )}
+                  value={new Date(request.requiredDate).toLocaleDateString("en-IN")}
                   heading={heading}
                   mutedText={mutedText}
                 />
@@ -636,8 +565,6 @@ export default function RequestDetails() {
                     darkMode={darkMode}
                     heading={heading}
                     mutedText={mutedText}
-                    onAcceptCounter={handleAcceptCounter}
-                    onRejectCounter={handleRejectCounter}
                   />
                 </>
               ) : (
@@ -654,9 +581,7 @@ export default function RequestDetails() {
                 >
                   <div className="flex items-center justify-center gap-2">
                     <Send size={16} />
-                    {request.status === "open"
-                      ? "Submit Quotation"
-                      : "Request Closed"}
+                    {request.status === "open" ? "Submit Quotation" : "Request Closed"}
                   </div>
                 </button>
               )}
@@ -709,15 +634,11 @@ export default function RequestDetails() {
                   darkMode={darkMode}
                   heading={heading}
                   mutedText={mutedText}
-                  onAcceptCounter={handleAcceptCounter}
-                  onRejectCounter={handleRejectCounter}
                 />
               ) : (
                 <div className="space-y-5">
                   <div>
-                    <label className={`font-medium text-sm ${labelText}`}>
-                      Quoted Price
-                    </label>
+                    <label className={`font-medium text-sm ${labelText}`}>Quoted Price</label>
                     <div className="relative">
                       <IndianRupee
                         size={16}
@@ -730,27 +651,19 @@ export default function RequestDetails() {
                         className={`${modalInputCls} pl-10`}
                         value={quotation.quotedPrice}
                         onChange={(e) =>
-                          setQuotation({
-                            ...quotation,
-                            quotedPrice: e.target.value,
-                          })
+                          setQuotation({ ...quotation, quotedPrice: e.target.value })
                         }
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className={`font-medium text-sm ${labelText}`}>
-                      Pricing Type
-                    </label>
+                    <label className={`font-medium text-sm ${labelText}`}>Pricing Type</label>
                     <select
                       className={modalInputCls}
                       value={quotation.pricingType}
                       onChange={(e) =>
-                        setQuotation({
-                          ...quotation,
-                          pricingType: e.target.value,
-                        })
+                        setQuotation({ ...quotation, pricingType: e.target.value })
                       }
                     >
                       {pricingTypes.map((item) => (
@@ -762,26 +675,19 @@ export default function RequestDetails() {
                   </div>
 
                   <div>
-                    <label className={`font-medium text-sm ${labelText}`}>
-                      Estimated Start Date
-                    </label>
+                    <label className={`font-medium text-sm ${labelText}`}>Estimated Start Date</label>
                     <input
                       type="date"
                       className={modalInputCls}
                       value={quotation.estimatedStartDate}
                       onChange={(e) =>
-                        setQuotation({
-                          ...quotation,
-                          estimatedStartDate: e.target.value,
-                        })
+                        setQuotation({ ...quotation, estimatedStartDate: e.target.value })
                       }
                     />
                   </div>
 
                   <div>
-                    <label className={`font-medium text-sm ${labelText}`}>
-                      Message
-                    </label>
+                    <label className={`font-medium text-sm ${labelText}`}>Message</label>
                     <textarea
                       rows={4}
                       className={`${modalInputCls} resize-none`}
@@ -838,20 +744,10 @@ export default function RequestDetails() {
 
 /* ── Subcomponents ─────────────────────────────────────────── */
 
-const DetailTile = ({
-  icon,
-  iconTint,
-  label,
-  value,
-  darkMode,
-  heading,
-  mutedText,
-}) => (
+const DetailTile = ({ icon, iconTint, label, value, darkMode, heading, mutedText }) => (
   <div
     className={`flex items-start gap-3 rounded-xl p-3.5 transition-colors ${
-      darkMode
-        ? "bg-white/[0.02] hover:bg-white/[0.04]"
-        : "bg-slate-50/70 hover:bg-slate-100/70"
+      darkMode ? "bg-white/[0.02] hover:bg-white/[0.04]" : "bg-slate-50/70 hover:bg-slate-100/70"
     }`}
   >
     <div className={`p-2 rounded-lg shrink-0 ${iconTint}`}>{icon}</div>
@@ -870,9 +766,7 @@ const InfoRow = ({ icon, label, value, darkMode, heading, mutedText }) => (
   >
     <div className="shrink-0">{icon}</div>
     <div className="min-w-0">
-      <p className={`text-[11px] uppercase tracking-wide ${mutedText}`}>
-        {label}
-      </p>
+      <p className={`text-[11px] uppercase tracking-wide ${mutedText}`}>{label}</p>
       <p className={`text-sm font-medium truncate ${heading}`}>{value}</p>
     </div>
   </div>
@@ -885,14 +779,7 @@ const SummaryRow = ({ label, value, first, heading, mutedText }) => (
   </div>
 );
 
-const QuotationSummary = ({
-  myQuotation,
-  darkMode,
-  heading,
-  mutedText,
-  onAcceptCounter,
-  onRejectCounter,
-}) => {
+const QuotationSummary = ({ myQuotation, darkMode, heading, mutedText }) => {
   const statusPill =
     myQuotation.counterStatus === "pending"
       ? "bg-amber-500/15 text-amber-600 ring-1 ring-amber-500/30"
@@ -916,9 +803,7 @@ const QuotationSummary = ({
       }`}
     >
       <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-        <h3
-          className={`font-bold text-base ${darkMode ? "text-emerald-300" : "text-emerald-700"}`}
-        >
+        <h3 className={`font-bold text-base ${darkMode ? "text-emerald-300" : "text-emerald-700"}`}>
           Your Quotation
         </h3>
         <span
@@ -931,9 +816,7 @@ const QuotationSummary = ({
       <div className="space-y-3">
         <div className="flex justify-between items-center">
           <span className={`text-sm ${mutedText}`}>Quoted Price</span>
-          <strong className={`text-lg ${heading}`}>
-            ₹{myQuotation.quotedPrice}
-          </strong>
+          <strong className={`text-lg ${heading}`}>₹{myQuotation.quotedPrice}</strong>
         </div>
 
         <div className="flex justify-between items-center">
@@ -947,17 +830,13 @@ const QuotationSummary = ({
           <span className={`text-sm ${mutedText}`}>Start Date</span>
           <strong className={`text-sm ${heading}`}>
             {myQuotation.estimatedStartDate
-              ? new Date(myQuotation.estimatedStartDate).toLocaleDateString(
-                  "en-IN",
-                )
+              ? new Date(myQuotation.estimatedStartDate).toLocaleDateString("en-IN")
               : "—"}
           </strong>
         </div>
 
         <div>
-          <p className={`text-xs uppercase tracking-wide mb-1.5 ${mutedText}`}>
-            Your Message
-          </p>
+          <p className={`text-xs uppercase tracking-wide mb-1.5 ${mutedText}`}>Your Message</p>
           <p
             className={`text-sm rounded-xl p-3 ${
               darkMode ? "bg-white/[0.04]" : "bg-white"
@@ -978,9 +857,7 @@ const QuotationSummary = ({
             }`}
           >
             <div className="flex items-center justify-between flex-wrap gap-2">
-              <h4 className={`font-semibold text-sm ${heading}`}>
-                Buyer Counter Offer
-              </h4>
+              <h4 className={`font-semibold text-sm ${heading}`}>Buyer Counter Offer</h4>
               <span
                 className={`px-2.5 py-1 rounded-full text-[11px] font-semibold capitalize ${
                   myQuotation.counterStatus === "pending"
@@ -1004,9 +881,7 @@ const QuotationSummary = ({
 
               {myQuotation.buyerMessage && (
                 <div>
-                  <p
-                    className={`text-xs uppercase tracking-wide mb-1.5 ${mutedText}`}
-                  >
+                  <p className={`text-xs uppercase tracking-wide mb-1.5 ${mutedText}`}>
                     Buyer's Message
                   </p>
                   <p
@@ -1019,45 +894,6 @@ const QuotationSummary = ({
                 </div>
               )}
             </div>
-          </div>
-        )}
-        {myQuotation.counterStatus === "pending" && (
-          <div className="mt-5 flex gap-3">
-            <button
-              onClick={() => onAcceptCounter(myQuotation._id)}
-              className="
-        flex-1
-        rounded-xl
-        bg-linear-to-r
-        from-emerald-600
-        to-lime-500
-        py-3
-        font-semibold
-        text-white
-        transition
-        hover:shadow-lg
-      "
-            >
-              ✓ Accept Offer
-            </button>
-
-            <button
-              onClick={() => onRejectCounter(myQuotation._id)}
-              className="
-        flex-1
-        rounded-xl
-        border
-        border-red-500
-        py-3
-        font-semibold
-        text-red-600
-        hover:bg-red-500
-        hover:text-white
-        transition
-      "
-            >
-              ✕ Reject
-            </button>
           </div>
         )}
       </div>

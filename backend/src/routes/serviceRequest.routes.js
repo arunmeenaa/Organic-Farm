@@ -9,6 +9,7 @@ const {
   cancelServiceRequest,
   deleteServiceRequest,
   getServiceRequestById,
+  getSellerRequests
 } = require("../controllers/serviceRequest.controller");
 
 const auth = require("../middleware/auth.middleware");
@@ -36,5 +37,5 @@ router.get("/:id", auth, validateId("serviceRequest"), getServiceRequestById);
 router.post("/:id/quotation", auth, authorize("seller"), submitQuotation);
 router.get("/open", auth, authorize("seller"), getOpenServiceRequests);
 router.post("/:id/respond", auth, authorize("seller"), submitQuotation);
-
+router.get("/seller/all", auth,authorize("seller"), getSellerRequests);
 module.exports = router;

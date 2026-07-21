@@ -26,7 +26,7 @@ import Checkout from "../pages/buyer/Checkout";
 import BuyerOrderDetails from "../pages/buyer/OrderDetails";
 import OrderSuccess from "../components/order/OrderSuccess";
 import BookMachine from "../pages/machine/BookMachine";
-import CreateServiceRequest from "../pages/buyer/ServiceForm";
+import CreateServiceRequest from "../pages/buyer/RequestForm";
 
 import SellerRoute from "./SellerRoute";
 import Dashboard from "../pages/seller/Dashboard";
@@ -41,8 +41,10 @@ import EditMachine from "../pages/seller/EditMachine";
 import MachineBookingDetails from "../pages/machine/MachineBookingDetails";
 import RequestCardDetail from "../pages/service/RequestDetails";
 import BuyerRequests from "../pages/service/BuyerRequest";
-import MyService from "../pages/buyer/MyServices";
-import ServiceDetails from "../pages/buyer/ServiceDetails";
+import MyRequest from "../pages/buyer/MyRequest";
+import RequestDetails from "../pages/buyer/RequestDetails";
+import BuyerJobDetails from "../pages/buyer/BuyerJobDetails";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -76,7 +78,7 @@ const AppRoutes = () => {
             <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/machines/book/:id" element={<BookMachine />} />
-            <Route path="/buyer/my-services" element={<MyService />} />
+            <Route path="/buyer/my-services" element={<MyRequest />} />
             <Route
               path="/buyer/service-requests/post"
               element={<CreateServiceRequest />}
@@ -84,8 +86,9 @@ const AppRoutes = () => {
 
             <Route
               path="/buyer/service-details/:id"
-              element={<ServiceDetails />}
+              element={<RequestDetails />}
             />
+            <Route path="/buyer/jobs/:id" element={<BuyerJobDetails />} />
           </Route>
 
           <Route element={<SellerRoute />}>

@@ -2,14 +2,12 @@ const mongoose = require("mongoose");
 
 const serviceRequestSchema = new mongoose.Schema(
   {
-    // Buyer who created the request
     buyer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    // Seller who accepted (null initially)
     acceptedSeller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -43,6 +41,7 @@ const serviceRequestSchema = new mongoose.Schema(
     description: {
       type: String,
       required: true,
+      trim: true,
     },
 
     landArea: {
@@ -85,6 +84,7 @@ const serviceRequestSchema = new mongoose.Schema(
         type: String,
       },
     ],
+
     responses: [
       {
         seller: {
@@ -116,6 +116,7 @@ const serviceRequestSchema = new mongoose.Schema(
         message: {
           type: String,
           trim: true,
+          default: "",
         },
 
         estimatedStartDate: {
@@ -124,8 +125,55 @@ const serviceRequestSchema = new mongoose.Schema(
 
         status: {
           type: String,
-          enum: ["pending", "accepted", "rejected"],
+          enum: [
+            "pending",
+            "countered",
+            "accepted",
+            "rejected",
+          ],
           default: "pending",
+        },
+
+        buyerOffer: {
+          type: Number,
+          default: null,
+        },
+
+        buyerMessage: {
+          type: String,
+          trim: true,
+          default: "",
+        },
+
+        counterStatus: {
+          type: String,
+          enum: [
+            "none",
+            "pending",
+            "accepted",
+            "rejected",
+          ],
+          default: "none",
+        },
+
+        finalPrice: {
+          type: Number,
+          default: null,
+        },
+
+        acceptedAt: {
+          type: Date,
+          default: null,
+        },
+
+        contactUnlocked: {
+          type: Boolean,
+          default: false,
+        },
+
+        isViewedByBuyer: {
+          type: Boolean,
+          default: false,
         },
 
         createdAt: {
@@ -134,18 +182,29 @@ const serviceRequestSchema = new mongoose.Schema(
         },
       },
     ],
+
     status: {
       type: String,
-      enum: ["open", "accepted", "in_progress", "completed", "cancelled"],
+      enum: [
+        "open",
+        "accepted",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
       default: "open",
     },
+
     expiresAt: {
       type: Date,
     },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-module.exports = mongoose.model("ServiceRequest", serviceRequestSchema);
+module.exports = mongoose.model(
+  "ServiceRequest",
+  serviceRequestSchema
+);

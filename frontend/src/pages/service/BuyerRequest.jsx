@@ -3,7 +3,7 @@ import { Search, ClipboardList } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
-import { getOpenServiceRequests } from "../../services/serviceRequest.service";
+import { getSellerRequests } from "../../services/serviceRequest.service";
 import BuyerRequestCard from "../service/BuyerRequestCard";
 
 const categories = [
@@ -32,7 +32,7 @@ export default function BuyerRequests() {
     try {
       setLoading(true);
 
-      const { data } = await getOpenServiceRequests();
+      const { data } = await getSellerRequests();
 
       setRequests(data.requests || []);
     } catch (err) {
@@ -72,10 +72,7 @@ export default function BuyerRequests() {
 
         <div className="flex items-center gap-3">
 
-          <ClipboardList
-            className="text-emerald-600"
-            size={28}
-          />
+          
 
           <div>
 

@@ -12,11 +12,13 @@ import {
   MapPin,
   CalendarDays,
   Expand,
+  ArrowRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import {
   getOpenServiceRequests,
+  getMyServiceRequests,
   deleteServiceRequest,
 } from "../../services/serviceRequest.service";
 import {
@@ -32,13 +34,18 @@ const MyServices = ({ darkMode }) => {
   const [srSearch, setSrSearch] = useState("");
   const [srCategory, setSrCategory] = useState("All");
   const [loading, setLoading] = useState(true);
-
+  const [tab, setTab] = useState("all");
   const [deletingId, setDeletingId] = useState(null);
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const { data } = await getOpenServiceRequests();
+
+      const { data } =
+        user?.role === "buyer"
+          ? await getMyServiceRequests()
+          : await getOpenServiceRequests();
+
       setServiceRequests(data.requests || []);
     } catch (err) {
       toast.error(
@@ -50,15 +57,17 @@ const MyServices = ({ darkMode }) => {
   };
 
   useEffect(() => {
+    if (!user) return;
+
     fetchRequests();
-  }, []);
+  }, [user]);
 
   // Buyers only see their own requests; sellers/guests see all
   const filteredSR = useMemo(() => {
     let list = serviceRequests;
 
-    if (user?.role === "buyer") {
-      list = list.filter((r) => r.buyer?._id === user?._id);
+    if (tab !== "all") {
+      list = list.filter((r) => r.status === tab);
     }
 
     return list.filter((r) => {
@@ -73,7 +82,7 @@ const MyServices = ({ darkMode }) => {
       const mc = srCategory === "All" || r.category === srCategory;
       return ms && mc;
     });
-  }, [serviceRequests, srSearch, srCategory, user]);
+  }, [serviceRequests, srSearch, srCategory, user, tab]);
 
   const handleDelete = async (reqId) => {
     if (!window.confirm("Delete this service request? This cannot be undone."))
@@ -94,15 +103,18 @@ const MyServices = ({ darkMode }) => {
   const inputCls = [
     "w-full rounded-xl py-3 px-4 text-sm font-medium outline-none transition-[border-color,box-shadow] duration-150",
     darkMode
-      ? "bg-white/[0.06] border border-[rgba(52,211,153,0.15)] text-[#D1FAE5] placeholder:text-[rgba(167,243,208,0.35)] focus:border-[#34D399] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.14)]"
-      : "bg-white/[0.88] border border-[rgba(6,95,70,0.12)] text-[#064E3B] placeholder:text-[rgba(6,95,70,0.30)] focus:border-[#059669] focus:shadow-[0_0_0_3px_rgba(5,150,105,0.14)]",
+      ? "bg-white/10 border border-[rgba(52,211,153,0.15)] text-[#D1FAE5] placeholder:text-[rgba(167,243,208,0.35)] focus:border-[#34D399] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.14)]"
+      : "bg-white/5 border border-[rgba(6,95,70,0.12)] text-[#064E3B] placeholder:text-[rgba(6,95,70,0.30)] focus:border-[#059669] focus:shadow-[0_0_0_3px_rgba(5,150,105,0.14)]",
   ].join(" ");
+ const titleGradient = darkMode
+    ? "bg-gradient-to-r from-[#34D399] to-[#A3E635] bg-clip-text text-transparent"
+    : "bg-gradient-to-r from-[#065F46] to-[#65A30D] bg-clip-text text-transparent";
 
   const selectInputCls = [
     "rounded-xl px-4 py-3 text-sm font-semibold cursor-pointer w-full outline-none transition-[border-color,box-shadow] duration-150",
     darkMode
-      ? "bg-white/[0.06] border border-[rgba(52,211,153,0.15)] text-[#D1FAE5] focus:border-[#34D399] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.14)] [&>option]:bg-[#0B1A12] [&>option]:text-[#D1FAE5]"
-      : "bg-white/[0.88] border border-[rgba(6,95,70,0.12)] text-[#064E3B] focus:border-[#059669] focus:shadow-[0_0_0_3px_rgba(5,150,105,0.14)]",
+      ? "bg-white/10 border border-[rgba(52,211,153,0.15)] text-[#D1FAE5] focus:border-[#34D399] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.14)] [&>option]:bg-[#0B1A12] [&>option]:text-[#D1FAE5]"
+      : "bg-white/5 border border-[rgba(6,95,70,0.12)] text-[#064E3B] focus:border-[#059669] focus:shadow-[0_0_0_3px_rgba(5,150,105,0.14)]",
   ].join(" ");
 
   const isBuyer = user?.role === "buyer";
@@ -155,12 +167,7 @@ const MyServices = ({ darkMode }) => {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <h1
-            className={[
-              "text-3xl font-extrabold tracking-tight bg-clip-text text-transparent font-['Space_Grotesk',ui-sans-serif,sans-serif]",
-              darkMode
-                ? "bg-gradient-to-r from-[#34D399] to-[#A3E635]"
-                : "bg-gradient-to-r from-[#065F46] to-[#65A30D]",
-            ].join(" ")}
+            className={[ `text-3xl font-extrabold tracking-tight bg-clip-text text-transparent font-['Space_Grotesk',ui-sans-serif,sans-serif] ${titleGradient}`]}
           >
             {isBuyer ? "My Service Requests" : "Open Service Requests"}
           </h1>
@@ -173,7 +180,7 @@ const MyServices = ({ darkMode }) => {
             ].join(" ")}
           >
             {isBuyer
-              ? `You have ${filteredSR.length} request${filteredSR.length === 1 ? "" : "s"} posted.`
+              ? `You have ${serviceRequests.length} request${filteredSR.length === 1 ? "" : "s"} posted.`
               : `${filteredSR.length} open requests from buyers.`}
           </p>
         </div>
@@ -187,14 +194,38 @@ const MyServices = ({ darkMode }) => {
           </Link>
         )}
       </div>
-
+      <div className="flex flex-wrap gap-3 mb-8">
+        {[
+          ["all", "All"],
+          ["open", "Open"],
+          ["accepted", "Accepted"],
+          ["in_progress", "In Progress"],
+          ["completed", "Completed"],
+          ["cancelled", "Cancelled"],
+        ].map(([value, label]) => (
+          <button
+            key={value}
+            onClick={() => setTab(value)}
+            className={[
+              "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all",
+              tab === value
+                ? "bg-gradient-to-r from-emerald-600 to-lime-500 text-white shadow-lg"
+                : darkMode
+                  ? "bg-white/5 text-slate-300 hover:bg-white/10"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+            ].join(" ")}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       {/* Filters */}
       <div
         className={[
           "p-5 rounded-2xl mb-8 backdrop-blur-[20px] grid sm:grid-cols-2 gap-4",
           darkMode
-            ? "bg-white/[0.05] border border-[rgba(52,211,153,0.10)]"
-            : "bg-white/50 border border-white/60 shadow-sm",
+            ? " bg-white/10 border border-[rgba(52,211,153,0.10)]"
+            : "bg-white/5 border border-white/60 shadow-sm",
         ].join(" ")}
       >
         <div className="relative">
@@ -239,7 +270,7 @@ const MyServices = ({ darkMode }) => {
               className={[
                 "h-56 rounded-3xl animate-pulse",
                 darkMode
-                  ? "bg-white/[0.05] border border-[rgba(52,211,153,0.08)]"
+                  ? "bg-white/5 border border-[rgba(52,211,153,0.08)]"
                   : "bg-white/70 border border-white/60",
               ].join(" ")}
             />
@@ -249,7 +280,9 @@ const MyServices = ({ darkMode }) => {
         <EmptyBox
           darkMode={darkMode}
           icon={<ClipboardList size={28} />}
-          title={isBuyer ? "No Requests Yet" : "No Open Requests"}
+          title={
+            isBuyer ? "You haven't posted any requests yet" : "No Open Requests"
+          }
           sub={
             isBuyer
               ? "Post your first service request to start receiving quotations from farmers."
@@ -275,8 +308,6 @@ const MyServices = ({ darkMode }) => {
   );
 };
 
-/* ── Buyer-facing request card: shows status, response count, budget, and
-   a delete action instead of the "Respond to Request" CTA. ── */
 const MyRequestCard = ({ req, darkMode, isOwner, deleting, onDelete }) => {
   const responseCount = req.responses?.length ?? 0;
   const pricingLabel =
@@ -293,10 +324,10 @@ const MyRequestCard = ({ req, darkMode, isOwner, deleting, onDelete }) => {
   return (
     <div
       className={[
-        "rounded-3xl p-5 flex flex-col gap-4 shadow-sm hover:-translate-y-1 hover:shadow-xl transition-all duration-200 relative",
+        "rounded-3xl p-5 flex flex-col gap-4 bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10  shadow-[0_8px_40px_rgba(0,0,0,0.12)]  hover:-translate-y-1 hover:shadow-xl transition-all duration-200 relative",
         darkMode
-          ? "bg-white/[0.05] border border-[rgba(99,102,241,0.18)] backdrop-blur-md"
-          : "bg-white/85 border border-indigo-100/70 backdrop-blur-md",
+          ? "relative overflow-hidden backdrop-blur-3xl  border border-white/15 before:absolute before:inset-0 before:bg-linear-to-br before:from-white/15 before:to-transparent before:pointer-events-none"
+          : "  border border-indigo-100/70 backdrop-blur-md",
       ].join(" ")}
     >
       {isOwner && (
@@ -320,47 +351,134 @@ const MyRequestCard = ({ req, darkMode, isOwner, deleting, onDelete }) => {
         </button>
       )}
 
-      <div className="flex items-start justify-between gap-2 pr-8">
+      <div className="flex items-start justify-between pr-8 gap-2">
         <span
-          className={[
-            "text-xs font-bold px-2.5 py-1 rounded-full",
-            darkMode
-              ? "bg-indigo-900/40 text-indigo-300"
-              : "bg-indigo-50 text-indigo-700",
-          ].join(" ")}
+          className={`px-2.5 py-1 rounded-full text-xs font-semibold
+      ${
+        req.status === "open"
+          ? "bg-blue-100 text-blue-700"
+          : req.status === "accepted"
+            ? "bg-green-100 text-green-700"
+            : req.status === "completed"
+              ? "bg-emerald-100 text-emerald-700"
+              : "bg-gray-100 text-gray-700"
+      }`}
         >
-          {req.category}
+          {req.status.replace("_", " ")}
         </span>
+
         <span
-          className={[
-            "text-xs font-semibold px-2.5 py-1 rounded-full",
+          className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
             darkMode
-              ? "bg-white/5 text-slate-400"
-              : "bg-slate-100 text-slate-500",
-          ].join(" ")}
+              ? "bg-white/5 text-slate-300"
+              : "bg-slate-100 text-slate-600"
+          }`}
         >
-          {responseCount} {responseCount === 1 ? "response" : "responses"}
+          {responseCount} Response{responseCount !== 1 && "s"}
         </span>
       </div>
 
       <div>
-        <h3
-          className={[
-            "font-bold font-['Space_Grotesk',ui-sans-serif,sans-serif] text-lg leading-snug",
-            darkMode ? "text-white" : "text-slate-900",
-          ].join(" ")}
-        >
+        <h3 className="font-bold font-['Space_Grotesk',ui-sans-serif,sans-serif] text-lg leading-snug">
           {req.title || req.category}
         </h3>
       </div>
+      {req.status === "accepted" ? (
+  <div className="flex items-center gap-3 mt-3">
+    <img
+      src={
+        req.acceptedSeller.profileImage ||
+        `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(
+          req.acceptedSeller.name
+        )}`
+      }
+      className="w-10 h-10 rounded-full object-cover"
+      alt={req.acceptedSeller.name}
+    />
 
+    <div>
+      <p className="font-semibold">{req.acceptedSeller.name}</p>
+      <p className="text-xs opacity-70">Selected Seller</p>
+    </div>
+  </div>
+) : (
+  (() => {
+    // Find quotation having buyer counter offer pending
+    const pendingCounter = req.responses?.find(
+      (r) => r.counterStatus === "pending"
+    );
+
+    // Otherwise show latest quotation
+    const latestQuote =
+      pendingCounter ||
+      (req.responses?.length
+        ? req.responses[req.responses.length - 1]
+        : null);
+
+    if (!latestQuote) return null;
+
+    return (
+      <div className="mt-3 flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/10 p-3">
+        <div className="flex items-center gap-3">
+          <img
+            src={
+              latestQuote.seller?.profileImage ||
+              `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(
+                latestQuote.seller?.name || "Seller"
+              )}`
+            }
+            className="w-10 h-10 rounded-full object-cover"
+            alt={latestQuote.seller?.name}
+          />
+
+          <div>
+            <p className="font-semibold">
+              {latestQuote.seller?.name}
+            </p>
+
+            <p className="text-xs opacity-70">
+              {latestQuote.counterStatus === "pending"
+                ? "Waiting for seller response"
+                : "Latest quotation"}
+            </p>
+          </div>
+        </div>
+
+        <div className="text-right">
+          <p className="font-bold text-emerald-600">
+            ₹
+            {latestQuote.finalPrice ||
+              latestQuote.buyerOffer ||
+              latestQuote.quotedPrice}
+          </p>
+
+          {latestQuote.counterStatus === "pending" && (
+            <span className="inline-block mt-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+              Counter Pending
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  })()
+)}
+      <div className="mt-5">
+        <div className="h-2 rounded-full bg-slate-200 dark:bg-white/10">
+          <div
+            className={`h-full rounded-full ${
+              req.status === "completed"
+                ? "w-full bg-green-500"
+                : req.status === "in_progress"
+                  ? "w-2/3 bg-blue-500"
+                  : req.status === "accepted"
+                    ? "w-1/3 bg-yellow-500"
+                    : "w-0"
+            }`}
+          />
+        </div>
+      </div>
       <div className="space-y-2.5">
-        <div
-          className={[
-            "flex items-center gap-2 text-sm",
-            darkMode ? "text-slate-300" : "text-slate-600",
-          ].join(" ")}
-        >
+        <div className="flex items-center gap-2 text-sm">
           <MapPin
             size={14}
             className={darkMode ? "text-indigo-400" : "text-indigo-500"}
@@ -368,24 +486,14 @@ const MyRequestCard = ({ req, darkMode, isOwner, deleting, onDelete }) => {
           {req.location?.village ? `${req.location.village}, ` : ""}
           {req.location?.district ?? "—"}
         </div>
-        <div
-          className={[
-            "flex items-center gap-2 text-sm",
-            darkMode ? "text-slate-300" : "text-slate-600",
-          ].join(" ")}
-        >
+        <div className="flex items-center gap-2 text-sm">
           <Expand
             size={14}
             className={darkMode ? "text-indigo-400" : "text-indigo-500"}
           />
-          {req.area} {req.areaUnit}
+          {req.landArea} {req.unit}
         </div>
-        <div
-          className={[
-            "flex items-center gap-2 text-sm",
-            darkMode ? "text-slate-300" : "text-slate-600",
-          ].join(" ")}
-        >
+        <div className="flex items-center gap-2 text-sm">
           <CalendarDays
             size={14}
             className={darkMode ? "text-indigo-400" : "text-indigo-500"}
@@ -414,13 +522,23 @@ const MyRequestCard = ({ req, darkMode, isOwner, deleting, onDelete }) => {
         </div>
 
         <Link
-          to={`/buyer/service-details/${req._id}`}
-          className={[
-            "text-xs font-bold uppercase tracking-wide underline underline-offset-2",
-            darkMode ? "text-indigo-300" : "text-indigo-600",
-          ].join(" ")}
+          to={
+            req.status === "accepted"
+              ? `/buyer/jobs/${req._id}`
+              : `/buyer/service-details/${req._id}`
+          }
+          className="inline-flex items-center gap-2 rounded-xl
+  bg-linear-to-r
+  from-emerald-600
+  to-lime-500
+  px-4 py-2
+  text-sm
+  font-semibold
+  text-white"
         >
-          View Details
+          {req.status === "accepted" ? "View Job" : "View Responses"}
+
+          <ArrowRight size={16} />
         </Link>
       </div>
     </div>

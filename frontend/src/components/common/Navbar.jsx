@@ -67,7 +67,7 @@ const Navbar = () => {
       "font-['Inter'] px-4 py-2.5 border-l-2",
       "transition-[color,border-color,background-color] duration-150",
       isActive
-        ? "font-semibold text-emerald-700 border-emerald-600 bg-emerald-50 dark:text-emerald-300 dark:border-emerald-400 dark:bg-emerald-400/10"
+        ? " font-semibold text-emerald-700 border-emerald-600 bg-emerald-50 dark:text-emerald-300 dark:border-emerald-400 dark:bg-emerald-400/10"
         : "text-[#0F2E22] border-transparent hover:text-emerald-600 hover:border-emerald-300 dark:text-emerald-100 dark:hover:text-emerald-300 dark:hover:border-emerald-600/40",
     ].join(" ");
   // ───────────────────────────────────────────────────────────────────────────
@@ -93,9 +93,9 @@ const Navbar = () => {
         <div
           className="
             max-w-7xl mx-auto px-4 rounded-3xl
-            bg-white/[0.58] backdrop-blur-2xl border border-white/55
+             backdrop-blur-2xl border border-white/55
             shadow-[0_12px_40px_rgba(22,163,74,0.08)]
-            dark:bg-[#0a140e]/62 dark:border-white/10 dark:shadow-[0_18px_45px_rgba(0,0,0,0.35)]
+             dark:border-white/10 dark:shadow-[0_18px_45px_rgba(0,0,0,0.35)]
             transition-colors duration-300"
         >
           <div className="max-w-7xl mx-auto px-6">

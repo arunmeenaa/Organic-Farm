@@ -36,3 +36,7 @@ export const acceptQuotation = (requestId, responseId) =>
   api.patch(
     `/service-requests/${requestId}/responses/${responseId}/accept`
   );
+
+  export const getSellerRequests = () => {
+  return api.get("/service-requests/seller/all");
+};
