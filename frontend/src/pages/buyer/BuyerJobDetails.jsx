@@ -204,8 +204,8 @@ shadow-[0_8px_40px_rgba(0,0,0,0.12)]">
 
             <p>
               <MapPin className="inline mr-2" size={16}/>
-              {order.location.village},{" "}
-              {order.location.district}
+              {order.location?.village || "-"}
+              {order.location?.district || "-" }
             </p>
 
             <p>

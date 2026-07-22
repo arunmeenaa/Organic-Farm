@@ -20,10 +20,10 @@ export const NotificationProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) return;
+  if (!user?._id) return;
 
-    socket.emit("register", user._id);
-  }, [user]);
+  socket.emit("register", user._id);
+}, [user?._id]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -34,16 +34,24 @@ export const NotificationProvider = ({ children }) => {
     fetchNotifications();
   }, [isAuthenticated]);
   useEffect(() => {
-    socket.on("notification", (notification) => {
-      setNotifications((prev) => [notification, ...prev]);
+  const handleNotification = (notification) => {
+    setNotifications((prev) => {
+      if (prev.some((n) => n._id === notification._id)) {
+        return prev;
+      }
 
-      showNotificationToast(notification);
+      return [notification, ...prev];
     });
 
-    return () => {
-      socket.off("notification");
-    };
-  }, []);
+    showNotificationToast(notification);
+  };
+
+  socket.on("notification", handleNotification);
+
+  return () => {
+    socket.off("notification", handleNotification);
+  };
+}, []);
   const fetchNotifications = async () => {
     try {
       setLoading(true);

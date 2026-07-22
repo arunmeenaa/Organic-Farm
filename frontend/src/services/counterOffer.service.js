@@ -24,3 +24,9 @@ export const acceptQuotation = (requestId, responseId) => {
     `/counter-offers/${requestId}/responses/${responseId}/accept`
   );
 };
+
+export const rejectQuotation = (requestId, responseId) => {
+  return api.post(
+    `/counter-offers/${requestId}/responses/${responseId}/reject`
+  );
+};

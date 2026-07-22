@@ -26,7 +26,7 @@ const serviceOrderSchema = new mongoose.Schema(
     },
 
     title: String,
-
+    description: String,
     category: String,
 
     location: {

@@ -56,7 +56,7 @@ export default function CreateServiceRequest() {
       images.forEach((image) => data.append("images", image));
       await createServiceRequest(data);
       toast.success("Service request created successfully");
-      navigate("/request-service");
+      navigate("/buyer/my-services");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to create service request");
     } finally {

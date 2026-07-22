@@ -9,7 +9,7 @@ const {
   cancelServiceRequest,
   deleteServiceRequest,
   getServiceRequestById,
-  getSellerRequests
+  getSellerRequests,
 } = require("../controllers/serviceRequest.controller");
 
 const auth = require("../middleware/auth.middleware");
@@ -22,6 +22,9 @@ const upload = multer({
 const router = express.Router();
 
 router.get("/open", getOpenServiceRequests);
+router.get("/my", auth, authorize("buyer"), getMyServiceRequests);
+router.get("/seller/all", auth, authorize("seller"), getSellerRequests);
+router.delete("/:id", auth, authorize("buyer"), deleteServiceRequest);
 router.post(
   "/",
   auth,
@@ -29,13 +32,7 @@ router.post(
   upload.array("images", 5),
   createServiceRequest,
 );
-
-router.get("/my", auth, authorize("buyer"), getMyServiceRequests);
-router.delete("/:id", auth, authorize("buyer"), deleteServiceRequest);
+router.post("/:id/quotation", auth, authorize("seller"), submitQuotation);
 router.patch("/:id/cancel", auth, authorize("buyer"), cancelServiceRequest);
 router.get("/:id", auth, validateId("serviceRequest"), getServiceRequestById);
-router.post("/:id/quotation", auth, authorize("seller"), submitQuotation);
-router.get("/open", auth, authorize("seller"), getOpenServiceRequests);
-router.post("/:id/respond", auth, authorize("seller"), submitQuotation);
-router.get("/seller/all", auth,authorize("seller"), getSellerRequests);
 module.exports = router;

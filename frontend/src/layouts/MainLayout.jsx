@@ -5,7 +5,7 @@ import BackgroundEffects from "../components/common/BackgroundEffects";
 import FloatingAIButton from "../components/common/FloatingAIButton";
 const MainLayout = () => {
   const location = useLocation();
-  const hideLayout = ["/login", "/register"].includes(location.pathname);
+  const hideLayout = ["/login", "/register", ].includes(location.pathname);
   const hideAIButton = hideLayout || location.pathname === "/ai";
 
   return (

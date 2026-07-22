@@ -1,6 +1,7 @@
 const ServiceRequest = require("../models/serviceRequest.model");
-const User = require("../models/user.model");
+const userModel = require("../models/user.model");
 const { uploadImage } = require("../utils/imageKit");
+const { createNotification } = require("../services/notification.service");
 
 const createServiceRequest = async (req, res) => {
   try {
@@ -61,7 +62,23 @@ const createServiceRequest = async (req, res) => {
 
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
+    const sellers = await userModel.find({
+      role: "seller",
+      "location.district": district,
+    });
 
+    await Promise.all(
+      sellers.map((seller) =>
+        createNotification({
+          receiver: seller._id,
+          sender: req.user._id,
+          title: "New Service Request",
+          message: `${title} posted in ${district}.`,
+          type: "service_request",
+          referenceId: request._id,
+        }),
+      ),
+    );
     return res.status(201).json({
       success: true,
       message: "Service request created successfully.",
@@ -146,7 +163,6 @@ const submitQuotation = async (req, res) => {
       });
     }
 
-    
     const alreadyResponded = request.responses.find(
       (response) =>
         response.seller.toString() === req.user._id.toString() &&
@@ -170,11 +186,24 @@ const submitQuotation = async (req, res) => {
     });
 
     await request.save();
+    console.log("Request saved");
 
-    return res.status(200).json({
+    console.log("Before notification");
+
+    await createNotification({
+      receiver: request.buyer,
+      sender: req.user._id,
+      title: "New Quotation",
+      message: "A seller has submitted a quotation for your request.",
+      type: "quotation",
+      referenceId: request._id,
+    });
+
+    console.log("After notification");
+
+    return res.json({
       success: true,
       message: "Quotation submitted successfully.",
-      request,
     });
   } catch (err) {
     return res.status(500).json({

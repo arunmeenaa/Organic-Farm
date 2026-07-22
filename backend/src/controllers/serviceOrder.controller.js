@@ -1,14 +1,12 @@
 const ServiceOrder = require("../models/serviceOrder.model");
+const { createNotification } = require("../services/notification.service");
 
 const getBuyerOrders = async (req, res) => {
   try {
     const orders = await ServiceOrder.find({
       buyer: req.user._id,
     })
-      .populate(
-        "seller",
-        "name email phone profileImage"
-      )
+      .populate("seller", "name email phone profileImage")
       .populate("request")
       .sort({ createdAt: -1 });
 
@@ -29,10 +27,7 @@ const getSellerOrders = async (req, res) => {
     const orders = await ServiceOrder.find({
       seller: req.user._id,
     })
-      .populate(
-        "buyer",
-        "name email phone profileImage"
-      )
+      .populate("buyer", "name email phone profileImage")
       .populate("request")
       .sort({ createdAt: -1 });
 
@@ -51,14 +46,8 @@ const getSellerOrders = async (req, res) => {
 const getOrderById = async (req, res) => {
   try {
     const order = await ServiceOrder.findById(req.params.id)
-      .populate(
-        "buyer",
-        "name email phone profileImage"
-      )
-      .populate(
-        "seller",
-        "name email phone profileImage"
-      )
+      .populate("buyer", "name email phone profileImage")
+      .populate("seller", "name email phone profileImage")
       .populate("request");
 
     if (!order) {
@@ -102,7 +91,14 @@ const startWork = async (req, res) => {
     order.startedAt = new Date();
 
     await order.save();
-
+    await createNotification({
+      receiver: order.buyer,
+      sender: req.user._id,
+      title: "Work Started",
+      message: "The seller has started working on your request.",
+      type: "service_started",
+      referenceId: order._id,
+    });
     res.json({
       success: true,
       message: "Work started successfully.",
@@ -138,7 +134,14 @@ const completeWork = async (req, res) => {
     order.completedAt = new Date();
 
     await order.save();
-
+    await createNotification({
+      receiver: order.buyer,
+      sender: req.user._id,
+      title: "Work Completed",
+      message: "The seller marked the work as completed.",
+      type: "service_completed",
+      referenceId: order._id,
+    });
     res.json({
       success: true,
       message: "Work completed.",

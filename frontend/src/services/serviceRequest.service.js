@@ -9,9 +9,6 @@ export const createServiceRequest = (data) => {
 };
 export const getServiceRequestById = (id) => api.get(`/service-requests/${id}`);
 
-export const respondToRequest = (id, data) =>
-  api.post(`/service-requests/${id}/respond`, data);
-
 export const getMyServiceRequests = () => {
   return api.get("/service-requests/my");
 };
@@ -31,11 +28,6 @@ export const getOpenServiceRequests = () => {
 export const submitQuotation = (id, data) => {
   return api.post(`/service-requests/${id}/quotation`, data);
 };
-
-export const acceptQuotation = (requestId, responseId) =>
-  api.patch(
-    `/service-requests/${requestId}/responses/${responseId}/accept`
-  );
 
   export const getSellerRequests = () => {
   return api.get("/service-requests/seller/all");

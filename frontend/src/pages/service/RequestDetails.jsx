@@ -33,7 +33,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import {
   getServiceRequestById,
-  respondToRequest,
+  submitQuotation as submitQuotationService,
 } from "../../services/serviceRequest.service";
 
 const pricingTypes = [
@@ -134,7 +134,7 @@ export default function RequestDetails() {
     }
     try {
       setSubmitting(true);
-      await respondToRequest(id, quotation);
+      await submitQuotationService(id, quotation);
       toast.success("Quotation submitted successfully");
       setShowModal(false);
       setQuotation({
@@ -240,7 +240,7 @@ export default function RequestDetails() {
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="mt-2 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 font-semibold text-white bg-gradient-to-r from-emerald-600 to-lime-500 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-0.5 transition-all"
+            className="mt-2 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 font-semibold text-white bg-linear-to-r from-emerald-600 to-lime-500 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-0.5 transition-all"
           >
             <ArrowLeft size={16} />
             Go back
@@ -293,17 +293,17 @@ export default function RequestDetails() {
               className={[
                 "relative overflow-hidden rounded-3xl border",
                 darkMode
-                  ? "border-white/[0.06] bg-slate-900/60"
+                  ? "border-white/6 bg-slate-900/60"
                   : "border-slate-200/70 bg-white",
               ].join(" ")}
             >
-              <div className="relative h-[420px] sm:h-[480px] w-full">
+              <div className="relative h-105 sm:h-120 w-full">
                 <img
                   src={heroImage}
                   alt={request.title || "Service request"}
                   className="absolute inset-0 h-full w-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
 
                 {/* Status floating */}
                 <div className="absolute top-5 right-5">
@@ -486,7 +486,7 @@ export default function RequestDetails() {
 
               <div className="flex flex-col sm:flex-row items-start gap-5">
                 <div className="relative shrink-0">
-                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-emerald-500/40 to-lime-400/40 blur-md opacity-50" />
+                  <div className="absolute -inset-1 rounded-2xl bg-linear-to-br from-emerald-500/40 to-lime-400/40 blur-md opacity-50" />
                   <img
                     src={
                       request.buyer?.profileImage ||
@@ -646,7 +646,7 @@ export default function RequestDetails() {
                   disabled={request.status !== "open"}
                   className={`mt-6 w-full rounded-xl py-3.5 font-semibold text-sm transition-all ${
                     request.status === "open"
-                      ? "bg-gradient-to-r from-emerald-600 to-lime-500 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0"
+                      ? "bg-linear-to-r from-emerald-600 to-lime-500 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0"
                       : darkMode
                         ? "bg-white/5 text-slate-500 cursor-not-allowed"
                         : "bg-slate-100 text-slate-400 cursor-not-allowed"
@@ -812,7 +812,7 @@ export default function RequestDetails() {
                   <button
                     onClick={submitQuotation}
                     disabled={submitting}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-emerald-600 to-lime-500 text-white shadow-lg shadow-emerald-500/25 disabled:opacity-70 hover:shadow-emerald-500/40 transition-all"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-linear-to-r from-emerald-600 to-lime-500 text-white shadow-lg shadow-emerald-500/25 disabled:opacity-70 hover:shadow-emerald-500/40 transition-all"
                   >
                     {submitting ? (
                       <>
@@ -850,7 +850,7 @@ const DetailTile = ({
   <div
     className={`flex items-start gap-3 rounded-xl p-3.5 transition-colors ${
       darkMode
-        ? "bg-white/[0.02] hover:bg-white/[0.04]"
+        ? "bg-white/2 hover:bg-white/4"
         : "bg-slate-50/70 hover:bg-slate-100/70"
     }`}
   >
@@ -865,7 +865,7 @@ const DetailTile = ({
 const InfoRow = ({ icon, label, value, darkMode, heading, mutedText }) => (
   <div
     className={`flex items-center gap-3 rounded-xl p-3 ${
-      darkMode ? "bg-white/[0.03]" : "bg-slate-50"
+      darkMode ? "bg-white/3" : "bg-slate-50"
     }`}
   >
     <div className="shrink-0">{icon}</div>
@@ -960,7 +960,7 @@ const QuotationSummary = ({
           </p>
           <p
             className={`text-sm rounded-xl p-3 ${
-              darkMode ? "bg-white/[0.04]" : "bg-white"
+              darkMode ? "bg-white/4" : "bg-white"
             } ${myQuotation.message ? heading : "italic " + mutedText}`}
           >
             {myQuotation.message || "No message"}
@@ -1011,7 +1011,7 @@ const QuotationSummary = ({
                   </p>
                   <p
                     className={`text-sm rounded-xl p-3 ${
-                      darkMode ? "bg-white/[0.04]" : "bg-white"
+                      darkMode ? "bg-white/4" : "bg-white"
                     } ${heading}`}
                   >
                     {myQuotation.buyerMessage}

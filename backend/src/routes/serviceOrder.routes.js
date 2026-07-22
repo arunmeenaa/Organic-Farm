@@ -14,15 +14,10 @@ const {
 const router = express.Router();
 
 router.get("/buyer", auth, getBuyerOrders);
-
 router.get("/seller", auth, getSellerOrders);
-
-router.get("/:id", auth, getOrderById);
-
-router.patch("/:id/start", auth, startWork);
-
-router.patch("/:id/complete", auth, completeWork);
-
-router.patch("/:id/confirm", auth, confirmCompletion);
 router.get("/request/:requestId", auth, getOrderByRequestId);
+router.get("/:id", auth, getOrderById);
+router.patch("/:id/start", auth, startWork);
+router.patch("/:id/complete", auth, completeWork);
+router.patch("/:id/confirm", auth, confirmCompletion);
 module.exports = router;

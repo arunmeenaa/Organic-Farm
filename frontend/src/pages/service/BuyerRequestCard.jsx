@@ -6,12 +6,17 @@ import {
   ClipboardList,
   ArrowRight,
   Clock,
+  CheckCircle2,
+  Briefcase,
+  AlertTriangle,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
+
 const BuyerRequestCard = ({ req }) => {
   const { darkMode } = useTheme();
   const { user } = useAuth();
+
   const requiredDate = req.requiredDate
     ? new Date(req.requiredDate).toLocaleDateString("en-IN", {
         day: "numeric",
@@ -45,13 +50,48 @@ const BuyerRequestCard = ({ req }) => {
       className={[
         "rounded-3xl overflow-hidden transition-all duration-300",
         "backdrop-blur-xl border hover:-translate-y-1 hover:shadow-xl",
-        darkMode
-          ? "bg-white/5 border-white/10 hover:shadow-emerald-900/30"
-          : "bg-white/20 border-white/60 hover:shadow-emerald-500/15",
+        quotationAccepted
+          ? darkMode
+            ? " bg-white/5  hover:shadow-green-900/40 ring-2 ring-green-500/30"
+            : " bg-white/5 hover:shadow-green-500/25 ring-2 ring-green-400/30"
+          : darkMode
+          ? "bg-white/5  hover:shadow-emerald-900/30"
+          : "bg-white/20  hover:shadow-emerald-500/15",
       ].join(" ")}
     >
-      {/* Header */}
+      {/* ── Accepted Congratulations Banner ── */}
+      {quotationAccepted && (
+        <div className="relative blur-mdl overflow-hidden px-5 py-4 bg-gradient-to-r from-green-600 to-emerald-500">
+          {/* Decorative shimmer */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 animate-[shimmer_2.5s_infinite]" />
 
+          <div className="flex items-center gap-3">
+            <div className="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+              <CheckCircle2 size={22} className="text-white" />
+            </div>
+
+            <div>
+              <p className="text-white font-bold text-base leading-tight">
+                🎉 Congratulations! Your quotation was accepted.
+              </p>
+              <p className="text-green-100 text-xs mt-0.5">
+                The buyer has confirmed your offer — you're all set to begin.
+              </p>
+            </div>
+          </div>
+
+          {/* ACTION REQUIRED badge */}
+          <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/20 border border-white/30 px-3 py-1">
+            <AlertTriangle size={12} className="text-yellow-200 animate-pulse" />
+            <span className="text-white text-[11px] font-bold tracking-widest uppercase">
+              Action Required
+            </span>
+            <AlertTriangle size={12} className="text-yellow-200 animate-pulse" />
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
       <div className="p-5 border-b border-emerald-500/10">
         <div className="flex justify-between items-start gap-4">
           {/* Left */}
@@ -117,7 +157,7 @@ const BuyerRequestCard = ({ req }) => {
               </div>
             </div>
           </div>
-          
+
           {/* Status */}
           <div className="flex flex-col items-end gap-2">
             <span
@@ -135,68 +175,68 @@ const BuyerRequestCard = ({ req }) => {
             )}
           </div>
         </div>
+
         {myQuotation && (
-            <div
-              className={`mt-4 rounded-2xl border p-4 ${
-                quotationAccepted
-                  ? "border-green-500/20 bg-green-500/10"
-                  : quotationRejected
-                    ? "border-red-500/20 bg-red-500/10"
-                    : hasBuyerCounter
-                      ? "border-amber-500/20 bg-amber-500/10"
-                      : "border-blue-500/20 bg-blue-500/10"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold">Your Quotation</p>
+          <div
+            className={`mt-4 rounded-2xl border p-4 ${
+              quotationAccepted
+                ? "border-green-500/20 bg-green-500/10"
+                : quotationRejected
+                ? "border-red-500/20 bg-red-500/10"
+                : hasBuyerCounter
+                ? "border-amber-500/20 bg-amber-500/10"
+                : "border-blue-500/20 bg-blue-500/10"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-semibold">Your Quotation</p>
 
-                  <p className="text-sm opacity-70">
-                    ₹{myQuotation.finalPrice || myQuotation.quotedPrice}
-                  </p>
-                </div>
-
-                {quotationAccepted ? (
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                    Accepted
-                  </span>
-                ) : quotationRejected ? (
-                  <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
-                    Rejected
-                  </span>
-                ) : hasBuyerCounter ? (
-                  <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 animate-pulse">
-                    Counter Offer
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                    Waiting
-                  </span>
-                )}
+                <p className="text-sm opacity-70">
+                  ₹{myQuotation.finalPrice || myQuotation.quotedPrice}
+                </p>
               </div>
 
-              {hasBuyerCounter && (
-                <div className="mt-3">
-                  <p className="text-sm">
-                    Buyer Offer:
-                    <span className="ml-2 font-bold text-emerald-600">
-                      ₹{myQuotation.buyerOffer}
-                    </span>
-                  </p>
-
-                  {myQuotation.buyerMessage && (
-                    <p className="mt-2 text-sm italic">
-                      "{myQuotation.buyerMessage}"
-                    </p>
-                  )}
-                </div>
+              {quotationAccepted ? (
+                <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                  Accepted
+                </span>
+              ) : quotationRejected ? (
+                <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                  Rejected
+                </span>
+              ) : hasBuyerCounter ? (
+                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 animate-pulse">
+                  Counter Offer
+                </span>
+              ) : (
+                <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                  Waiting
+                </span>
               )}
             </div>
-          )}
+
+            {hasBuyerCounter && (
+              <div className="mt-3">
+                <p className="text-sm">
+                  Buyer Offer:
+                  <span className="ml-2 font-bold text-emerald-600">
+                    ₹{myQuotation.buyerOffer}
+                  </span>
+                </p>
+
+                {myQuotation.buyerMessage && (
+                  <p className="mt-2 text-sm italic">
+                    "{myQuotation.buyerMessage}"
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Body */}
-
       <div className="p-5">
         <p
           className={[
@@ -254,17 +294,33 @@ const BuyerRequestCard = ({ req }) => {
             Posted {postedDate}
           </div>
 
-          <Link
-            to={`/seller/request/${req._id}`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl
-              bg-linear-to-r from-emerald-600 to-lime-500
-              text-white text-sm font-semibold
-              hover:shadow-lg hover:shadow-emerald-500/30
-              transition-all"
-          >
-            View Details
-            <ArrowRight size={16} />
-          </Link>
+          {/* CTA: Go to Job (accepted) vs View Details (default) */}
+          {quotationAccepted ? (
+            <Link
+              to={`/seller/job/${req._id}`}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
+                bg-gradient-to-r from-green-600 to-emerald-500
+                text-white text-sm font-bold
+                hover:shadow-lg hover:shadow-green-500/40
+                transition-all animate-pulse hover:animate-none"
+            >
+              <Briefcase size={15} />
+              Go to Job
+              <ArrowRight size={15} />
+            </Link>
+          ) : (
+            <Link
+              to={`/seller/request/${req._id}`}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+                bg-linear-to-r from-emerald-600 to-lime-500
+                text-white text-sm font-semibold
+                hover:shadow-lg hover:shadow-emerald-500/30
+                transition-all"
+            >
+              View Details
+              <ArrowRight size={16} />
+            </Link>
+          )}
         </div>
       </div>
     </div>

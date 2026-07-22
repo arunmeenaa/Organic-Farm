@@ -1,6 +1,8 @@
 const ServiceRequest = require("../models/serviceRequest.model");
 const userModel = require("../models/user.model");
 const ServiceOrder = require("../models/serviceOrder.model");
+const { finalizeAgreement } = require("../utils/serviceAgreement");
+const { createNotification } = require("../services/notification.service");
 
 const sendCounterOffer = async (req, res) => {
   try {
@@ -13,8 +15,14 @@ const sendCounterOffer = async (req, res) => {
         message: "Request not found",
       });
     }
-    
+
     const response = request.responses.id(req.params.responseId);
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: "Quotation not found",
+      });
+    }
     if (response.buyerOffer !== null) {
       return res.status(400).json({
         success: false,
@@ -35,7 +43,14 @@ const sendCounterOffer = async (req, res) => {
     response.status = "countered";
 
     await request.save();
-
+    await createNotification({
+      receiver: response.seller,
+      sender: req.user._id,
+      title: "Counter Offer",
+      message: `Buyer offered ₹${buyerOffer}.`,
+      type: "counter_offer",
+      referenceId: request._id,
+    });
     return res.json({
       success: true,
       message: "Counter offer sent successfully.",
@@ -50,7 +65,9 @@ const sendCounterOffer = async (req, res) => {
 
 const acceptCounterOffer = async (req, res) => {
   try {
-    const request = await ServiceRequest.findById(req.params.requestId);
+    const { requestId, responseId } = req.params;
+
+    const request = await ServiceRequest.findById(requestId);
 
     if (!request) {
       return res.status(404).json({
@@ -59,7 +76,7 @@ const acceptCounterOffer = async (req, res) => {
       });
     }
 
-    const response = request.responses.id(req.params.responseId);
+    const response = request.responses.id(responseId);
 
     if (!response) {
       return res.status(404).json({
@@ -68,20 +85,31 @@ const acceptCounterOffer = async (req, res) => {
       });
     }
 
+    if (response.seller.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    if (response.counterStatus !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "No pending counter offer.",
+      });
+    }
+
     response.counterStatus = "accepted";
-    response.status = "accepted";
 
-    response.finalPrice = response.buyerOffer;
-
-    response.acceptedAt = new Date();
-
-    response.contactUnlocked = true;
-
-    request.acceptedSeller = response.seller;
-    request.status = "accepted";
-
-    await request.save();
-
+    await finalizeAgreement(request, response, response.buyerOffer);
+    await createNotification({
+      receiver: request.buyer,
+      sender: req.user._id,
+      title: "Counter Offer Accepted",
+      message: "The seller accepted your counter offer.",
+      type: "counter_accepted",
+      referenceId: request._id,
+    });
     return res.json({
       success: true,
       message: "Counter offer accepted.",
@@ -94,98 +122,6 @@ const acceptCounterOffer = async (req, res) => {
   }
 };
 
-const acceptQuotation = async (req, res) => {
-  try {
-    const { requestId, responseId } = req.params;
-
-    const request = await ServiceRequest.findById(requestId);
-
-    if (!request) {
-      return res.status(404).json({
-        success: false,
-        message: "Service request not found.",
-      });
-    }
-
-    // Only buyer can accept
-    if (request.buyer.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "You are not authorized.",
-      });
-    }
-
-    if (request.status !== "open") {
-      return res.status(400).json({
-        success: false,
-        message: "This request has already been finalized.",
-      });
-    }
-
-    const response = request.responses.id(responseId);
-
-    if (!response) {
-      return res.status(404).json({
-        success: false,
-        message: "Quotation not found.",
-      });
-    }
-
-    // Final agreed price
-    const agreedPrice =
-      response.counterStatus === "accepted" && response.buyerOffer != null
-        ? response.buyerOffer
-        : response.quotedPrice;
-
-    response.status = "accepted";
-    response.finalPrice = agreedPrice;
-    response.acceptedAt = new Date();
-    response.contactUnlocked = true;
-
-    // Reject all other quotations
-    request.responses.forEach((quote) => {
-      if (quote._id.toString() !== responseId) {
-        quote.status = "rejected";
-      }
-    });
-
-    request.acceptedSeller = response.seller;
-    request.status = "accepted";
-
-    // Save request first
-    await request.save();
-
-    // Prevent duplicate orders
-    const existingOrder = await ServiceOrder.findOne({
-      request: request._id,
-    });
-
-    if (!existingOrder) {
-      await ServiceOrder.create({
-        request: request._id,
-        buyer: request.buyer,
-        seller: response.seller,
-        quotationId: response._id,
-        finalPrice: agreedPrice,
-        pricingType: response.pricingType,
-        estimatedStartDate: response.estimatedStartDate,
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Quotation accepted successfully.",
-      request,
-    });
-  } catch (err) {
-    console.error(err);
-
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
 const rejectCounterOffer = async (req, res) => {
   try {
     const { requestId, responseId } = req.params;
@@ -220,7 +156,14 @@ const rejectCounterOffer = async (req, res) => {
     response.buyerMessage = "";
 
     await request.save();
-
+    await createNotification({
+      receiver: request.buyer,
+      sender: req.user._id,
+      title: "Counter Offer Rejected",
+      message: "The seller rejected your counter offer.",
+      type: "counter_rejected",
+      referenceId: request._id,
+    });
     res.json({
       success: true,
       message: "Counter offer rejected.",
@@ -232,9 +175,147 @@ const rejectCounterOffer = async (req, res) => {
     });
   }
 };
+
+const rejectQuotation = async (req, res) => {
+  try {
+    const { requestId, responseId } = req.params;
+
+    const request = await ServiceRequest.findById(requestId);
+
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: "Service request not found.",
+      });
+    }
+
+    // Only the buyer can reject quotations
+    if (request.buyer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized.",
+      });
+    }
+
+    if (request.status !== "open") {
+      return res.status(400).json({
+        success: false,
+        message: "This request has already been finalized.",
+      });
+    }
+
+    const response = request.responses.id(responseId);
+
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: "Quotation not found.",
+      });
+    }
+
+    // Already processed
+    if (response.status === "accepted") {
+      return res.status(400).json({
+        success: false,
+        message: "Accepted quotation cannot be rejected.",
+      });
+    }
+
+    if (response.status === "rejected") {
+      return res.status(400).json({
+        success: false,
+        message: "Quotation has already been rejected.",
+      });
+    }
+
+    response.status = "rejected";
+    response.counterStatus = "none";
+    response.buyerOffer = null;
+    response.buyerMessage = "";
+
+    await request.save();
+    await createNotification({
+      receiver: response.seller,
+      sender: req.user._id,
+      title: "Quotation Rejected",
+      message: "Your quotation has been rejected.",
+      type: "quotation_rejected",
+      referenceId: request._id,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "Quotation rejected successfully.",
+      request,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const acceptQuotation = async (req, res) => {
+  try {
+    const { requestId, responseId } = req.params;
+
+    const request = await ServiceRequest.findById(requestId);
+
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: "Service request not found.",
+      });
+    }
+
+    if (request.buyer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized.",
+      });
+    }
+
+    if (request.status !== "open") {
+      return res.status(400).json({
+        success: false,
+        message: "This request has already been finalized.",
+      });
+    }
+
+    const response = request.responses.id(responseId);
+
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: "Quotation not found.",
+      });
+    }
+
+    await finalizeAgreement(request, response, response.quotedPrice);
+    await createNotification({
+      receiver: response.seller,
+      sender: req.user._id,
+      title: "Quotation Accepted",
+      message: "Your quotation has been accepted.",
+      type: "quotation_accepted",
+      referenceId: request._id,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "Quotation accepted successfully.",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
 module.exports = {
   sendCounterOffer,
   acceptCounterOffer,
+  rejectCounterOffer,
+
   acceptQuotation,
-  rejectCounterOffer
+  rejectQuotation,
 };
