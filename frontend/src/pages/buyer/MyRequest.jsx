@@ -106,7 +106,7 @@ const MyServices = ({ darkMode }) => {
       ? "bg-white/10 border border-[rgba(52,211,153,0.15)] text-[#D1FAE5] placeholder:text-[rgba(167,243,208,0.35)] focus:border-[#34D399] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.14)]"
       : "bg-white/5 border border-[rgba(6,95,70,0.12)] text-[#064E3B] placeholder:text-[rgba(6,95,70,0.30)] focus:border-[#059669] focus:shadow-[0_0_0_3px_rgba(5,150,105,0.14)]",
   ].join(" ");
- const titleGradient = darkMode
+  const titleGradient = darkMode
     ? "bg-gradient-to-r from-[#34D399] to-[#A3E635] bg-clip-text text-transparent"
     : "bg-gradient-to-r from-[#065F46] to-[#65A30D] bg-clip-text text-transparent";
 
@@ -116,7 +116,7 @@ const MyServices = ({ darkMode }) => {
       ? "bg-white/10 border border-[rgba(52,211,153,0.15)] text-[#D1FAE5] focus:border-[#34D399] focus:shadow-[0_0_0_3px_rgba(52,211,153,0.14)] [&>option]:bg-[#0B1A12] [&>option]:text-[#D1FAE5]"
       : "bg-white/5 border border-[rgba(6,95,70,0.12)] text-[#064E3B] focus:border-[#059669] focus:shadow-[0_0_0_3px_rgba(5,150,105,0.14)]",
   ].join(" ");
-
+  
   const isBuyer = user?.role === "buyer";
 
   // Guests get a login prompt instead of an empty/broken list.
@@ -167,7 +167,9 @@ const MyServices = ({ darkMode }) => {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <h1
-            className={[ `text-3xl font-extrabold tracking-tight bg-clip-text text-transparent font-['Space_Grotesk',ui-sans-serif,sans-serif] ${titleGradient}`]}
+            className={[
+              `text-3xl font-extrabold tracking-tight bg-clip-text text-transparent font-['Space_Grotesk',ui-sans-serif,sans-serif] ${titleGradient}`,
+            ]}
           >
             {isBuyer ? "My Service Requests" : "Open Service Requests"}
           </h1>
@@ -320,7 +322,14 @@ const MyRequestCard = ({ req, darkMode, isOwner, deleting, onDelete }) => {
         year: "numeric",
       })
     : "—";
+const jobSteps = [
+    { key: "open", label: "Open" },
+    { key: "accepted", label: "Accepted" },
+    { key: "in_progress", label: "In Progress" },
+    { key: "completed", label: "Completed" },
+  ];
 
+  const currentStep = jobSteps.findIndex((step) => step.key === req.status);
   return (
     <div
       className={[
@@ -383,100 +392,153 @@ const MyRequestCard = ({ req, darkMode, isOwner, deleting, onDelete }) => {
           {req.title || req.category}
         </h3>
       </div>
+      
       {req.status === "accepted" ? (
-  <div className="flex items-center gap-3 mt-3">
-    <img
-      src={
-        req.acceptedSeller.profileImage ||
-        `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(
-          req.acceptedSeller.name
-        )}`
-      }
-      className="w-10 h-10 rounded-full object-cover"
-      alt={req.acceptedSeller.name}
-    />
-
-    <div>
-      <p className="font-semibold">{req.acceptedSeller.name}</p>
-      <p className="text-xs opacity-70">Selected Seller</p>
-    </div>
-  </div>
-) : (
-  (() => {
-    // Find quotation having buyer counter offer pending
-    const pendingCounter = req.responses?.find(
-      (r) => r.counterStatus === "pending"
-    );
-
-    // Otherwise show latest quotation
-    const latestQuote =
-      pendingCounter ||
-      (req.responses?.length
-        ? req.responses[req.responses.length - 1]
-        : null);
-
-    if (!latestQuote) return null;
-
-    return (
-      <div className="mt-3 flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/10 p-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mt-3">
           <img
             src={
-              latestQuote.seller?.profileImage ||
+              req.acceptedSeller.profileImage ||
               `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(
-                latestQuote.seller?.name || "Seller"
+                req.acceptedSeller.name,
               )}`
             }
             className="w-10 h-10 rounded-full object-cover"
-            alt={latestQuote.seller?.name}
+            alt={req.acceptedSeller.name}
           />
 
           <div>
-            <p className="font-semibold">
-              {latestQuote.seller?.name}
-            </p>
-
-            <p className="text-xs opacity-70">
-              {latestQuote.counterStatus === "pending"
-                ? "Waiting for seller response"
-                : "Latest quotation"}
-            </p>
+            <p className="font-semibold">{req.acceptedSeller.name}</p>
+            <p className="text-xs opacity-70">Selected Seller</p>
           </div>
         </div>
+      ) : (
+        (() => {
+          // Find quotation having buyer counter offer pending
+          const pendingCounter = req.responses?.find(
+            (r) => r.counterStatus === "pending",
+          );
 
-        <div className="text-right">
-          <p className="font-bold text-emerald-600">
-            ₹
-            {latestQuote.finalPrice ||
-              latestQuote.buyerOffer ||
-              latestQuote.quotedPrice}
-          </p>
+          // Otherwise show latest quotation
+          const latestQuote =
+            pendingCounter ||
+            (req.responses?.length
+              ? req.responses[req.responses.length - 1]
+              : null);
 
-          {latestQuote.counterStatus === "pending" && (
-            <span className="inline-block mt-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
-              Counter Pending
-            </span>
-          )}
-        </div>
-      </div>
-    );
-  })()
-)}
-      <div className="mt-5">
-        <div className="h-2 rounded-full bg-slate-200 dark:bg-white/10">
+          if (!latestQuote) return null;
+
+          return (
+            <div className="mt-3 flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/10 p-3">
+              <div className="flex items-center gap-3">
+                <img
+                  src={
+                    latestQuote.seller?.profileImage ||
+                    `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(
+                      latestQuote.seller?.name || "Seller",
+                    )}`
+                  }
+                  className="w-10 h-10 rounded-full object-cover"
+                  alt={latestQuote.seller?.name}
+                />
+
+                <div>
+                  <p className="font-semibold">{latestQuote.seller?.name}</p>
+
+                  <p className="text-xs opacity-70">
+                    {latestQuote.counterStatus === "pending"
+                      ? "Waiting for seller response"
+                      : "Latest quotation"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-right">
+                <p className="font-bold text-emerald-600">
+                  ₹
+                  {latestQuote.finalPrice ||
+                    latestQuote.buyerOffer ||
+                    latestQuote.quotedPrice}
+                </p>
+
+                {latestQuote.counterStatus === "pending" && (
+                  <span className="inline-block mt-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                    Counter Pending
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })()
+      )}<div
+  className={`mt-5 rounded-2xl border-l-4 p-4 ${
+    req.status === "accepted"
+      ? "bg-yellow-50 border-yellow-500 text-yellow-800"
+      : req.status === "in_progress"
+      ? "bg-blue-50 border-blue-500 text-blue-800"
+      : req.status === "completed"
+      ? "bg-emerald-50 border-emerald-500 text-emerald-800"
+      : "bg-slate-50 border-slate-400 text-slate-700"
+  }`}
+>
+  <p className="font-bold text-sm">
+    {req.status === "accepted" &&
+      "🟡 Your request has been accepted. Contact the provider to start the work."}
+
+    {req.status === "in_progress" &&
+      "🔵 Work is currently in progress."}
+
+    {req.status === "completed" &&
+      "🟢 This job has been completed successfully."}
+
+    {req.status === "open" &&
+      "⚪ Waiting for sellers to submit quotations."}
+  </p>
+</div>
+      <div className="mt-6">
+  <div className="flex items-center justify-between relative">
+
+    {/* Progress Line */}
+    <div className="absolute top-4 left-4 right-4 h-1 bg-slate-200 dark:bg-white/10 rounded-full">
+      <div
+        className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-lime-500 transition-all duration-500"
+        style={{
+          width: `${(currentStep / (jobSteps.length - 1)) * 100}%`,
+        }}
+      />
+    </div>
+
+    {jobSteps.map((step, index) => {
+      const active = index <= currentStep;
+
+      return (
+        <div
+          key={step.key}
+          className="relative z-10 flex flex-col items-center flex-1"
+        >
           <div
-            className={`h-full rounded-full ${
-              req.status === "completed"
-                ? "w-full bg-green-500"
-                : req.status === "in_progress"
-                  ? "w-2/3 bg-blue-500"
-                  : req.status === "accepted"
-                    ? "w-1/3 bg-yellow-500"
-                    : "w-0"
+            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+              active
+                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/40 scale-110"
+                : "bg-slate-200 dark:bg-slate-700 text-slate-500"
             }`}
-          />
+          >
+            {index + 1}
+          </div>
+
+          <span
+            className={`mt-2 text-[11px] font-semibold ${
+              active
+                ? "text-emerald-600"
+                : "text-slate-400"
+            }`}
+          >
+            {step.label}
+          </span>
         </div>
-      </div>
+      );
+    })}
+  </div>
+</div>
       <div className="space-y-2.5">
         <div className="flex items-center gap-2 text-sm">
           <MapPin

@@ -44,6 +44,7 @@ import BuyerRequests from "../pages/service/BuyerRequest";
 import MyRequest from "../pages/buyer/MyRequest";
 import RequestDetails from "../pages/buyer/RequestDetails";
 import BuyerJobDetails from "../pages/buyer/BuyerJobDetails";
+import BuyerJob from "../pages/service/BuyerJob"
 
 const AppRoutes = () => {
   return (
@@ -113,6 +114,7 @@ const AppRoutes = () => {
             {/* Services */}
             <Route path="/seller/buyer-requests" element={<BuyerRequests />} />
             <Route path="/seller/request/:id" element={<RequestCardDetail />} />
+            <Route path="/seller/job/:id" element={<BuyerJob />} />
           </Route>
         </Route>
       </Route>

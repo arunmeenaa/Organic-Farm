@@ -470,30 +470,30 @@ hover:bg-white/15
                             ✕ Reject
                           </button>
                         </div>
-{counterAlreadySent && (
-  <div className="mt-5 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5">
-    <h3 className="font-semibold text-amber-600">
-      Counter Offer Submitted
-    </h3>
+                        {counterAlreadySent && (
+                          <div className="mt-5 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5">
+                            <h3 className="font-semibold text-amber-600">
+                              Counter Offer Submitted
+                            </h3>
 
-    <p className="mt-2">
-      Your Offer:
-      <span className="ml-2 font-bold">
-        ₹{quote.buyerOffer}
-      </span>
-    </p>
+                            <p className="mt-2">
+                              Your Offer:
+                              <span className="ml-2 font-bold">
+                                ₹{quote.buyerOffer}
+                              </span>
+                            </p>
 
-    {quote.buyerMessage && (
-      <p className="mt-2 italic">
-        "{quote.buyerMessage}"
-      </p>
-    )}
+                            {quote.buyerMessage && (
+                              <p className="mt-2 italic">
+                                "{quote.buyerMessage}"
+                              </p>
+                            )}
 
-    <p className="mt-3 text-sm text-gray-500">
-      Waiting for the seller to respond.
-    </p>
-  </div>
-)}
+                            <p className="mt-3 text-sm text-gray-500">
+                              Waiting for the seller to respond.
+                            </p>
+                          </div>
+                        )}
                         {/* Negotiation Form */}
 
                         {!counterAlreadySent &&
